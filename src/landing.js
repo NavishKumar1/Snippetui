@@ -209,13 +209,6 @@ export function renderLanding(onNavigate) {
             </div>
           </div>
 
-        </div>
-      </section>
-
-      <!-- Section 3.5: Elite Highlights Section with Left-to-Right Horizontal Scroll Pinning -->
-      <section class="landing-elite-section" id="elite-scroll-track">
-        <div class="elite-sticky-wrap">
-          
           <div class="elite-row-container">
             <div class="elite-row" id="elite-row">
               
@@ -472,12 +465,13 @@ export function renderLanding(onNavigate) {
         });
       }
 
-      // 4. Scroll-pinned horizontal scroll for category cards
+      // 4. Scroll-pinned horizontal scroll for category and elite cards (Combined)
       const categoryTrack = appContainer.querySelector('#categories-scroll-track');
       const categoriesRow = appContainer.querySelector('#categories-row');
+      const eliteRow = appContainer.querySelector('#elite-row');
 
       function updateHorizontalScroll() {
-        if (!categoryTrack || !categoriesRow) return;
+        if (!categoryTrack) return;
 
         const rect = categoryTrack.getBoundingClientRect();
         const windowHeight = window.innerHeight;
@@ -490,39 +484,31 @@ export function renderLanding(onNavigate) {
 
         const scrollRatio = Math.max(0, Math.min(1, -start / totalScrollableHeight));
         
-        // Calculate translate delta
-        const maxTranslate = categoriesRow.scrollWidth - window.innerWidth;
-        categoriesRow.style.transform = `translateX(-${scrollRatio * maxTranslate}px)`;
-      }
+        // Translate Categories Row (Right-to-Left)
+        if (categoriesRow) {
+          const maxTranslate = categoriesRow.scrollWidth - window.innerWidth;
+          if (maxTranslate > 0) {
+            categoriesRow.style.transform = `translateX(-${scrollRatio * maxTranslate}px)`;
+          } else {
+            categoriesRow.style.transform = 'none';
+          }
+        }
 
-      // 4.5. Scroll-pinned horizontal scroll for elite cards (Left-to-Right)
-      const eliteTrack = appContainer.querySelector('#elite-scroll-track');
-      const eliteRow = appContainer.querySelector('#elite-row');
-
-      function updateEliteHorizontalScroll() {
-        if (!eliteTrack || !eliteRow) return;
-
-        const rect = eliteTrack.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        
-        // Calculate scroll ratio (0 when sticky track top meets top of screen, 1 when sticky track bottom meets bottom of screen)
-        const start = rect.top;
-        const totalScrollableHeight = rect.height - windowHeight;
-        
-        if (totalScrollableHeight <= 0) return;
-
-        const scrollRatio = Math.max(0, Math.min(1, -start / totalScrollableHeight));
-        
-        // Calculate translate delta (Left-to-Right translates from -maxTranslate to 0)
-        const maxTranslate = eliteRow.scrollWidth - window.innerWidth;
-        eliteRow.style.transform = `translateX(-${(1 - scrollRatio) * maxTranslate}px)`;
+        // Translate Elite Row (Left-to-Right)
+        if (eliteRow) {
+          const maxTranslate = eliteRow.scrollWidth - window.innerWidth;
+          if (maxTranslate > 0) {
+            eliteRow.style.transform = `translateX(-${(1 - scrollRatio) * maxTranslate}px)`;
+          } else {
+            eliteRow.style.transform = 'none';
+          }
+        }
       }
 
       // Combine all scroll listeners into a single optimized scroll engine
       function handleScrollActions() {
         updatePipelinePath();
         updateHorizontalScroll();
-        updateEliteHorizontalScroll();
       }
 
       // De-duplicate scroll listeners to avoid memory leaks

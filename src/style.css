@@ -605,7 +605,7 @@ a {
    ========================================================================== */
 .landing-categories-section {
   width: 100%;
-  height: 220vh; /* Scroll track height to define scrolling length */
+  height: 240vh; /* Increased scroll track height for combined smooth translation */
   position: relative;
   margin: 0;
   padding: 0;
@@ -711,34 +711,11 @@ a {
   text-shadow: var(--glow-cyan);
 }
 
-/* ==========================================================================
-   4.5. Elite Highlights Section with Left-to-Right Horizontal Scroll Pinning
-   ========================================================================== */
-.landing-elite-section {
-  width: 100%;
-  height: 220vh; /* Scroll track height */
-  position: relative;
-  margin: 0;
-  padding: 0;
-  z-index: 10;
-}
-
-.elite-sticky-wrap {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
 .elite-row-container {
   width: 100%;
   overflow: visible;
   position: relative;
+  margin-top: 40px; /* Space out Categories and Elite Highlights row */
 }
 
 .elite-row {
@@ -2548,7 +2525,7 @@ a {
   
   /* Mobile category adjustments for scroll-pinned translation */
   .landing-categories-section {
-    height: 220vh !important; /* Retain scroll track for mobile translation */
+    height: 240vh !important; /* Retain scroll track for mobile translation */
   }
   
   .category-sticky-wrap {
@@ -2602,23 +2579,9 @@ a {
   }
   
   /* Mobile elite highlights adjustments for scroll-pinned translation */
-  .landing-elite-section {
-    height: 220vh !important; /* Retain scroll track for mobile translation */
-  }
-  
-  .elite-sticky-wrap {
-    position: sticky !important;
-    top: 0 !important;
-    height: 100vh !important;
-    height: 100dvh !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    overflow: hidden !important;
-  }
-  
   .elite-row-container {
     overflow: visible !important;
+    margin-top: 24px !important;
   }
   
   .elite-row {
