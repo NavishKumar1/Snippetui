@@ -216,12 +216,6 @@ export function renderLanding(onNavigate) {
       <section class="landing-elite-section" id="elite-scroll-track">
         <div class="elite-sticky-wrap">
           
-          <div class="section-header">
-            <div class="tech-badge">Engine Highlights</div>
-            <h2 class="section-title">Built for Performance</h2>
-            <p class="section-subtitle">Scroll down to see the engineering design advantages of SnippetUI.</p>
-          </div>
-
           <div class="elite-row-container">
             <div class="elite-row" id="elite-row">
               
