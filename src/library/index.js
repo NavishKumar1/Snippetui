@@ -313,23 +313,13 @@ import { component as smokeAuraLoader } from './loaders/smoke-aura-loader.js';
 import { component as biolumeSynapseLoader } from './loaders/biolume-synapse-loader.js';
 
 // Background Animations
-import { component as cosmicGravityFlux } from './background-animations/cosmic-gravity-flux.js';
 import { component as quantumParticlePlexus } from './background-animations/quantum-particle-plexus.js';
 import { component as glossyPhysicsBalls } from './background-animations/glossy-physics-balls.js';
 import { component as cyberGridMatrix } from './background-animations/cyber-grid-matrix.js';
 import { component as interactiveLightningPlasma } from './background-animations/interactive-lightning-plasma.js';
-import { component as refractiveGlassMatrix } from './background-animations/refractive-glass-matrix.js';
-import { component as biolumeFluidSwarm } from './background-animations/biolume-fluid-swarm.js';
-import { component as cosmicNebulaFlow } from './background-animations/cosmic-nebula-flow.js';
-import { component as neuralSynapticMesh } from './background-animations/neural-synaptic-mesh.js';
 import { component as holoWaveInterference } from './background-animations/holo-wave-interference.js';
-import { component as darkMatterLens } from './background-animations/dark-matter-lens.js';
-import { component as auroralRibbonCurve } from './background-animations/auroral-ribbon-curve.js';
-import { component as glitchRainstorm } from './background-animations/glitch-rainstorm.js';
 import { component as liquidGlassMetaballs } from './background-animations/liquid-glass-metaballs.js';
-import { component as stellarDustVortex } from './background-animations/stellar-dust-vortex.js';
 import { component as vectorFieldSwarm } from './background-animations/vector-field-swarm.js';
-import { component as quantumStringVibration } from './background-animations/quantum-string-vibration.js';
 
 // Dock Navigations
 import { component as ultimateGamingDock } from './dock-navigations/ultimate-gaming-dock.js';
@@ -726,23 +716,13 @@ export const COMPONENTS_DATABASE = [
   origamiGeometricRing,
 
   // Background Animations
-  cosmicGravityFlux,
   quantumParticlePlexus,
   glossyPhysicsBalls,
   cyberGridMatrix,
   interactiveLightningPlasma,
-  refractiveGlassMatrix,
-  biolumeFluidSwarm,
-  cosmicNebulaFlow,
-  neuralSynapticMesh,
   holoWaveInterference,
-  darkMatterLens,
-  auroralRibbonCurve,
-  glitchRainstorm,
   liquidGlassMetaballs,
-  stellarDustVortex,
   vectorFieldSwarm,
-  quantumStringVibration,
 
   // Dock Navigations
   ultimateGamingDock,
