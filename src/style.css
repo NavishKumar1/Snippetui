@@ -3250,6 +3250,22 @@ a {
   scroll-behavior: auto !important;
 }
 
+/* Enable scrolling inside container components' wrapper elements when rendered in preview blocks */
+.smart-wrapper,
+.maxw-wrapper,
+.hero-wrapper,
+.glass-env,
+.fs-launcher,
+.fluid-wrapper,
+.float-wrapper,
+.dash-wrapper,
+.content-wrapper,
+.adapt-wrapper {
+  height: 100% !important;
+  overflow-y: auto !important;
+  box-sizing: border-box;
+}
+
 
 
 

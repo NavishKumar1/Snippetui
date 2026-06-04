@@ -377,17 +377,7 @@ import { component as dashboardContainer } from './containers/dashboard-containe
 import { component as fullscreenContainer } from './containers/fullscreen-container.js';
 import { component as smartAutoScalingContainer } from './containers/smart-auto-scaling-container.js';
 
-// Grid Layouts
-import { component as autoFitGrid } from './grid-layouts/auto-fit-grid.js';
-import { component as autoFillGrid } from './grid-layouts/auto-fill-grid.js';
-import { component as responsiveCardGrid } from './grid-layouts/responsive-card-grid.js';
-import { component as featuredContentGrid } from './grid-layouts/featured-content-grid.js';
-import { component as magazineGrid } from './grid-layouts/magazine-grid.js';
-import { component as dashboardAnalyticsGrid } from './grid-layouts/dashboard-analytics-grid.js';
-import { component as bentoGrid } from './grid-layouts/bento-grid.js';
-import { component as masonryGrid } from './grid-layouts/masonry-grid.js';
-import { component as infiniteScrollGrid } from './grid-layouts/infinite-scroll-grid.js';
-import { component as dynamicRecommendationGrid } from './grid-layouts/dynamic-recommendation-grid.js';
+
 
 // Dashboard Widgets
 import { component as statisticsWidget } from './dashboard-widgets/statistics-widget.js';
@@ -787,16 +777,7 @@ export const COMPONENTS_DATABASE = [
   dashboardContainer,
   fullscreenContainer,
   smartAutoScalingContainer,
-  autoFitGrid,
-  autoFillGrid,
-  responsiveCardGrid,
-  featuredContentGrid,
-  magazineGrid,
-  dashboardAnalyticsGrid,
-  bentoGrid,
-  masonryGrid,
-  infiniteScrollGrid,
-  dynamicRecommendationGrid,
+
   statisticsWidget,
   analyticsChart,
   performanceCard,
