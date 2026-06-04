@@ -1,0 +1,96 @@
+{
+  "name": "snippetui",
+  "displayName": "SnippetUI",
+  "description": "Insert premium SnippetUI components directly into your project.",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Snippets",
+    "Other"
+  ],
+  "publisher": "snippetui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/snippetui/snippetui2.git"
+  },
+  "bin": {
+    "snippetui": "./cli.js"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "chatParticipants": [
+      {
+        "id": "snippetui.chat",
+        "name": "snippetui",
+        "description": "Ask SnippetUI to generate or find UI components",
+        "isSticky": true
+      }
+    ],
+    "commands": [
+      {
+        "command": "snippetui.insertComponent",
+        "title": "SnippetUI: Insert Component (QuickPick)"
+      },
+      {
+        "command": "snippetui.openExplorer",
+        "title": "SnippetUI: Open Visual Explorer"
+      },
+      {
+        "command": "snippetui.initProject",
+        "title": "SnippetUI: Initialize Project (Globals)"
+      },
+      {
+        "command": "snippetui.updateComponents",
+        "title": "SnippetUI: Update Synced Components"
+      },
+      {
+        "command": "snippetui.syncFigma",
+        "title": "SnippetUI: Sync Design Tokens from Figma"
+      }
+    ],
+    "configuration": {
+      "title": "SnippetUI",
+      "properties": {
+        "snippetui.insertMode": {
+          "type": "string",
+          "enum": ["Prompt", "File Creation", "Copy to Clipboard"],
+          "default": "Prompt",
+          "description": "How should components be inserted?"
+        },
+        "snippetui.defaultFramework": {
+          "type": "string",
+          "enum": ["Prompt", "Vanilla", "Tailwind", "React", "Vue"],
+          "default": "Prompt",
+          "description": "Default framework when generating SnippetUI components."
+        },
+        "snippetui.defaultScript": {
+          "type": "string",
+          "enum": ["Prompt", "JavaScript", "TypeScript"],
+          "default": "Prompt",
+          "description": "Default scripting language when inserting SnippetUI components."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "18.x",
+    "typescript": "^5.1.3",
+    "@typescript-eslint/eslint-plugin": "^5.59.8",
+    "@typescript-eslint/parser": "^5.59.8",
+    "eslint": "^8.41.0"
+  }
+}
