@@ -3240,6 +3240,16 @@ a {
   border-color: #ffffff;
 }
 
+/* Optimize scroll containers with GPU compositor layers for maximum scroll smoothness and lag prevention */
+.library-sidebar,
+.library-main,
+.drawer-pane,
+.drawer-code-body {
+  will-change: scroll-position;
+  transform: translate3d(0, 0, 0);
+  scroll-behavior: auto !important;
+}
+
 
 
 

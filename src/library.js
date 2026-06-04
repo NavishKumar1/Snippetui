@@ -10,27 +10,30 @@ import { COMPONENTS_DATABASE } from './library/index.js';
  * Intercepts desktop wheel events and interpolates scroll position
  * with high fidelity LERP (linear interpolation) for a premium feel.
  */
-function applyInertiaScroll(element, speedFactor = 1.0, smoothFactor = 0.07) {
+function applyInertiaScroll(element, speedFactor = 1.0, smoothFactor = 0.09) {
   if (!element) return;
 
   let targetScrollY = element.scrollTop;
   let currentScrollY = element.scrollTop;
   let isRunning = false;
   let touchActive = false;
+  let isProgrammaticScroll = false;
 
-  // Sync scroll values if user drags scrollbar or scrolls programmatically (e.g. on filter change)
+  // Sync scroll values and immediately stop LERP if user scrolls natively (e.g. scrollbar drag)
   const syncScrollValues = () => {
-    if (!isRunning) {
+    if (!isProgrammaticScroll) {
       targetScrollY = element.scrollTop;
       currentScrollY = element.scrollTop;
+      isRunning = false; // Prevents fighting native scroll gestures/scrollbar drags
     }
+    isProgrammaticScroll = false;
   };
 
   element.addEventListener('scroll', syncScrollValues, { passive: true });
 
   element.addEventListener('touchstart', () => {
     touchActive = true;
-    isRunning = false; // Hand over control to native touch inertia
+    isRunning = false; // Hand over control to native touch momentum
   }, { passive: true });
 
   element.addEventListener('touchend', () => {
@@ -43,17 +46,22 @@ function applyInertiaScroll(element, speedFactor = 1.0, smoothFactor = 0.07) {
   element.addEventListener('wheel', (e) => {
     if (e.ctrlKey || e.metaKey || e.shiftKey || touchActive) return;
 
+    // Detect trackpad scrolling (fractional deltas or horizontal deltas)
+    const isTrackpad = e.deltaX !== 0 || (Math.abs(e.deltaY) < 50 && e.deltaY % 1 !== 0);
+    if (isTrackpad) {
+      isRunning = false; // Bypass smoothing to prevent fighting trackpad momentum
+      return; 
+    }
+
     e.preventDefault();
 
     const maxScroll = element.scrollHeight - element.clientHeight;
     if (maxScroll <= 0) return;
 
-    // Trackpad delta is typically fractional/smaller.
-    // Let's scale up physical mouse wheels slightly for a deeper roll, while keeping trackpads responsive.
     let delta = e.deltaY;
     if (Math.abs(delta) >= 100) {
-      // Physical wheel turn
-      delta = Math.sign(delta) * 110;
+      // Discrete physical mouse wheel - scale up slightly for responsive roll depth
+      delta = Math.sign(delta) * 120;
     }
 
     // Accumulate target scroll position
@@ -68,7 +76,6 @@ function applyInertiaScroll(element, speedFactor = 1.0, smoothFactor = 0.07) {
 
   // 2. Premium Keyboard Navigation Smoothing
   element.addEventListener('keydown', (e) => {
-    // Check if input element is currently focused (to prevent key capturing when typing in search)
     const activeEl = document.activeElement;
     if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
       return;
@@ -80,7 +87,7 @@ function applyInertiaScroll(element, speedFactor = 1.0, smoothFactor = 0.07) {
     if (maxScroll <= 0) return;
 
     const pageStep = element.clientHeight * 0.85;
-    const lineStep = 80; // Buttery standard line step size
+    const lineStep = 100; // Snappy standard line step size
 
     switch (key) {
       case 'ArrowDown':
@@ -107,7 +114,7 @@ function applyInertiaScroll(element, speedFactor = 1.0, smoothFactor = 0.07) {
         e.preventDefault();
         break;
       default:
-        return; // Bubble up other keys
+        return;
     }
 
     if (scrollAmount !== 0) {
@@ -130,6 +137,7 @@ function applyInertiaScroll(element, speedFactor = 1.0, smoothFactor = 0.07) {
     
     // Snap to final target and stop loop if very close to save resource cycles
     if (Math.abs(diff) < 0.25) {
+      isProgrammaticScroll = true;
       element.scrollTop = targetScrollY;
       currentScrollY = targetScrollY;
       isRunning = false;
@@ -137,6 +145,7 @@ function applyInertiaScroll(element, speedFactor = 1.0, smoothFactor = 0.07) {
     }
 
     currentScrollY += diff * smoothFactor;
+    isProgrammaticScroll = true;
     element.scrollTop = Math.round(currentScrollY);
 
     requestAnimationFrame(updateScroll);
