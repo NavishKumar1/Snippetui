@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Prompt and match utility files
+matches.txt
+prompts.txt
+prompts_utf8.txt
+*.vsix
