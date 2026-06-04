@@ -152,8 +152,8 @@ function applyInertiaScroll(element, speedFactor = 1.0, smoothFactor = 0.09) {
   }
 }
 
-export function renderLibrary(onNavigate) {
-  let activeFilter = 'all';
+export function renderLibrary(onNavigate, initialFilter = 'all') {
+  let activeFilter = initialFilter;
   let searchQuery = '';
   let activeDetailComponent = null;
   

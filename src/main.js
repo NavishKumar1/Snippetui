@@ -38,13 +38,15 @@ function navigate(target) {
 
   // Render view & Navbar visibility coordination
   let page;
-  if (target === 'library') {
+  if (target.startsWith('library')) {
     navbar.style.display = 'none';
     appContainer.classList.remove('with-nav');
     appContainer.classList.add('no-nav');
     document.body.classList.add('library-page-active');
-    page = renderLibrary(navigate);
-    window.location.hash = 'library';
+    const parts = target.split('?');
+    const category = parts[1]?.split('=')[1] || 'all';
+    page = renderLibrary(navigate, category);
+    window.location.hash = target;
   } else {
     navbar.style.display = 'block';
     appContainer.classList.remove('no-nav');
@@ -124,8 +126,10 @@ mobileToggle.addEventListener('click', () => {
 // 5. Initial Hash Routing resolution
 function handleHashRoute() {
   const hash = window.location.hash;
-  if (hash === '#library') {
-    navigate('library');
+  if (hash.startsWith('#library')) {
+    const parts = hash.substring(1).split('?');
+    const category = parts[1]?.split('=')[1] || 'all';
+    navigate(`library?category=${category}`);
   } else {
     navigate('landing');
   }
