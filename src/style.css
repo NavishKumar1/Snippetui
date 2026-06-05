@@ -7377,88 +7377,29 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 0 100px;
+  padding: 0 0 120px;
   overflow: hidden;
   position: relative;
   box-sizing: border-box;
 }
 
-/* Ambient glow reflection directly beneath the text - transitions smoothly on wrapper hover */
-.footer-signature-wrap::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 45%;
-  height: 140px;
-  background: radial-gradient(ellipse at bottom, rgba(0, 242, 254, 0.1) 0%, rgba(138, 43, 226, 0.05) 50%, transparent 70%);
-  z-index: 1;
-  pointer-events: none;
-  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
-              opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  opacity: 0.7;
-}
-
-.footer-signature-wrap:hover::before {
-  width: 60%;
-  opacity: 1;
-  filter: saturate(1.2) blur(10px);
-}
-
 .footer-signature-text {
   font-family: var(--font-heading);
-  font-size: clamp(80px, 15.5vw, 240px);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -0.04em;
+  font-size: clamp(80px, 14vw, 220px);
+  font-weight: 700;
   line-height: 0.8;
   margin: 0;
   text-align: center;
   user-select: none;
   cursor: default;
   z-index: 2;
-  
-  /* Modern premium outline styling + dynamic linear gradient shimmer */
-  color: transparent;
-  background: linear-gradient(
-    90deg, 
-    rgba(255, 255, 255, 0.02) 0%, 
-    rgba(255, 255, 255, 0.08) 25%, 
-    rgba(0, 242, 254, 0.25) 50%, 
-    rgba(138, 43, 226, 0.25) 75%, 
-    rgba(255, 255, 255, 0.02) 100%
-  );
-  background-size: 200% auto;
-  background-position: 0% center;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.04);
-  
-  /* Ambient glow effect */
-  filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.03));
-  position: relative;
-  transition: background-position 1s ease, 
-              -webkit-text-stroke 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              letter-spacing 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  
-  /* Constant subtle shimmer wave */
-  animation: logo-shimmer-pulse 10s linear infinite;
-}
-
-@keyframes logo-shimmer-pulse {
-  0% { background-position: 0% center; }
-  50% { background-position: 100% center; }
-  100% { background-position: 200% center; }
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0.95;
 }
 
 .footer-signature-wrap:hover .footer-signature-text {
-  letter-spacing: -0.01em; /* elegant letter separation expansion */
-  -webkit-text-stroke: 1px rgba(0, 242, 254, 0.35);
-  filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.15)) 
-          drop-shadow(0 0 50px rgba(138, 43, 226, 0.1));
-  transform: translateY(-5px) scale(1.02);
+  opacity: 1;
+  transform: scale(1.01);
 }
