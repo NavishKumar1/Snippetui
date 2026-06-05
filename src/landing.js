@@ -818,37 +818,6 @@ export function renderLanding(onNavigate) {
           </div>
         </section>
 
-        <!-- Section 3.7: Premium Page-Peel Socials/CTA Banner (White Theme) -->
-        <section class="landing-banner-section">
-          <div class="peel-banner-container">
-            <!-- Left floating avatar + bubble -->
-            <div class="floating-avatar-wrap left-wrap">
-              <div class="speech-bubble">#snippetui</div>
-              <div class="avatar-circle">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&fit=crop&q=80" alt="Developer Avatar" />
-              </div>
-            </div>
-
-            <!-- Main Contents -->
-            <div class="peel-banner-content">
-              <h2 class="peel-banner-title">Start Building Breathtaking<br/>Interfaces with SnippetUI</h2>
-              <button class="btn-peel-cta" id="btn-peel-browse">Browse Components</button>
-            </div>
-
-            <!-- Right floating avatar + bubble -->
-            <div class="floating-avatar-wrap right-wrap">
-              <div class="speech-bubble">#cssvariables</div>
-              <div class="avatar-circle">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&fit=crop&q=80" alt="Developer Avatar" />
-              </div>
-            </div>
-
-            <!-- Page Peel Effect elements -->
-            <div class="peel-cutout"></div>
-            <div class="peel-fold"></div>
-          </div>
-        </section>
-
         <!-- Elegant Animated Connector Line (Extension to Playground transition) -->
         <div class="extension-bottom-divider">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 80" fill="none" class="animated-divider-svg">
@@ -1182,6 +1151,51 @@ export function renderLanding(onNavigate) {
         </div>
       </div>
       </section>
+
+      <!-- FAQ bottom curved transition to Light Banner theme -->
+      <div class="faq-bottom-divider">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path d="M 0,30 L 180,30 C 280,30 320,80 420,90 L 1020,90 C 1120,90 1160,90 1260,90 L 1440,90 L 1440,120 L 0,120 Z" class="faq-divider-path"></path>
+        </svg>
+      </div>
+
+      <!-- Section 6: Premium Page-Peel Socials/CTA Banner (White Theme) -->
+      <section class="landing-banner-section">
+        <div class="peel-banner-container">
+          <!-- Left floating avatar + bubble -->
+          <div class="floating-avatar-wrap left-wrap">
+            <div class="speech-bubble">#snippetui</div>
+            <div class="avatar-circle">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&fit=crop&q=80" alt="Developer Avatar" />
+            </div>
+          </div>
+
+          <!-- Main Contents -->
+          <div class="peel-banner-content">
+            <h2 class="peel-banner-title">Start Building Breathtaking<br/>Interfaces with SnippetUI</h2>
+            <button class="btn-peel-cta" id="btn-peel-browse">Browse Components</button>
+          </div>
+
+          <!-- Right floating avatar + bubble -->
+          <div class="floating-avatar-wrap right-wrap">
+            <div class="speech-bubble">#cssvariables</div>
+            <div class="avatar-circle">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&fit=crop&q=80" alt="Developer Avatar" />
+            </div>
+          </div>
+
+          <!-- Page Peel Effect elements -->
+          <div class="peel-cutout"></div>
+          <div class="peel-fold"></div>
+        </div>
+      </section>
+
+      <!-- Banner bottom curved transition to Dark Footer theme -->
+      <div class="banner-bottom-divider">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path d="M 0,90 L 180,90 C 280,90 320,70 420,60 L 1020,30 C 1120,20 1160,20 1260,20 L 1440,20 L 1440,120 L 0,120 Z" class="banner-divider-path"></path>
+        </svg>
+      </div>
 
       <!-- Footer Section -->
       <footer class="global-footer">
