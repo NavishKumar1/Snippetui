@@ -948,7 +948,8 @@ export function renderLanding(onNavigate) {
 
       <!-- Section 5: Premium Interactive FAQ Section -->
       <section class="landing-faq-section" id="faq-section">
-        <div class="section-header">
+        <div class="faq-container-inner">
+          <div class="section-header">
           <div class="tech-badge">
             <span>Frequently Asked Questions</span>
           </div>
@@ -1148,6 +1149,7 @@ export function renderLanding(onNavigate) {
           </div>
 
         </div>
+      </div>
       </section>
 
       <!-- Footer Section -->
