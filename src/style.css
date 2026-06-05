@@ -304,7 +304,7 @@ a {
 }
 
 #app.no-nav {
-  padding-top: 20px; /* Compact padding for navbarless pages */
+  padding-top: 0; /* Align full-screen pages flush to the top */
 }
 
 /* ==========================================================================
