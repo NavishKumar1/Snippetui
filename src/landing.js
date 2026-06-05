@@ -10,21 +10,234 @@ export function renderLanding(onNavigate) {
       <section class="hero-section">
         <!-- Left Column: Content -->
         <div class="hero-content-left">
-          <div class="tech-badge">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-            Industry-Leading Snippets
+          <div class="hero-badge">
+            <span class="badge-dot"></span>
+            100+ Styles created
           </div>
           
           <h1 class="hero-title">
-            Build 10x Faster with <br/><span>SnippetUI</span> Components
+            Find your vibe<br/>We'll <span>code it right</span>
           </h1>
           
           <p class="hero-subtitle">
-            Frosted glassmorphism, animated capsule elements, glowing gradient borders, and mesmerizing micro-animations. 100% hand-crafted, lightweight vanilla CSS, and free forever.
+            Turn your components into the look you love, without any guesswork. Frosted glassmorphism, animated capsule elements, glowing gradient borders, and mesmerizing micro-animations.
           </p>
           
           <div class="hero-actions">
-            <a href="#library" class="btn-hero-primary" id="hero-btn-browse">Browse Components</a>
+            <a href="#library" class="btn-hero-primary" id="hero-btn-browse">
+              Browse Components
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-left: 6px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+            <a href="https://marketplace.visualstudio.com" target="_blank" class="btn-hero-secondary btn-hero-extension">
+              Get Extension
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-left: 6px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Column: Visual Showcase -->
+        <div class="hero-visual-right">
+          <!-- Column 1 (Bottom to Top) -->
+          <div class="hero-marquee-column col-up">
+            <div class="marquee-track">
+              <!-- Item 1: Typing Terminal Text -->
+              <div class="mock-card card-text-typing">
+                <div class="mock-card-header"><span>typing-terminal.js</span></div>
+                <div class="mock-typing-text">> npm run dev<br/><span class="cursor-blink">|</span></div>
+              </div>
+              <!-- Item 2: Magnetic Button -->
+              <div class="mock-card card-btn-magnetic">
+                <button class="mock-magnetic-btn">
+                  <span>Connect</span>
+                  <div class="btn-magnetic-glow"></div>
+                </button>
+              </div>
+              <!-- Item 3: Cyberpunk Glitch Text -->
+              <div class="mock-card card-text-glitch">
+                <div class="mock-glitch-text" data-text="CYBER">CYBER</div>
+              </div>
+              <!-- Item 4: Liquid Gradient Button -->
+              <div class="mock-card card-btn-liquid">
+                <button class="mock-liquid-btn">Explore</button>
+              </div>
+              
+              <!-- Duplicate the same 4 items for seamless infinite scroll -->
+              <div class="mock-card card-text-typing">
+                <div class="mock-card-header"><span>typing-terminal.js</span></div>
+                <div class="mock-typing-text">> npm run dev<br/><span class="cursor-blink">|</span></div>
+              </div>
+              <div class="mock-card card-btn-magnetic">
+                <button class="mock-magnetic-btn">
+                  <span>Connect</span>
+                  <div class="btn-magnetic-glow"></div>
+                </button>
+              </div>
+              <div class="mock-card card-text-glitch">
+                <div class="mock-glitch-text" data-text="CYBER">CYBER</div>
+              </div>
+              <div class="mock-card card-btn-liquid">
+                <button class="mock-liquid-btn">Explore</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2 (Top to Bottom) -->
+          <div class="hero-marquee-column col-down">
+            <div class="marquee-track">
+              <!-- Item 1: DNA Helix Loader -->
+              <div class="mock-card card-loader-dna">
+                <div class="dna-helix">
+                  <div class="dna-dot dot-1"></div>
+                  <div class="dna-dot dot-2"></div>
+                  <div class="dna-dot dot-3"></div>
+                  <div class="dna-dot dot-4"></div>
+                  <div class="dna-dot dot-5"></div>
+                </div>
+              </div>
+              <!-- Item 2: Mini Plexus Mesh -->
+              <div class="mock-card card-bg-plexus">
+                <div class="plexus-network">
+                  <div class="plexus-node node-1"></div>
+                  <div class="plexus-node node-2"></div>
+                  <div class="plexus-node node-3"></div>
+                  <div class="plexus-line line-1"></div>
+                  <div class="plexus-line line-2"></div>
+                </div>
+              </div>
+              <!-- Item 3: Soundwave Loader -->
+              <div class="mock-card card-loader-soundwave">
+                <div class="soundwave-loader">
+                  <div class="wave-bar bar-1"></div>
+                  <div class="wave-bar bar-2"></div>
+                  <div class="wave-bar bar-3"></div>
+                  <div class="wave-bar bar-4"></div>
+                </div>
+              </div>
+              <!-- Item 4: Quantum Loader -->
+              <div class="mock-card card-loader-quantum">
+                <div class="quantum-loader">
+                  <div class="ring-orbit ring-1"></div>
+                  <div class="ring-orbit ring-2"></div>
+                  <div class="ring-dot"></div>
+                </div>
+              </div>
+              
+              <!-- Duplicate the same 4 items for seamless infinite scroll -->
+              <div class="mock-card card-loader-dna">
+                <div class="dna-helix">
+                  <div class="dna-dot dot-1"></div>
+                  <div class="dna-dot dot-2"></div>
+                  <div class="dna-dot dot-3"></div>
+                  <div class="dna-dot dot-4"></div>
+                  <div class="dna-dot dot-5"></div>
+                </div>
+              </div>
+              <div class="mock-card card-bg-plexus">
+                <div class="plexus-network">
+                  <div class="plexus-node node-1"></div>
+                  <div class="plexus-node node-2"></div>
+                  <div class="plexus-node node-3"></div>
+                  <div class="plexus-line line-1"></div>
+                  <div class="plexus-line line-2"></div>
+                </div>
+              </div>
+              <div class="mock-card card-loader-soundwave">
+                <div class="soundwave-loader">
+                  <div class="wave-bar bar-1"></div>
+                  <div class="wave-bar bar-2"></div>
+                  <div class="wave-bar bar-3"></div>
+                  <div class="wave-bar bar-4"></div>
+                </div>
+              </div>
+              <div class="mock-card card-loader-quantum">
+                <div class="quantum-loader">
+                  <div class="ring-orbit ring-1"></div>
+                  <div class="ring-orbit ring-2"></div>
+                  <div class="ring-dot"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 3 (Bottom to Top) -->
+          <div class="hero-marquee-column col-up">
+            <div class="marquee-track">
+              <!-- Item 1: Statistics Widget -->
+              <div class="mock-card card-widget-stats">
+                <div class="sui-stat-widget">
+                  <span class="widget-label">Conversion Rate</span>
+                  <div class="widget-row">
+                    <span class="widget-value">24.8%</span>
+                    <span class="widget-trend up">+4.2%</span>
+                  </div>
+                  <div class="widget-sparkline">
+                    <svg class="spark-svg" viewBox="0 0 100 30" width="100%" height="24">
+                      <path d="M0,25 Q15,10 30,22 T60,5 T90,20" fill="none" stroke="var(--accent-cyan)" stroke-width="2.5" stroke-linecap="round"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <!-- Item 2: Progress Ring / Gauge -->
+              <div class="mock-card card-gauge-progress">
+                <div class="orbital-gauge">
+                  <svg width="50" height="50" viewBox="0 0 40 40">
+                    <circle class="gauge-bg" cx="20" cy="20" r="16" />
+                    <circle class="gauge-fill" cx="20" cy="20" r="16" />
+                  </svg>
+                  <div class="gauge-label">85%</div>
+                </div>
+              </div>
+              <!-- Item 3: Analytics Chart Widget -->
+              <div class="mock-card card-widget-chart">
+                <div class="sui-chart-widget">
+                  <span class="widget-label">Daily Traffic</span>
+                  <div class="widget-chart-bars">
+                    <div class="chart-bar bar-active" style="height: 40%"></div>
+                    <div class="chart-bar" style="height: 60%"></div>
+                    <div class="chart-bar" style="height: 85%"></div>
+                    <div class="chart-bar" style="height: 55%"></div>
+                    <div class="chart-bar" style="height: 95%"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Duplicate the same 3 items for seamless infinite scroll -->
+              <div class="mock-card card-widget-stats">
+                <div class="sui-stat-widget">
+                  <span class="widget-label">Conversion Rate</span>
+                  <div class="widget-row">
+                    <span class="widget-value">24.8%</span>
+                    <span class="widget-trend up">+4.2%</span>
+                  </div>
+                  <div class="widget-sparkline">
+                    <svg class="spark-svg" viewBox="0 0 100 30" width="100%" height="24">
+                      <path d="M0,25 Q15,10 30,22 T60,5 T90,20" fill="none" stroke="var(--accent-cyan)" stroke-width="2.5" stroke-linecap="round"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="mock-card card-gauge-progress">
+                <div class="orbital-gauge">
+                  <svg width="50" height="50" viewBox="0 0 40 40">
+                    <circle class="gauge-bg" cx="20" cy="20" r="16" />
+                    <circle class="gauge-fill" cx="20" cy="20" r="16" />
+                  </svg>
+                  <div class="gauge-label">85%</div>
+                </div>
+              </div>
+              <div class="mock-card card-widget-chart">
+                <div class="sui-chart-widget">
+                  <span class="widget-label">Daily Traffic</span>
+                  <div class="widget-chart-bars">
+                    <div class="chart-bar bar-active" style="height: 40%"></div>
+                    <div class="chart-bar" style="height: 60%"></div>
+                    <div class="chart-bar" style="height: 85%"></div>
+                    <div class="chart-bar" style="height: 55%"></div>
+                    <div class="chart-bar" style="height: 95%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
