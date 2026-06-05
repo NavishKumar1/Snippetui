@@ -491,9 +491,27 @@ export function renderLanding(onNavigate) {
                 <div class="marker-pulse"></div>
               </div>
               <div class="step-card">
-                <div class="step-icon">🔍</div>
-                <h3>1. Discover</h3>
-                <p>Browse through hundreds of highly responsive, glassmorphism UI components designed for immediate, copy-paste deployment.</p>
+                <div class="step-card-content">
+                  <div class="step-icon">🔍</div>
+                  <h3>1. Discover</h3>
+                  <p>Browse through hundreds of highly responsive, glassmorphism UI components designed for immediate, copy-paste deployment.</p>
+                </div>
+                <div class="step-card-preview">
+                  <div class="preview-discover-search">
+                    <div class="mock-search-bar">
+                      <span class="mock-search-icon">🔍</span>
+                      <span class="mock-search-text"></span>
+                      <span class="mock-search-cursor">|</span>
+                    </div>
+                    <div class="mock-search-results">
+                      <div class="mock-result-card">
+                        <div class="mock-card-glow"></div>
+                        <div class="mock-card-icon">✨</div>
+                        <div class="mock-card-title">Glassmorphism Card</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -503,9 +521,31 @@ export function renderLanding(onNavigate) {
                 <div class="marker-pulse"></div>
               </div>
               <div class="step-card">
-                <div class="step-icon">📋</div>
-                <h3>2. Copy</h3>
-                <p>Grab modular, lightweight vanilla HTML and CSS variables configuration with one single click. No bloated framework dependencies required.</p>
+                <div class="step-card-content">
+                  <div class="step-icon">📋</div>
+                  <h3>2. Copy</h3>
+                  <p>Grab modular, lightweight vanilla HTML and CSS variables configuration with one single click. No bloated framework dependencies required.</p>
+                </div>
+                <div class="step-card-preview">
+                  <div class="preview-copy-snippet">
+                    <div class="mock-code-editor">
+                      <div class="editor-header">
+                        <span class="editor-dot red"></span>
+                        <span class="editor-dot yellow"></span>
+                        <span class="editor-dot green"></span>
+                        <span class="editor-title">style.css</span>
+                      </div>
+                      <pre class="editor-code"><code><span class="token-selector">.card-glass</span> {
+  <span class="token-property">backdrop-filter</span>: <span class="token-value">blur(12px)</span>;
+  <span class="token-property">background</span>: <span class="token-value">rgba(255,255,255,0.1)</span>;
+}</code></pre>
+                      <button class="mock-copy-btn">
+                        <span class="copy-icon">📋</span>
+                        <span class="copy-text"></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -515,9 +555,40 @@ export function renderLanding(onNavigate) {
                 <div class="marker-pulse"></div>
               </div>
               <div class="step-card">
-                <div class="step-icon">🚀</div>
-                <h3>3. Deploy</h3>
-                <p>Paste the code blocks into your stylesheet and markup directly. Your components inherit variables dynamically and compile in &lt; 1ms.</p>
+                <div class="step-card-content">
+                  <div class="step-icon">🚀</div>
+                  <h3>3. Deploy</h3>
+                  <p>Paste the code blocks into your stylesheet and markup directly. Your components inherit variables dynamically and compile in &lt; 1ms.</p>
+                </div>
+                <div class="step-card-preview">
+                  <div class="preview-deploy-stage">
+                    <div class="mock-browser-window">
+                      <div class="browser-header">
+                        <span class="browser-dot red"></span>
+                        <span class="browser-dot yellow"></span>
+                        <span class="browser-dot green"></span>
+                        <div class="browser-address">localhost:3000</div>
+                      </div>
+                      <div class="browser-body">
+                        <div class="mock-app-wireframe">
+                          <div class="wireframe-nav">
+                            <div class="wireframe-nav-logo"></div>
+                            <div class="wireframe-nav-links">
+                              <span></span><span></span>
+                            </div>
+                          </div>
+                          <div class="wireframe-hero">
+                            <div class="wireframe-line long"></div>
+                            <div class="wireframe-line short"></div>
+                            <div class="mock-deploy-btn-wrapper">
+                              <div class="mock-deployed-btn">⚡ Inserted!</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -630,7 +701,7 @@ export function renderLanding(onNavigate) {
                 <div class="card-glow"></div>
                 <div class="elite-card-icon">🧪</div>
                 <h3>CSS Custom Variables</h3>
-                <p>Exposes clear CSS Custom Properties (\`--glow-color\`, \`--radius\`) to allow fast styling adjustments directly in your stylesheet.</p>
+                <p>Exposes clear CSS Custom Properties (--glow-color, --radius) to allow fast styling adjustments directly in your stylesheet.</p>
               </div>
 
             </div>
@@ -639,8 +710,144 @@ export function renderLanding(onNavigate) {
         </div>
       </section>
 
-      <!-- Section 4: Live Styling Playground -->
-      <section class="landing-playground-section">
+      <!-- Glowing Vector Transition Line after Categories & Elite -->
+      <div class="categories-bottom-divider">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" preserveAspectRatio="none">
+          <path d="M0,50 Q360,90 720,50 T1440,50 L1440,100 L0,100 Z" fill="#f8fafc" stroke="none"></path>
+          <path d="M0,50 Q360,90 720,50 T1440,50" fill="none" stroke="url(#cyan-purple-grad-3)" stroke-width="3" class="glow-vector-line"></path>
+          <defs>
+            <linearGradient id="cyan-purple-grad-3" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00f2fe" />
+              <stop offset="50%" stop-color="#4facfe" />
+              <stop offset="100%" stop-color="#8a2be2" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <div class="landing-body-light">
+        <!-- Section 3.5: VS Code Extension Showcase Section -->
+        <section class="landing-extension-section" id="extension-section">
+          <div class="extension-grid">
+            <!-- Visual Container (Left Side) -->
+            <div class="extension-visual-container">
+              <!-- Animated dashed connector path -->
+              <svg class="extension-curve-svg" viewBox="0 0 500 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 50 150 Q 150 50 250 200 T 450 100" stroke="rgba(99, 102, 241, 0.2)" stroke-width="3" stroke-linecap="round" class="extension-curve-path" />
+                <path d="M 50 150 Q 150 50 250 200 T 450 100" stroke="url(#active-flow-grad)" stroke-width="3.5" stroke-linecap="round" class="extension-curve-flow-path" />
+                <defs>
+                  <linearGradient id="active-flow-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#3b82f6" stop-opacity="0" />
+                    <stop offset="50%" stop-color="#6366f1" />
+                    <stop offset="100%" stop-color="#a855f7" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+              </svg>
+
+              <!-- Floating 3D glossy cards -->
+              <div class="floating-glass-pill pill-main">
+                <span class="puzzle-3d-icon">🧩</span>
+                <span class="pill-title">VS Code Extension?</span>
+              </div>
+
+              <!-- Badges along the path -->
+              <div class="floating-tech-badge tech-react" style="left: 10%; top: 40%;">
+                <svg viewBox="0 0 24 24" width="28" height="28">
+                  <ellipse rx="10" ry="4.5" fill="none" stroke="#61dafb" stroke-width="1.2" transform="translate(12 12) rotate(0)"/>
+                  <ellipse rx="10" ry="4.5" fill="none" stroke="#61dafb" stroke-width="1.2" transform="translate(12 12) rotate(60)"/>
+                  <ellipse rx="10" ry="4.5" fill="none" stroke="#61dafb" stroke-width="1.2" transform="translate(12 12) rotate(120)"/>
+                  <circle cx="12" cy="12" r="2" fill="#61dafb"/>
+                </svg>
+              </div>
+
+              <div class="floating-tech-badge tech-vue" style="left: 32%; top: 18%;">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                  <path d="M12 2L2 19h4L12 8.5 18 19h4L12 2z" fill="#41B883"/>
+                  <path d="M12 2L5.5 13.5 8 18l4-7 4 7 2.5-4.5L12 2z" fill="#35495E"/>
+                </svg>
+              </div>
+
+              <div class="floating-tech-badge tech-svelte" style="left: 54%; top: 58%;">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                  <path d="M19.1 10.3c-.6-1.5-1.9-2.3-3.6-2.3H12l4.4-7.6c.3-.5.1-1.1-.4-1.4-.5-.3-1.1-.1-1.4.4L9 8.6C8 7 6.4 6 4.4 6 2 6 .1 7.7.1 9.9c0 1 .4 1.9 1.1 2.5l5.2 4.4-4.4 7.6c-.3.5-.1 1.1.4 1.4.2.1.4.2.6.2.3 0 .7-.2.9-.5l5.6-9.6c1.1 1.6 2.6 2.5 4.5 2.5 2.4 0 4.3-1.7 4.3-3.9 0-1.1-.4-2-1.1-2.7zM4.4 9.9c0-1.1.9-2 2-2 1 0 1.8.7 2 1.6L4.7 12c-.2-.5-.3-1.1-.3-2.1zm7.8 7.3c-.2-.9-1-1.6-2-1.6-.2 0-.4 0-.6.1l3.7-6.4c.2.5.3 1.1.3 1.6.1 2.2-1.4 6.3-1.4 6.3z" fill="#FF3E00"/>
+                </svg>
+              </div>
+
+              <div class="floating-tech-badge tech-html" style="left: 74%; top: 38%;">
+                <svg viewBox="0 0 24 24" width="22" height="22">
+                  <path d="M1.5 0h21l-1.9 21.2L12 24l-8.6-2.8L1.5 0zm15.1 6.2H7.4l.3 3.1h7.8l-.3 3.5-3.2 1-3.2-1-.2-2.1H5.7l.4 4.5 5.9 1.9 5.9-1.9.7-7.9.1-1.2z" fill="#E34F26"/>
+                </svg>
+              </div>
+
+              <!-- VS Code Badge -->
+              <div class="floating-vscode-logo" style="left: 85%; top: 15%;">
+                <div class="vscode-logo-wrap">
+                  <svg viewBox="0 0 24 24" width="48" height="48">
+                    <path d="M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29L7.164 9.684 1.776 5.864a1.493 1.493 0 0 0-1.776.082L.002 6.075l-.002.115v11.624l.002.115.002.128a1.49 1.49 0 0 0 1.776.082l5.388-3.82 9.341 9.184a1.494 1.494 0 0 0 1.705.29l4.94-2.377a1.5 1.5 0 0 0 .85-1.352V3.939a1.5 1.5 0 0 0-.85-1.352zM17.44 19.38l-7.397-7.275 7.397-7.274z" fill="#007acc" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content Container (Right Side) -->
+            <div class="extension-content">
+              <div class="tech-badge">VS Code Integration</div>
+              <h2 class="section-title">Access Snippets Instantly Anywhere You Code</h2>
+              <p class="section-subtitle">Our official VS Code extension brings the entire SnippetUI library of premium glassmorphic components right into your editor. Search, preview, and insert code blocks with a single shortcut.</p>
+              
+              <div class="extension-features-list">
+                <div class="extension-feature-item">
+                  <span class="feature-check">✓</span>
+                  <span>1-Click Code Injection directly into files</span>
+                </div>
+                <div class="extension-feature-item">
+                  <span class="feature-check">✓</span>
+                  <span>Global Variable Sync with your CSS design tokens</span>
+                </div>
+                <div class="extension-feature-item">
+                  <span class="feature-check">✓</span>
+                  <span>Support for Vanilla HTML/CSS, React, Vue, & Svelte</span>
+                </div>
+              </div>
+
+              <a href="https://marketplace.visualstudio.com" target="_blank" class="btn-extension">
+                <span>Get VS Code Extension</span>
+                <span class="btn-arrow">→</span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Elegant Animated Connector Line (Extension to Playground transition) -->
+        <div class="extension-bottom-divider">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 80" fill="none" class="animated-divider-svg">
+            <path id="divider-path" d="M0,40 Q360,10 720,40 T1440,40" stroke="url(#divider-grad)" stroke-width="2.5" opacity="0.65"/>
+            <!-- Animated Glowing Node (Particle moving along path) -->
+            <circle r="4.5" fill="#6366f1" filter="url(#node-shadow)">
+              <animateMotion dur="6s" repeatCount="indefinite" path="M0,40 Q360,10 720,40 T1440,40" />
+            </circle>
+            <defs>
+              <linearGradient id="divider-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#3b82f6" />
+                <stop offset="50%" stop-color="#8b5cf6" />
+                <stop offset="100%" stop-color="#06b6d4" />
+              </linearGradient>
+              <filter id="node-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="3.5" />
+                <feOffset dx="0" dy="0" result="offsetblur" />
+                <feFlood flood-color="#8b5cf6" />
+                <feComposite in2="offsetblur" operator="in" />
+                <feMerge>
+                  <feMergeNode />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- Section 4: Live Styling Playground -->
+        <section class="landing-playground-section" id="playground-section">
         <div class="section-header">
           <div class="tech-badge">Interactive Playground</div>
           <h2 class="section-title">Live Customizer</h2>
@@ -652,6 +859,15 @@ export function renderLanding(onNavigate) {
           <div class="playground-controls">
             <h3>Style Variables</h3>
             
+            <div class="component-selector-group">
+              <label>Select Component</label>
+              <div class="component-buttons">
+                <button class="btn-comp active" data-component="card">Card</button>
+                <button class="btn-comp" data-component="button">Button</button>
+                <button class="btn-comp" data-component="badge">Badge</button>
+              </div>
+            </div>
+
             <div class="control-group">
               <label>Glow Intensity: <span id="label-glow">40%</span></label>
               <input type="range" id="slider-glow" min="0" max="100" value="40" class="premium-slider" />
@@ -660,6 +876,11 @@ export function renderLanding(onNavigate) {
             <div class="control-group">
               <label>Border Radius: <span id="label-radius">24px</span></label>
               <input type="range" id="slider-radius" min="0" max="50" value="24" class="premium-slider" />
+            </div>
+
+            <div class="control-group">
+              <label>Backdrop Blur: <span id="label-blur">12px</span></label>
+              <input type="range" id="slider-blur" min="0" max="40" value="12" class="premium-slider" />
             </div>
 
             <div class="control-group">
@@ -690,12 +911,15 @@ export function renderLanding(onNavigate) {
             <div class="deck-ambient-glow" id="play-ambient-glow"></div>
 
             <div class="preview-stage">
-              <!-- Live customizable component -->
-              <div class="custom-premium-card" id="custom-preview-card">
-                <div class="preview-badge">Preview</div>
-                <h4 class="preview-card-title">Responsive Glassmorphic Card</h4>
-                <p>Tweak sliders on the left to see variables apply instantly with smooth, hardware-accelerated transitions.</p>
-                <button class="preview-card-action">Interact</button>
+              <!-- Live customizable component wrapper for float -->
+              <div class="preview-card-float-wrap">
+                <!-- Live customizable component -->
+                <div class="custom-premium-card" id="custom-preview-card">
+                  <div class="preview-badge">Preview</div>
+                  <h4 class="preview-card-title">Responsive Glassmorphic Card</h4>
+                  <p>Tweak sliders on the left to see variables apply instantly with smooth, hardware-accelerated transitions.</p>
+                  <button class="preview-card-action">Interact</button>
+                </div>
               </div>
             </div>
 
@@ -745,6 +969,7 @@ export function renderLanding(onNavigate) {
           </div>
         </div>
       </footer>
+      </div>
     </div>
   `;
 
@@ -958,63 +1183,198 @@ export function renderLanding(onNavigate) {
       // 5. Interactive Playground Customizer
       const sliderGlow = appContainer.querySelector('#slider-glow');
       const sliderRadius = appContainer.querySelector('#slider-radius');
+      const sliderBlur = appContainer.querySelector('#slider-blur');
       const sliderSpeed = appContainer.querySelector('#slider-speed');
       const sliderHue = appContainer.querySelector('#slider-hue');
 
       const labelGlow = appContainer.querySelector('#label-glow');
       const labelRadius = appContainer.querySelector('#label-radius');
+      const labelBlur = appContainer.querySelector('#label-blur');
       const labelSpeed = appContainer.querySelector('#label-speed');
       const labelHue = appContainer.querySelector('#label-hue');
 
-      const previewCard = appContainer.querySelector('#custom-preview-card');
       const codeSnippet = appContainer.querySelector('#playground-code-snippet');
       const btnCopyPlaygroundCss = appContainer.querySelector('#btn-copy-playground-css');
       const themeButtons = appContainer.querySelectorAll('.btn-theme');
+      const compButtons = appContainer.querySelectorAll('.btn-comp');
       const playgroundDeck = appContainer.querySelector('#playground-deck');
+      const previewStage = appContainer.querySelector('.preview-stage');
+
+      let activeComponent = 'card';
 
       function updatePlayground() {
         const glowVal = sliderGlow ? sliderGlow.value : 40;
         const radiusVal = sliderRadius ? sliderRadius.value : 24;
+        const blurVal = sliderBlur ? sliderBlur.value : 12;
         const speedVal = sliderSpeed ? (sliderSpeed.value / 10).toFixed(1) : 1.5;
         const hueVal = sliderHue ? sliderHue.value : 180;
 
         if (labelGlow) labelGlow.textContent = `${glowVal}%`;
         if (labelRadius) labelRadius.textContent = `${radiusVal}px`;
+        if (labelBlur) labelBlur.textContent = `${blurVal}px`;
         if (labelSpeed) labelSpeed.textContent = `${speedVal}s`;
         if (labelHue) labelHue.textContent = `${hueVal}deg`;
 
-        // Apply styles to preview card
-        if (previewCard) {
-          previewCard.style.setProperty('--card-glow-intensity', `${glowVal / 100}`);
-          previewCard.style.setProperty('--card-border-radius', `${radiusVal}px`);
-          previewCard.style.setProperty('--card-animation-speed', `${speedVal}s`);
-          previewCard.style.setProperty('--card-hue-rotate', `${hueVal}deg`);
+        // Apply styles to current preview element
+        // Apply styles to preview stage so all children can inherit
+        if (previewStage) {
+          previewStage.style.setProperty('--card-glow-intensity', `${glowVal / 100}`);
+          previewStage.style.setProperty('--card-border-radius', `${radiusVal}px`);
+          previewStage.style.setProperty('--card-blur', `${blurVal}px`);
+          previewStage.style.setProperty('--card-animation-speed', `${speedVal}s`);
+          previewStage.style.setProperty('--card-hue-rotate', `${hueVal}deg`);
         }
 
-        // Generate matching CSS snippet
-        const cssOutput = `.premium-glass-card {
+        // Generate matching CSS snippet depending on active component
+        let cssOutput = '';
+        if (activeComponent === 'card') {
+          cssOutput = `.premium-glass-card {
   /* Dynamic custom styling variables */
   --card-glow: rgba(0, 242, 254, ${(glowVal / 100).toFixed(2)});
   border-radius: ${radiusVal}px;
-  animation: float-pulse ${speedVal}s ease-in-out infinite;
+  animation: float-pulse ${speedVal}s ease-in-out infinite alternate;
   filter: hue-rotate(${hueVal}deg);
 
   /* Frost & Glass Core design tokens */
-  background: rgba(17, 17, 25, 0.45);
+  background: rgba(17, 17, 25, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 
-              0 0 30px var(--card-glow);
+  backdrop-filter: blur(${blurVal}px);
+  -webkit-backdrop-filter: blur(${blurVal}px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 
+              0 0 35px var(--card-glow);
 }`;
+        } else if (activeComponent === 'button') {
+          cssOutput = `.premium-glass-button {
+  /* Dynamic custom styling variables */
+  --button-glow: rgba(0, 242, 254, ${(glowVal / 100).toFixed(2)});
+  border-radius: ${radiusVal}px;
+  filter: hue-rotate(${hueVal}deg);
+
+  /* Glassmorphism Button styles */
+  padding: 16px 36px;
+  font-family: 'Outfit', sans-serif;
+  color: #ffffff;
+  background: rgba(17, 17, 25, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(${blurVal}px);
+  -webkit-backdrop-filter: blur(${blurVal}px);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5),
+              0 0 25px var(--button-glow);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.premium-glass-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 35px -8px rgba(0, 0, 0, 0.6),
+              0 0 30px var(--button-glow);
+}`;
+        } else if (activeComponent === 'badge') {
+          cssOutput = `.premium-glass-badge {
+  /* Dynamic custom styling variables */
+  --badge-glow: rgba(0, 242, 254, ${(glowVal / 100).toFixed(2)});
+  border-radius: ${radiusVal}px;
+  filter: hue-rotate(${hueVal}deg);
+
+  /* Glassmorphism Badge styles */
+  padding: 12px 28px;
+  font-family: 'Fira Code', monospace;
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.05);
+  border: 1.5px solid rgba(0, 242, 254, 0.25);
+  backdrop-filter: blur(${blurVal}px);
+  -webkit-backdrop-filter: blur(${blurVal}px);
+  box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.4),
+              0 0 20px var(--badge-glow);
+}`;
+        }
+
         if (codeSnippet) {
           codeSnippet.textContent = cssOutput;
         }
       }
 
       // Attach event listeners to sliders
-      [sliderGlow, sliderRadius, sliderSpeed, sliderHue].forEach(slider => {
+      [sliderGlow, sliderRadius, sliderBlur, sliderSpeed, sliderHue].forEach(slider => {
         slider?.addEventListener('input', updatePlayground);
       });
+
+      // Switch active preview component
+      compButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          compButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeComponent = btn.getAttribute('data-component') || 'card';
+
+          if (previewStage) {
+            if (activeComponent === 'card') {
+              previewStage.innerHTML = `
+                <div class="preview-card-float-wrap">
+                  <div class="custom-premium-card" id="custom-preview-card">
+                    <div class="preview-badge">Preview</div>
+                    <h4 class="preview-card-title">Responsive Glassmorphic Card</h4>
+                    <p>Tweak sliders on the left to see variables apply instantly with smooth, hardware-accelerated transitions.</p>
+                    <button class="preview-card-action">Interact</button>
+                  </div>
+                </div>
+              `;
+            } else if (activeComponent === 'button') {
+              previewStage.innerHTML = `
+                <div class="preview-card-float-wrap">
+                  <button class="custom-premium-button" id="custom-preview-card">
+                    <span>Customize Me</span>
+                  </button>
+                </div>
+              `;
+            } else if (activeComponent === 'badge') {
+              previewStage.innerHTML = `
+                <div class="preview-card-float-wrap">
+                  <div class="custom-premium-badge" id="custom-preview-card">
+                    <span>PRO EDITION</span>
+                  </div>
+                </div>
+              `;
+            }
+          }
+          updatePlayground();
+        });
+      });
+
+      // 3D Parallax Tilt mouse movement handlers
+      if (previewStage) {
+        previewStage.addEventListener('mousemove', (e) => {
+          const activeEl = previewStage.querySelector('#custom-preview-card');
+          if (!activeEl) return;
+          
+          const rect = activeEl.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          
+          // Max rotation of 18 degrees
+          const rotateX = -(y / (rect.height / 2)) * 18;
+          const rotateY = (x / (rect.width / 2)) * 18;
+          
+          activeEl.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(15px)`;
+          
+          // Subtle translation shift for the background ambient glow
+          const ambientGlow = appContainer.querySelector('#play-ambient-glow');
+          if (ambientGlow) {
+            ambientGlow.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px) translate(-50%, -50%)`;
+          }
+        });
+        
+        previewStage.addEventListener('mouseleave', () => {
+          const activeEl = previewStage.querySelector('#custom-preview-card');
+          if (!activeEl) return;
+          
+          activeEl.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0)';
+          
+          const ambientGlow = appContainer.querySelector('#play-ambient-glow');
+          if (ambientGlow) {
+            ambientGlow.style.transform = 'translate(-50%, -50%)';
+          }
+        });
+      }
 
       // Export copy operation
       btnCopyPlaygroundCss?.addEventListener('click', () => {
