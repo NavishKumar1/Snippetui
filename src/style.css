@@ -172,7 +172,7 @@ a {
 }
 
 .brand-img {
-  height: 42px;
+  height: 52px;
   width: auto;
   max-width: none;
   object-fit: contain;
@@ -181,7 +181,7 @@ a {
 }
 
 .global-navbar.scrolled .brand-img {
-  height: 34px;
+  height: 42px;
 }
 
 /* Nav Menu Links */
@@ -3073,7 +3073,7 @@ a {
 }
 
 #library-brand-logo .brand-img {
-  height: 42px;
+  height: 52px;
   width: auto;
   max-width: none;
   object-fit: contain;

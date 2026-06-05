@@ -220,7 +220,7 @@ ${comp.html}
       <div class="library-brand-header">
         <div class="header-left-group">
           <a href="#landing" id="library-brand-logo" class="nav-brand">
-            <img src="/assets/logo.png" alt="SnippetUI Logo" class="brand-img" />
+            <img src="/assets/logo.png?v=2" alt="SnippetUI Logo" class="brand-img" />
           </a>
         </div>
         
