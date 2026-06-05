@@ -7202,36 +7202,6 @@ a {
   .peel-fold {
     border-bottom-left-radius: 18px;
   }
-.faq-bottom-divider svg {
-  display: block;
-  width: 100%;
-  height: 120px;
-}
-
-.faq-divider-path {
-  fill: #f8fafc; /* Matches banner white theme background */
-  stroke: none;
-}
-
-/* Banner bottom transition to Dark Footer divider */
-.banner-bottom-divider {
-  width: 100%;
-  background-color: #f8fafc; /* Matches banner white theme background */
-  line-height: 0;
-  overflow: hidden;
-  position: relative;
-  z-index: 4;
-}
-
-.banner-bottom-divider svg {
-  display: block;
-  width: 100%;
-  height: 120px;
-}
-
-.banner-divider-path {
-  fill: #08080c; /* Matches dark footer background */
-  stroke: none;
 }
 
 .peel-banner-content {
