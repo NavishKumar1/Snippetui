@@ -40,31 +40,49 @@ export function renderLanding(onNavigate) {
           <!-- Column 1 (Bottom to Top) -->
           <div class="hero-marquee-column col-up">
             <div class="marquee-track">
-              <!-- Item 1: Typing Terminal Text -->
-              <div class="mock-card card-text-typing">
-                <div class="mock-card-header"><span>typing-terminal.js</span></div>
-                <div class="mock-typing-text">> npm run dev<br/><span class="cursor-blink">|</span></div>
+              <!-- Item 1: Text Gradient Shimmer -->
+              <div class="mock-card card-text-shimmer">
+                <div class="mock-text-shimmer">SnippetUI</div>
               </div>
-              <!-- Item 2: Magnetic Button -->
+              <!-- Item 2: Magnetic Gravity Button -->
               <div class="mock-card card-btn-magnetic">
                 <button class="mock-magnetic-btn">
                   <span>Connect</span>
                   <div class="btn-magnetic-glow"></div>
                 </button>
               </div>
-              <!-- Item 3: Cyberpunk Glitch Text -->
-              <div class="mock-card card-text-glitch">
-                <div class="mock-glitch-text" data-text="CYBER">CYBER</div>
+              <!-- Item 3: Liquid Distortion wave -->
+              <div class="mock-card card-text-liquid-wave">
+                <div class="mock-text-liquid-wave" data-text="LIQUID">LIQUID</div>
               </div>
-              <!-- Item 4: Liquid Gradient Button -->
-              <div class="mock-card card-btn-liquid">
-                <button class="mock-liquid-btn">Explore</button>
+              <!-- Item 4: Glassmorphism Fluid Orb (Button) -->
+              <div class="mock-card card-btn-glass-orb">
+                <button class="mock-glass-orb-btn">Launch</button>
               </div>
-              
-              <!-- Duplicate the same 4 items for seamless infinite scroll -->
-              <div class="mock-card card-text-typing">
-                <div class="mock-card-header"><span>typing-terminal.js</span></div>
-                <div class="mock-typing-text">> npm run dev<br/><span class="cursor-blink">|</span></div>
+              <!-- Item 5: Kinetic Stretch Warp -->
+              <div class="mock-card card-text-stretch">
+                <div class="mock-text-stretch">WARP</div>
+              </div>
+              <!-- Item 6: Chroma Refraction (Button) -->
+              <div class="mock-card card-btn-chroma-refract">
+                <button class="mock-chroma-refract-btn">Refract</button>
+              </div>
+              <!-- Item 7: Volcano Blast Glow -->
+              <div class="mock-card card-text-volcano">
+                <div class="mock-text-volcano">BLAST</div>
+              </div>
+              <!-- Item 8: Ethereal Smoke (Button) -->
+              <div class="mock-card card-btn-smoke">
+                <button class="mock-smoke-btn">Vapor</button>
+              </div>
+              <!-- Item 9: Chroma Oil-Slick Vortex (Button) -->
+              <div class="mock-card card-btn-vortex">
+                <button class="mock-vortex-btn">Slick</button>
+              </div>
+
+              <!-- Duplicate list for infinite scroll seamless looping -->
+              <div class="mock-card card-text-shimmer">
+                <div class="mock-text-shimmer">SnippetUI</div>
               </div>
               <div class="mock-card card-btn-magnetic">
                 <button class="mock-magnetic-btn">
@@ -72,11 +90,26 @@ export function renderLanding(onNavigate) {
                   <div class="btn-magnetic-glow"></div>
                 </button>
               </div>
-              <div class="mock-card card-text-glitch">
-                <div class="mock-glitch-text" data-text="CYBER">CYBER</div>
+              <div class="mock-card card-text-liquid-wave">
+                <div class="mock-text-liquid-wave" data-text="LIQUID">LIQUID</div>
               </div>
-              <div class="mock-card card-btn-liquid">
-                <button class="mock-liquid-btn">Explore</button>
+              <div class="mock-card card-btn-glass-orb">
+                <button class="mock-glass-orb-btn">Launch</button>
+              </div>
+              <div class="mock-card card-text-stretch">
+                <div class="mock-text-stretch">WARP</div>
+              </div>
+              <div class="mock-card card-btn-chroma-refract">
+                <button class="mock-chroma-refract-btn">Refract</button>
+              </div>
+              <div class="mock-card card-text-volcano">
+                <div class="mock-text-volcano">BLAST</div>
+              </div>
+              <div class="mock-card card-btn-smoke">
+                <button class="mock-smoke-btn">Vapor</button>
+              </div>
+              <div class="mock-card card-btn-vortex">
+                <button class="mock-vortex-btn">Slick</button>
               </div>
             </div>
           </div>
@@ -84,77 +117,99 @@ export function renderLanding(onNavigate) {
           <!-- Column 2 (Top to Bottom) -->
           <div class="hero-marquee-column col-down">
             <div class="marquee-track">
-              <!-- Item 1: DNA Helix Loader -->
-              <div class="mock-card card-loader-dna">
-                <div class="dna-helix">
-                  <div class="dna-dot dot-1"></div>
-                  <div class="dna-dot dot-2"></div>
-                  <div class="dna-dot dot-3"></div>
-                  <div class="dna-dot dot-4"></div>
-                  <div class="dna-dot dot-5"></div>
+              <!-- Item 1: Cyber Wave Loader -->
+              <div class="mock-card card-loader-cyber-wave">
+                <div class="cyber-wave">
+                  <span></span><span></span><span></span><span></span>
                 </div>
               </div>
-              <!-- Item 2: Mini Plexus Mesh -->
-              <div class="mock-card card-bg-plexus">
-                <div class="plexus-network">
-                  <div class="plexus-node node-1"></div>
-                  <div class="plexus-node node-2"></div>
-                  <div class="plexus-node node-3"></div>
-                  <div class="plexus-line line-1"></div>
-                  <div class="plexus-line line-2"></div>
+              <!-- Item 2: Liquid Range Slider -->
+              <div class="mock-card card-slider-liquid">
+                <div class="mock-slider-container">
+                  <div class="slider-liquid-track">
+                    <div class="slider-liquid-fill" style="width: 65%;"></div>
+                    <div class="slider-liquid-thumb" style="left: 65%;">
+                      <div class="slider-liquid-tooltip">65%</div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <!-- Item 3: Soundwave Loader -->
-              <div class="mock-card card-loader-soundwave">
-                <div class="soundwave-loader">
-                  <div class="wave-bar bar-1"></div>
-                  <div class="wave-bar bar-2"></div>
-                  <div class="wave-bar bar-3"></div>
-                  <div class="wave-bar bar-4"></div>
+              <!-- Item 3: Liquid Mercury Morphing Loader -->
+              <div class="mock-card card-loader-mercury">
+                <div class="mercury-blob"></div>
+              </div>
+              <!-- Item 4: Cosmic Nebula Slider -->
+              <div class="mock-card card-slider-nebula">
+                <div class="nebula-slider-wrap">
+                  <div class="nebula-track"></div>
+                  <div class="nebula-thumb"></div>
                 </div>
               </div>
-              <!-- Item 4: Quantum Loader -->
-              <div class="mock-card card-loader-quantum">
-                <div class="quantum-loader">
-                  <div class="ring-orbit ring-1"></div>
-                  <div class="ring-orbit ring-2"></div>
-                  <div class="ring-dot"></div>
+              <!-- Item 5: Bioluminescent Synapse Impulse -->
+              <div class="mock-card card-loader-synapse">
+                <div class="synapse-node">
+                  <div class="impulse"></div>
                 </div>
               </div>
-              
-              <!-- Duplicate the same 4 items for seamless infinite scroll -->
-              <div class="mock-card card-loader-dna">
-                <div class="dna-helix">
-                  <div class="dna-dot dot-1"></div>
-                  <div class="dna-dot dot-2"></div>
-                  <div class="dna-dot dot-3"></div>
-                  <div class="dna-dot dot-4"></div>
-                  <div class="dna-dot dot-5"></div>
+              <!-- Item 6: Glossy Physics Balls -->
+              <div class="mock-card card-bg-physics">
+                <div class="physics-balls">
+                  <span class="ball b1"></span>
+                  <span class="ball b2"></span>
+                  <span class="ball b3"></span>
                 </div>
               </div>
-              <div class="mock-card card-bg-plexus">
-                <div class="plexus-network">
-                  <div class="plexus-node node-1"></div>
-                  <div class="plexus-node node-2"></div>
-                  <div class="plexus-node node-3"></div>
-                  <div class="plexus-line line-1"></div>
-                  <div class="plexus-line line-2"></div>
+              <!-- Item 7: Cosmic Nebula Portal Ring -->
+              <div class="mock-card card-loader-nebula-portal">
+                <div class="nebula-ring"></div>
+              </div>
+              <!-- Item 8: Interactive Electric Lightning -->
+              <div class="mock-card card-bg-lightning">
+                <div class="lightning-strike"></div>
+              </div>
+
+              <!-- Duplicate list for infinite scroll seamless looping -->
+              <div class="mock-card card-loader-cyber-wave">
+                <div class="cyber-wave">
+                  <span></span><span></span><span></span><span></span>
                 </div>
               </div>
-              <div class="mock-card card-loader-soundwave">
-                <div class="soundwave-loader">
-                  <div class="wave-bar bar-1"></div>
-                  <div class="wave-bar bar-2"></div>
-                  <div class="wave-bar bar-3"></div>
-                  <div class="wave-bar bar-4"></div>
+              <div class="mock-card card-slider-liquid">
+                <div class="mock-slider-container">
+                  <div class="slider-liquid-track">
+                    <div class="slider-liquid-fill" style="width: 65%;"></div>
+                    <div class="slider-liquid-thumb" style="left: 65%;">
+                      <div class="slider-liquid-tooltip">65%</div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="mock-card card-loader-quantum">
-                <div class="quantum-loader">
-                  <div class="ring-orbit ring-1"></div>
-                  <div class="ring-orbit ring-2"></div>
-                  <div class="ring-dot"></div>
+              <div class="mock-card card-loader-mercury">
+                <div class="mercury-blob"></div>
+              </div>
+              <div class="mock-card card-slider-nebula">
+                <div class="nebula-slider-wrap">
+                  <div class="nebula-track"></div>
+                  <div class="nebula-thumb"></div>
                 </div>
+              </div>
+              <div class="mock-card card-loader-synapse">
+                <div class="synapse-node">
+                  <div class="impulse"></div>
+                </div>
+              </div>
+              <div class="mock-card card-bg-physics">
+                <div class="physics-balls">
+                  <span class="ball b1"></span>
+                  <span class="ball b2"></span>
+                  <span class="ball b3"></span>
+                </div>
+              </div>
+              <div class="mock-card card-loader-nebula-portal">
+                <div class="nebula-ring"></div>
+              </div>
+              <div class="mock-card card-bg-lightning">
+                <div class="lightning-strike"></div>
               </div>
             </div>
           </div>
@@ -162,7 +217,14 @@ export function renderLanding(onNavigate) {
           <!-- Column 3 (Bottom to Top) -->
           <div class="hero-marquee-column col-up">
             <div class="marquee-track">
-              <!-- Item 1: Statistics Widget -->
+              <!-- Item 1: Liquid Glass Metaballs -->
+              <div class="mock-card card-bg-metaballs">
+                <div class="metaballs-container">
+                  <div class="meta-blob m1"></div>
+                  <div class="meta-blob m2"></div>
+                </div>
+              </div>
+              <!-- Item 2: Statistics Widget -->
               <div class="mock-card card-widget-stats">
                 <div class="sui-stat-widget">
                   <span class="widget-label">Conversion Rate</span>
@@ -177,17 +239,15 @@ export function renderLanding(onNavigate) {
                   </div>
                 </div>
               </div>
-              <!-- Item 2: Progress Ring / Gauge -->
-              <div class="mock-card card-gauge-progress">
-                <div class="orbital-gauge">
-                  <svg width="50" height="50" viewBox="0 0 40 40">
-                    <circle class="gauge-bg" cx="20" cy="20" r="16" />
-                    <circle class="gauge-fill" cx="20" cy="20" r="16" />
-                  </svg>
-                  <div class="gauge-label">85%</div>
+              <!-- Item 3: Vector Field Swarm -->
+              <div class="mock-card card-bg-vector-swarm">
+                <div class="vector-swarm">
+                  <div class="particle p1"></div>
+                  <div class="particle p2"></div>
+                  <div class="particle p3"></div>
                 </div>
               </div>
-              <!-- Item 3: Analytics Chart Widget -->
+              <!-- Item 4: Analytics Chart -->
               <div class="mock-card card-widget-chart">
                 <div class="sui-chart-widget">
                   <span class="widget-label">Daily Traffic</span>
@@ -200,8 +260,56 @@ export function renderLanding(onNavigate) {
                   </div>
                 </div>
               </div>
-              
-              <!-- Duplicate the same 3 items for seamless infinite scroll -->
+              <!-- Item 5: Bioluminescent Spore Ring -->
+              <div class="mock-card card-gauge-spore">
+                <div class="spore-ring">
+                  <div class="spore-inner"></div>
+                </div>
+              </div>
+              <!-- Item 6: Liquid Magma Thermometer -->
+              <div class="mock-card card-gauge-thermometer">
+                <div class="thermometer-gauge">
+                  <div class="bulb"></div>
+                  <div class="tube">
+                    <div class="fill" style="height: 70%;"></div>
+                  </div>
+                </div>
+              </div>
+              <!-- Item 7: Quantum Wave Gauge -->
+              <div class="mock-card card-gauge-quantum-wave">
+                <div class="quantum-wave">
+                  <svg viewBox="0 0 100 40" class="q-wave-svg">
+                    <path d="M0,20 Q25,5 50,20 T100,20" fill="none" stroke="#00f2fe" stroke-width="2.5" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+              </div>
+              <!-- Item 8: Star Constellation Progress -->
+              <div class="mock-card card-progress-star">
+                <div class="star-progress">
+                  <div class="const-dot d1"></div>
+                  <div class="const-dot d2"></div>
+                  <div class="const-dot d3"></div>
+                  <svg class="const-line" width="60" height="20">
+                    <line x1="10" y1="10" x2="30" y2="10" stroke="rgba(0, 242, 254, 0.4)" stroke-width="1.5"></line>
+                    <line x1="30" y1="10" x2="50" y2="10" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1.5"></line>
+                  </svg>
+                </div>
+              </div>
+              <!-- Item 9: Origami Geometric Ring -->
+              <div class="mock-card card-gauge-origami">
+                <div class="origami-geometric">
+                  <div class="poly p1"></div>
+                  <div class="poly p2"></div>
+                </div>
+              </div>
+
+              <!-- Duplicate list for infinite scroll seamless looping -->
+              <div class="mock-card card-bg-metaballs">
+                <div class="metaballs-container">
+                  <div class="meta-blob m1"></div>
+                  <div class="meta-blob m2"></div>
+                </div>
+              </div>
               <div class="mock-card card-widget-stats">
                 <div class="sui-stat-widget">
                   <span class="widget-label">Conversion Rate</span>
@@ -216,13 +324,11 @@ export function renderLanding(onNavigate) {
                   </div>
                 </div>
               </div>
-              <div class="mock-card card-gauge-progress">
-                <div class="orbital-gauge">
-                  <svg width="50" height="50" viewBox="0 0 40 40">
-                    <circle class="gauge-bg" cx="20" cy="20" r="16" />
-                    <circle class="gauge-fill" cx="20" cy="20" r="16" />
-                  </svg>
-                  <div class="gauge-label">85%</div>
+              <div class="mock-card card-bg-vector-swarm">
+                <div class="vector-swarm">
+                  <div class="particle p1"></div>
+                  <div class="particle p2"></div>
+                  <div class="particle p3"></div>
                 </div>
               </div>
               <div class="mock-card card-widget-chart">
@@ -235,6 +341,43 @@ export function renderLanding(onNavigate) {
                     <div class="chart-bar" style="height: 55%"></div>
                     <div class="chart-bar" style="height: 95%"></div>
                   </div>
+                </div>
+              </div>
+              <div class="mock-card card-gauge-spore">
+                <div class="spore-ring">
+                  <div class="spore-inner"></div>
+                </div>
+              </div>
+              <div class="mock-card card-gauge-thermometer">
+                <div class="thermometer-gauge">
+                  <div class="bulb"></div>
+                  <div class="tube">
+                    <div class="fill" style="height: 70%;"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="mock-card card-gauge-quantum-wave">
+                <div class="quantum-wave">
+                  <svg viewBox="0 0 100 40" class="q-wave-svg">
+                    <path d="M0,20 Q25,5 50,20 T100,20" fill="none" stroke="#00f2fe" stroke-width="2.5" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="mock-card card-progress-star">
+                <div class="star-progress">
+                  <div class="const-dot d1"></div>
+                  <div class="const-dot d2"></div>
+                  <div class="const-dot d3"></div>
+                  <svg class="const-line" width="60" height="20">
+                    <line x1="10" y1="10" x2="30" y2="10" stroke="rgba(0, 242, 254, 0.4)" stroke-width="1.5"></line>
+                    <line x1="30" y1="10" x2="50" y2="10" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1.5"></line>
+                  </svg>
+                </div>
+              </div>
+              <div class="mock-card card-gauge-origami">
+                <div class="origami-geometric">
+                  <div class="poly p1"></div>
+                  <div class="poly p2"></div>
                 </div>
               </div>
             </div>
