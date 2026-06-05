@@ -4,6 +4,7 @@
 import './style.css';
 import { renderLanding } from './landing.js';
 import { renderLibrary } from './library.js';
+import Lenis from 'lenis';
 
 // Elements Cache
 const appContainer = document.getElementById('app');
@@ -16,6 +17,8 @@ const btnBrowseCta = document.getElementById('btn-browse-cta');
 
 // Global Router State
 let currentView = null; // 'landing' or 'library'
+let currentPage = null; // Store active page instance with destroy hooks
+let globalLenis = null;  // Store global Lenis scroll controller
 
 // 1. Core Routing Manager
 function navigate(target) {
@@ -25,6 +28,12 @@ function navigate(target) {
 
   // Prevent redundant renders
   if (currentView === target) return;
+
+  // Clean up previous page resources before rendering new one
+  if (currentPage && typeof currentPage.destroy === 'function') {
+    currentPage.destroy();
+  }
+
   currentView = target;
 
   // Sync active states on navigation links
@@ -36,6 +45,15 @@ function navigate(target) {
     }
   });
 
+  // Lazy initialize global Lenis on window if not exists
+  if (!globalLenis) {
+    globalLenis = new Lenis({
+      autoRaf: true,
+      lerp: 0.09,
+      duration: 1.2
+    });
+  }
+
   // Render view & Navbar visibility coordination
   let page;
   if (target.startsWith('library')) {
@@ -43,6 +61,10 @@ function navigate(target) {
     appContainer.classList.remove('with-nav');
     appContainer.classList.add('no-nav');
     document.body.classList.add('library-page-active');
+
+    // Pause global Lenis scroll tracking to avoid viewport conflicts
+    globalLenis.stop();
+
     const parts = target.split('?');
     const category = parts[1]?.split('=')[1] || 'all';
     page = renderLibrary(navigate, category);
@@ -52,9 +74,14 @@ function navigate(target) {
     appContainer.classList.remove('no-nav');
     appContainer.classList.add('with-nav');
     document.body.classList.remove('library-page-active');
+
+    // Resume global Lenis scroll tracking
+    globalLenis.start();
+
     page = renderLanding(navigate);
     window.location.hash = 'landing';
   }
+  currentPage = page;
 
   // Smooth fade transition between pages
   appContainer.style.opacity = 0;

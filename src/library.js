@@ -4,157 +4,16 @@
  */
 
 import { COMPONENTS_DATABASE } from './library/index.js';
+import Lenis from 'lenis';
 
-/**
- * High-performance, lightweight inertia smooth scroll utility.
- * Intercepts desktop wheel events and interpolates scroll position
- * with high fidelity LERP (linear interpolation) for a premium feel.
- */
-function applyInertiaScroll(element, speedFactor = 1.0, smoothFactor = 0.09) {
-  if (!element) return;
 
-  let targetScrollY = element.scrollTop;
-  let currentScrollY = element.scrollTop;
-  let isRunning = false;
-  let touchActive = false;
-  let isProgrammaticScroll = false;
-
-  // Sync scroll values and immediately stop LERP if user scrolls natively (e.g. scrollbar drag)
-  const syncScrollValues = () => {
-    if (!isProgrammaticScroll) {
-      targetScrollY = element.scrollTop;
-      currentScrollY = element.scrollTop;
-      isRunning = false; // Prevents fighting native scroll gestures/scrollbar drags
-    }
-    isProgrammaticScroll = false;
-  };
-
-  element.addEventListener('scroll', syncScrollValues, { passive: true });
-
-  element.addEventListener('touchstart', () => {
-    touchActive = true;
-    isRunning = false; // Hand over control to native touch momentum
-  }, { passive: true });
-
-  element.addEventListener('touchend', () => {
-    touchActive = false;
-    targetScrollY = element.scrollTop;
-    currentScrollY = element.scrollTop;
-  }, { passive: true });
-
-  // 1. Premium Mouse Wheel Smoothing with LERP
-  element.addEventListener('wheel', (e) => {
-    if (e.ctrlKey || e.metaKey || e.shiftKey || touchActive) return;
-
-    // Detect trackpad scrolling (fractional deltas or horizontal deltas)
-    const isTrackpad = e.deltaX !== 0 || (Math.abs(e.deltaY) < 50 && e.deltaY % 1 !== 0);
-    if (isTrackpad) {
-      isRunning = false; // Bypass smoothing to prevent fighting trackpad momentum
-      return; 
-    }
-
-    e.preventDefault();
-
-    const maxScroll = element.scrollHeight - element.clientHeight;
-    if (maxScroll <= 0) return;
-
-    let delta = e.deltaY;
-    if (Math.abs(delta) >= 100) {
-      // Discrete physical mouse wheel - scale up slightly for responsive roll depth
-      delta = Math.sign(delta) * 120;
-    }
-
-    // Accumulate target scroll position
-    targetScrollY += delta * speedFactor;
-    targetScrollY = Math.max(0, Math.min(targetScrollY, maxScroll));
-
-    if (!isRunning) {
-      isRunning = true;
-      requestAnimationFrame(updateScroll);
-    }
-  }, { passive: false });
-
-  // 2. Premium Keyboard Navigation Smoothing
-  element.addEventListener('keydown', (e) => {
-    const activeEl = document.activeElement;
-    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
-      return;
-    }
-
-    const key = e.key;
-    let scrollAmount = 0;
-    const maxScroll = element.scrollHeight - element.clientHeight;
-    if (maxScroll <= 0) return;
-
-    const pageStep = element.clientHeight * 0.85;
-    const lineStep = 100; // Snappy standard line step size
-
-    switch (key) {
-      case 'ArrowDown':
-        scrollAmount = lineStep;
-        break;
-      case 'ArrowUp':
-        scrollAmount = -lineStep;
-        break;
-      case 'PageDown':
-        scrollAmount = pageStep;
-        break;
-      case 'PageUp':
-        scrollAmount = -pageStep;
-        break;
-      case 'Space':
-        scrollAmount = e.shiftKey ? -pageStep : pageStep;
-        break;
-      case 'Home':
-        targetScrollY = 0;
-        e.preventDefault();
-        break;
-      case 'End':
-        targetScrollY = maxScroll;
-        e.preventDefault();
-        break;
-      default:
-        return;
-    }
-
-    if (scrollAmount !== 0) {
-      e.preventDefault();
-      targetScrollY += scrollAmount;
-      targetScrollY = Math.max(0, Math.min(targetScrollY, maxScroll));
-    }
-
-    if (!isRunning) {
-      isRunning = true;
-      requestAnimationFrame(updateScroll);
-    }
-  });
-
-  // Dynamic LERP Engine (Linear Interpolation)
-  function updateScroll() {
-    if (!isRunning) return;
-
-    const diff = targetScrollY - currentScrollY;
-    
-    // Snap to final target and stop loop if very close to save resource cycles
-    if (Math.abs(diff) < 0.25) {
-      isProgrammaticScroll = true;
-      element.scrollTop = targetScrollY;
-      currentScrollY = targetScrollY;
-      isRunning = false;
-      return;
-    }
-
-    currentScrollY += diff * smoothFactor;
-    isProgrammaticScroll = true;
-    element.scrollTop = Math.round(currentScrollY);
-
-    requestAnimationFrame(updateScroll);
-  }
-}
 
 export function renderLibrary(onNavigate, initialFilter = 'all') {
-  let activeFilter = initialFilter;
+  const rawCategories = Array.from(new Set(COMPONENTS_DATABASE.map(c => c.category)));
+  let activeFilter = (initialFilter === 'all' || !initialFilter || !rawCategories.includes(initialFilter)) ? rawCategories[0] : initialFilter;
   let searchQuery = '';
+  const isMac = typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
+  const shortcutLabel = isMac ? '⌘K' : 'Ctrl K';
   let activeDetailComponent = null;
   
   // Track active selections in dropdowns
@@ -262,18 +121,15 @@ ${comp.html}
   }
 
   // Extract unique categories from components database dynamically
-  const rawCategories = Array.from(new Set(COMPONENTS_DATABASE.map(c => c.category)));
-  // Ensure custom order with 'all' at the beginning
-  const categories = ['all', ...rawCategories];
+  const categories = [...rawCategories];
 
   function getCountForCategory(cat) {
-    if (cat === 'all') return COMPONENTS_DATABASE.length;
     return COMPONENTS_DATABASE.filter(c => c.category === cat).length;
   }
 
   function getFilteredComponents() {
     return COMPONENTS_DATABASE.filter(comp => {
-      const matchesCategory = activeFilter === 'all' || comp.category === activeFilter;
+      const matchesCategory = comp.category === activeFilter;
       const matchesSearch = comp.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                             comp.category.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
@@ -282,7 +138,6 @@ ${comp.html}
 
   // Format category display names nicely (e.g. 'text-animation' -> 'Text Animation')
   function formatCategoryName(cat) {
-    if (cat === 'all') return 'All Components';
     return cat
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -711,10 +566,21 @@ ${comp.html}
     </style>
   `;
 
-  // Helper to execute component JS scoped to its container
+  let observer = null;
+  const cardCleanups = new Map();
+  let activeModalCleanup = null;
+  let sidebarLenis = null;
+  let mainLenis = null;
+
+  // Helper to execute component JS scoped to its container and return cleanup function
   function executeComponentJS(component, elementContainer) {
-    if (!component || !component.js) return;
+    if (!component || !component.js) return () => {};
     try {
+      const localListeners = [];
+      const localIntervals = [];
+      const localTimeouts = [];
+      const localFrames = [];
+
       const shadowDoc = {
         querySelector: (sel) => elementContainer.querySelector(sel),
         querySelectorAll: (sel) => elementContainer.querySelectorAll(sel),
@@ -723,38 +589,105 @@ ${comp.html}
         getElementsByTagName: (tag) => elementContainer.getElementsByTagName(tag),
         createElement: (tagName) => document.createElement(tagName),
         addEventListener: (type, cb, opts) => {
-          if (type === 'mousemove' || type === 'mouseleave') {
+          const isLocal = ['mousemove', 'mouseleave', 'mouseenter', 'click', 'mousedown', 'mouseup', 'mouseover', 'mouseout'].includes(type);
+          if (isLocal) {
             elementContainer.addEventListener(type, cb, opts);
+            localListeners.push({ target: elementContainer, type, cb, opts });
           } else {
             window.addEventListener(type, cb, opts);
+            localListeners.push({ target: window, type, cb, opts });
           }
         },
         removeEventListener: (type, cb, opts) => {
-          if (type === 'mousemove' || type === 'mouseleave') {
+          const isLocal = ['mousemove', 'mouseleave', 'mouseenter', 'click', 'mousedown', 'mouseup', 'mouseover', 'mouseout'].includes(type);
+          if (isLocal) {
             elementContainer.removeEventListener(type, cb, opts);
           } else {
             window.removeEventListener(type, cb, opts);
           }
         }
       };
-      
-      const initFn = new Function('document', component.js);
-      initFn(shadowDoc);
+
+      const customSetInterval = (cb, delay) => {
+        const id = setInterval(cb, delay);
+        localIntervals.push(id);
+        return id;
+      };
+      const customSetTimeout = (cb, delay) => {
+        const id = setTimeout(cb, delay);
+        localTimeouts.push(id);
+        return id;
+      };
+      const customRequestAnimationFrame = (cb) => {
+        const id = requestAnimationFrame(cb);
+        localFrames.push(id);
+        return id;
+      };
+
+      const initFn = new Function('document', 'setInterval', 'setTimeout', 'requestAnimationFrame', component.js);
+      initFn(shadowDoc, customSetInterval, customSetTimeout, customRequestAnimationFrame);
+
+      return () => {
+        localListeners.forEach(({ target, type, cb, opts }) => {
+          try {
+            target.removeEventListener(type, cb, opts);
+          } catch (e) {}
+        });
+        localIntervals.forEach(id => clearInterval(id));
+        localTimeouts.forEach(id => clearTimeout(id));
+        localFrames.forEach(id => cancelAnimationFrame(id));
+      };
     } catch (err) {
       console.warn('Error executing scoped JS for component ' + component.id + ':', err);
+      return () => {};
     }
   }
 
-  // Helper to execute JS for all rendered components in the grid
+  // Helper to execute JS for all rendered components lazily when visible
   function initializeGridComponentJS(container) {
+    if (observer) {
+      observer.disconnect();
+    }
+    cardCleanups.forEach(cleanup => cleanup());
+    cardCleanups.clear();
+
     const list = getFilteredComponents();
+    const mainContainer = container.querySelector('.library-main');
+    if (!mainContainer) return;
+
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const cardEl = entry.target;
+        const compId = cardEl.getAttribute('data-comp-id');
+        const comp = list.find(c => c.id === compId);
+        if (!comp) return;
+
+        if (entry.isIntersecting) {
+          if (cardCleanups.has(compId)) return;
+          const preview = cardEl.querySelector('.component-preview');
+          if (preview) {
+            const cleanup = executeComponentJS(comp, preview);
+            cardCleanups.set(compId, cleanup);
+          }
+        } else {
+          const cleanup = cardCleanups.get(compId);
+          if (cleanup) {
+            cleanup();
+            cardCleanups.delete(compId);
+          }
+        }
+      });
+    }, {
+      root: mainContainer,
+      rootMargin: '120px',
+      threshold: 0.05
+    });
+
     list.forEach(comp => {
       const card = container.querySelector(`#card-${comp.id}`);
       if (card) {
-        const preview = card.querySelector('.component-preview');
-        if (preview) {
-          executeComponentJS(comp, preview);
-        }
+        card.setAttribute('data-comp-id', comp.id);
+        observer.observe(card);
       }
     });
   }
@@ -851,8 +784,8 @@ ${comp.html}
     const liveContainer = container.querySelector('#modal-live-container');
     liveContainer.innerHTML = activeDetailComponent.html;
 
-    // Execute scoped JavaScript for interactive previews
-    executeComponentJS(activeDetailComponent, liveContainer);
+    // Execute scoped JavaScript for interactive previews and store cleanup
+    activeModalCleanup = executeComponentJS(activeDetailComponent, liveContainer);
 
     const reloadBtn = container.querySelector('#modal-btn-reload-floating');
     const demoToggle = container.querySelector('#modal-demo-toggle-container');
@@ -904,6 +837,12 @@ ${comp.html}
       backdrop.classList.remove('fullscreen');
     }
     
+    // Clean up active modal JS logic immediately
+    if (activeModalCleanup) {
+      activeModalCleanup();
+      activeModalCleanup = null;
+    }
+
     // Clear live preview container
     setTimeout(() => {
       const liveContainer = container.querySelector('#modal-live-container');
@@ -1113,6 +1052,26 @@ ${comp.html}
   return {
     html: htmlContent,
     init: (container) => {
+      // Initialize Lenis smooth scroll for library panels
+      const sidebar = container.querySelector('.library-sidebar');
+      const main = container.querySelector('.library-main');
+      if (sidebar) {
+        sidebarLenis = new Lenis({
+          wrapper: sidebar,
+          autoRaf: true,
+          lerp: 0.1,
+          duration: 1.2
+        });
+      }
+      if (main) {
+        mainLenis = new Lenis({
+          wrapper: main,
+          autoRaf: true,
+          lerp: 0.1,
+          duration: 1.2
+        });
+      }
+
       // 0. Bind Logo and Header return navigation
       container.querySelector('#library-brand-logo')?.addEventListener('click', (e) => {
         e.preventDefault();
@@ -1127,15 +1086,7 @@ ${comp.html}
       attachCardListeners(container);
       initializeGridComponentJS(container);
 
-      // Bind premium inertia smooth scrolling to main panels and code drawer scroll containers
-      const sidebar = container.querySelector('.library-sidebar');
-      const main = container.querySelector('.library-main');
-      applyInertiaScroll(sidebar, 1.0, 0.07);
-      applyInertiaScroll(main, 1.0, 0.07);
 
-      container.querySelectorAll('.drawer-pane, .drawer-code-body').forEach(pane => {
-        applyInertiaScroll(pane, 1.0, 0.07);
-      });
 
       // 2. Search Input Listener
       const searchInp = container.querySelector('#search-snippets');
@@ -1170,11 +1121,15 @@ ${comp.html}
       // 5. Floating Reload Button listener inside preview modal box
       container.querySelector('#modal-btn-reload-floating')?.addEventListener('click', () => {
         if (!activeDetailComponent) return;
+        if (activeModalCleanup) {
+          activeModalCleanup();
+          activeModalCleanup = null;
+        }
         const liveContainer = container.querySelector('#modal-live-container');
         liveContainer.innerHTML = '';
         setTimeout(() => {
           liveContainer.innerHTML = activeDetailComponent.html;
-          executeComponentJS(activeDetailComponent, liveContainer);
+          activeModalCleanup = executeComponentJS(activeDetailComponent, liveContainer);
           triggerToast('Component reloaded!');
         }, 100);
       });
@@ -1488,6 +1443,26 @@ ${comp.html}
       drawerBackdrop?.addEventListener('click', (e) => {
         if (e.target === drawerBackdrop) closeCodeDrawer(container);
       });
+    },
+    destroy: () => {
+      if (sidebarLenis) {
+        sidebarLenis.destroy();
+        sidebarLenis = null;
+      }
+      if (mainLenis) {
+        mainLenis.destroy();
+        mainLenis = null;
+      }
+      if (observer) {
+        observer.disconnect();
+        observer = null;
+      }
+      cardCleanups.forEach(cleanup => cleanup());
+      cardCleanups.clear();
+      if (activeModalCleanup) {
+        activeModalCleanup();
+        activeModalCleanup = null;
+      }
     }
   };
 }

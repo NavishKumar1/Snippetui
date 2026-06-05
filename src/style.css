@@ -2,6 +2,27 @@
    SnippetUI - Premium CSS Core Design System
    ========================================================================== */
 
+/* --- Lenis Smooth Scroll Core Configuration --- */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
 /* --- Custom Variables & Theme Tokens --- */
 :root {
   /* Color Palettes */
@@ -1571,6 +1592,7 @@ a {
   -webkit-backdrop-filter: blur(20px);
   padding: 40px 32px;
   overflow-y: auto;
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   height: 100%;
   box-sizing: border-box;
@@ -1714,6 +1736,7 @@ a {
   border-radius: 24px;
   padding: 40px 48px;
   overflow-y: auto;
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   height: 100%;
   box-sizing: border-box;

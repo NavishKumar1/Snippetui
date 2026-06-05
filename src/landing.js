@@ -658,6 +658,12 @@ export function renderLanding(onNavigate) {
 
       // Init on load
       updatePlayground();
+    },
+    destroy: () => {
+      if (window.currentLandingScrollListener) {
+        window.removeEventListener('scroll', window.currentLandingScrollListener);
+        window.currentLandingScrollListener = null;
+      }
     }
   };
 }
