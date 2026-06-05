@@ -2,6 +2,157 @@
  * SnippetUI - Landing Page Component
  */
 
+// Step 1: Discover Animation (Auto-typing "glassmorphic-card")
+let typingTimer = null;
+function runStep1Animation(stepEl) {
+  if (stepEl.getAttribute('data-animated') === 'true') return;
+  stepEl.setAttribute('data-animated', 'true');
+  const textEl = stepEl.querySelector('#pipeline-search-text');
+  const resultCard = stepEl.querySelector('#pipeline-search-results');
+  if (!textEl || !resultCard) return;
+
+  textEl.textContent = '';
+  resultCard.style.opacity = '0';
+  resultCard.style.transform = 'translateY(10px) scale(0.95)';
+  resultCard.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+
+  const textToType = 'glassmorphic-card';
+  let idx = 0;
+  
+  if (typingTimer) clearTimeout(typingTimer);
+  
+  function typeChar() {
+    if (idx < textToType.length) {
+      textEl.textContent += textToType[idx];
+      idx++;
+      typingTimer = setTimeout(typeChar, 80);
+    } else {
+      resultCard.style.opacity = '1';
+      resultCard.style.transform = 'translateY(0) scale(1)';
+    }
+  }
+  typeChar();
+}
+
+function resetStep1Animation(stepEl) {
+  if (stepEl.getAttribute('data-animated') !== 'true') return;
+  stepEl.removeAttribute('data-animated');
+  if (typingTimer) {
+    clearTimeout(typingTimer);
+    typingTimer = null;
+  }
+  const textEl = stepEl.querySelector('#pipeline-search-text');
+  const resultCard = stepEl.querySelector('#pipeline-search-results');
+  if (textEl) textEl.textContent = '';
+  if (resultCard) {
+    resultCard.style.opacity = '0';
+    resultCard.style.transform = 'translateY(10px) scale(0.95)';
+  }
+}
+
+// Step 2: Copy Animation (Simulated Clipboard Copy click & Editor Glow)
+let copyAnimationTimer = null;
+function runStep2Animation(stepEl) {
+  if (stepEl.getAttribute('data-animated') === 'true') return;
+  stepEl.setAttribute('data-animated', 'true');
+  const copyBtn = stepEl.querySelector('#pipeline-copy-btn');
+  const codeEditor = stepEl.querySelector('.mock-code-editor-premium');
+  if (!copyBtn || !codeEditor) return;
+
+  copyBtn.classList.remove('copied');
+  copyBtn.style.background = '';
+  copyBtn.style.color = '';
+  copyBtn.innerHTML = '<span class="copy-icon">📋</span><span class="copy-text"></span>';
+
+  if (copyAnimationTimer) clearTimeout(copyAnimationTimer);
+
+  copyAnimationTimer = setTimeout(() => {
+    copyBtn.classList.add('copied');
+    copyBtn.style.background = '#00f2fe';
+    copyBtn.style.color = '#08080c';
+    copyBtn.innerHTML = '<span class="copy-icon">✓</span><span class="copy-text" style="font-family: var(--font-heading); font-size: 11px; margin-left: 4px; font-weight: 700;">Copied!</span>';
+    
+    codeEditor.style.borderColor = 'rgba(0, 242, 254, 0.4)';
+    codeEditor.style.boxShadow = '0 10px 40px rgba(0, 242, 254, 0.15)';
+    codeEditor.style.transition = 'border-color 0.3s ease, box-shadow 0.3s ease';
+
+    setTimeout(() => {
+      codeEditor.style.borderColor = '';
+      codeEditor.style.boxShadow = '';
+    }, 1500);
+  }, 1000);
+}
+
+function resetStep2Animation(stepEl) {
+  if (stepEl.getAttribute('data-animated') !== 'true') return;
+  stepEl.removeAttribute('data-animated');
+  if (copyAnimationTimer) {
+    clearTimeout(copyAnimationTimer);
+    copyAnimationTimer = null;
+  }
+  const copyBtn = stepEl.querySelector('#pipeline-copy-btn');
+  const codeEditor = stepEl.querySelector('.mock-code-editor-premium');
+  if (copyBtn) {
+    copyBtn.classList.remove('copied');
+    copyBtn.style.background = '';
+    copyBtn.style.color = '';
+    copyBtn.innerHTML = '<span class="copy-icon">📋</span><span class="copy-text"></span>';
+  }
+  if (codeEditor) {
+    codeEditor.style.borderColor = '';
+    codeEditor.style.boxShadow = '';
+  }
+}
+
+// Step 3: Deploy Animation (Simulated component fade-in inside wireframe viewport)
+let deployAnimationTimer = null;
+function runStep3Animation(stepEl) {
+  if (stepEl.getAttribute('data-animated') === 'true') return;
+  stepEl.setAttribute('data-animated', 'true');
+  const deployedBtn = stepEl.querySelector('#pipeline-deployed-btn');
+  const browserWin = stepEl.querySelector('#pipeline-browser-window');
+  if (!deployedBtn || !browserWin) return;
+
+  deployedBtn.style.opacity = '0';
+  deployedBtn.style.transform = 'scale(0.8) translateY(10px)';
+
+  if (deployAnimationTimer) clearTimeout(deployAnimationTimer);
+
+  deployAnimationTimer = setTimeout(() => {
+    deployedBtn.style.opacity = '1';
+    deployedBtn.style.transform = 'scale(1) translateY(0)';
+    deployedBtn.style.transition = 'opacity 0.4s ease, transform 0.4s ease, background 0.3s ease, box-shadow 0.3s ease';
+    
+    browserWin.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+    browserWin.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.8), 0 0 40px rgba(16, 185, 129, 0.15)';
+    browserWin.style.transition = 'border-color 0.4s ease, box-shadow 0.4s ease';
+
+    setTimeout(() => {
+      browserWin.style.borderColor = '';
+      browserWin.style.boxShadow = '';
+    }, 1500);
+  }, 1200);
+}
+
+function resetStep3Animation(stepEl) {
+  if (stepEl.getAttribute('data-animated') !== 'true') return;
+  stepEl.removeAttribute('data-animated');
+  if (deployAnimationTimer) {
+    clearTimeout(deployAnimationTimer);
+    deployAnimationTimer = null;
+  }
+  const deployedBtn = stepEl.querySelector('#pipeline-deployed-btn');
+  const browserWin = stepEl.querySelector('#pipeline-browser-window');
+  if (deployedBtn) {
+    deployedBtn.style.opacity = '0';
+    deployedBtn.style.transform = 'scale(0.8) translateY(10px)';
+  }
+  if (browserWin) {
+    browserWin.style.borderColor = '';
+    browserWin.style.boxShadow = '';
+  }
+}
+
 export function renderLanding(onNavigate) {
   // Returns HTML structure for the landing page
   const htmlContent = `
@@ -10,11 +161,7 @@ export function renderLanding(onNavigate) {
       <section class="hero-section">
         <!-- Left Column: Content -->
         <div class="hero-content-left">
-          <div class="hero-badge">
-            <span class="badge-dot"></span>
-            100+ Styles created
-          </div>
-          
+
           <h1 class="hero-title">
             Find your vibe<br/>We'll <span>code it right</span>
           </h1>
@@ -28,7 +175,7 @@ export function renderLanding(onNavigate) {
               Browse Components
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-left: 6px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </a>
-            <a href="https://marketplace.visualstudio.com" target="_blank" class="btn-hero-secondary btn-hero-extension">
+            <a href="#extension" class="btn-hero-secondary btn-hero-extension">
               Get Extension
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-left: 6px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </a>
@@ -464,131 +611,140 @@ export function renderLanding(onNavigate) {
       </div>
       </div>
 
-      <!-- Section 2: Visual "How It Works" Pipeline -->
+      <!-- Section 2: Visual "How It Works" Sticky Pipeline -->
       <section class="landing-pipeline-section" id="pipeline-section">
         <div class="section-header">
-          <div class="tech-badge">Pipeline</div>
+          <div class="tech-badge">Interactive Flow</div>
           <h2 class="section-title">How It Works</h2>
           <p class="section-subtitle">Get production-ready components integrated into your project in three seconds flat.</p>
         </div>
 
-        <div class="pipeline-container">
-          <!-- Scroll Tracer SVG -->
-          <div class="pipeline-line-wrapper">
-            <svg class="pipeline-svg" viewBox="0 0 100 600" preserveAspectRatio="none">
-              <!-- Background Path -->
-              <path class="pipeline-path-bg" d="M 50 0 L 50 600" />
-              <!-- Animated Glowing Active Path -->
-              <path class="pipeline-path-active" id="pipeline-active-path" d="M 50 0 L 50 600" />
-            </svg>
-          </div>
-
-          <div class="pipeline-steps">
-            
-            <div class="pipeline-step" id="step-discover">
-              <div class="step-marker">
-                <span class="step-num">1</span>
-                <div class="marker-pulse"></div>
-              </div>
-              <div class="step-card">
-                <div class="step-card-content">
-                  <div class="step-icon">🔍</div>
-                  <h3>1. Discover</h3>
-                  <p>Browse through hundreds of highly responsive, glassmorphism UI components designed for immediate, copy-paste deployment.</p>
-                </div>
-                <div class="step-card-preview">
-                  <div class="preview-discover-search">
-                    <div class="mock-search-bar">
-                      <span class="mock-search-icon">🔍</span>
-                      <span class="mock-search-text"></span>
-                      <span class="mock-search-cursor">|</span>
-                    </div>
-                    <div class="mock-search-results">
-                      <div class="mock-result-card">
-                        <div class="mock-card-glow"></div>
-                        <div class="mock-card-icon">✨</div>
-                        <div class="mock-card-title">Glassmorphism Card</div>
+        <div class="pipeline-split-layout">
+          <!-- Left Sticky: Morphing Sandbox Viewport -->
+          <div class="pipeline-sticky-viewport">
+            <div class="morphing-sandbox-card" id="pipeline-morph-sandbox">
+              
+              <!-- Sandbox Stage 1: Discover Search -->
+              <div class="sandbox-stage stage-discover visible" id="sandbox-stage-1">
+                <div class="mock-search-container">
+                  <div class="mock-search-bar">
+                    <span class="mock-search-icon">🔍</span>
+                    <span class="mock-search-text" id="pipeline-search-text"></span>
+                    <span class="mock-search-cursor">|</span>
+                  </div>
+                  <div class="mock-search-results-list" id="pipeline-search-results">
+                    <div class="mock-result-card-premium">
+                      <div class="mock-card-glow-aurora"></div>
+                      <div class="mock-card-badge-neon">New</div>
+                      <span class="result-icon">✨</span>
+                      <div>
+                        <div class="result-title">Aurora Gradient Text</div>
+                        <div class="result-category">Text Animation</div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="pipeline-step" id="step-copy">
-              <div class="step-marker">
-                <span class="step-num">2</span>
-                <div class="marker-pulse"></div>
-              </div>
-              <div class="step-card">
-                <div class="step-card-content">
-                  <div class="step-icon">📋</div>
-                  <h3>2. Copy</h3>
-                  <p>Grab modular, lightweight vanilla HTML and CSS variables configuration with one single click. No bloated framework dependencies required.</p>
-                </div>
-                <div class="step-card-preview">
-                  <div class="preview-copy-snippet">
-                    <div class="mock-code-editor">
-                      <div class="editor-header">
-                        <span class="editor-dot red"></span>
-                        <span class="editor-dot yellow"></span>
-                        <span class="editor-dot green"></span>
-                        <span class="editor-title">style.css</span>
-                      </div>
-                      <pre class="editor-code"><code><span class="token-selector">.card-glass</span> {
-  <span class="token-property">backdrop-filter</span>: <span class="token-value">blur(12px)</span>;
-  <span class="token-property">background</span>: <span class="token-value">rgba(255,255,255,0.1)</span>;
+              <!-- Sandbox Stage 2: Code Copy Editor -->
+              <div class="sandbox-stage stage-copy" id="sandbox-stage-2">
+                <div class="mock-code-editor-premium">
+                  <div class="editor-header-tabs">
+                    <div class="tabs-dots">
+                      <span class="dot-tab red"></span>
+                      <span class="dot-tab yellow"></span>
+                      <span class="dot-tab green"></span>
+                    </div>
+                    <div class="tab-title-text">aurora-text.css</div>
+                  </div>
+                  <pre class="editor-code-block"><code><span class="token-selector">.aurora-text</span> {
+  <span class="token-property">background</span>: <span class="token-value">linear-gradient(to right, #00f2fe, #4facfe, #8a2be2)</span>;
+  <span class="token-property">background-clip</span>: <span class="token-value">text</span>;
+  <span class="token-property">color</span>: <span class="token-value">transparent</span>;
+  <span class="token-property">animation</span>: <span class="token-value">shimmer 3s infinite</span>;
 }</code></pre>
-                      <button class="mock-copy-btn">
-                        <span class="copy-icon">📋</span>
-                        <span class="copy-text"></span>
-                      </button>
-                    </div>
-                  </div>
+                  <button class="mock-copy-btn-premium" id="pipeline-copy-btn">
+                    <span class="copy-icon">📋</span>
+                    <span class="copy-text">Copy Code</span>
+                  </button>
                 </div>
               </div>
-            </div>
 
-            <div class="pipeline-step" id="step-deploy">
-              <div class="step-marker">
-                <span class="step-num">3</span>
-                <div class="marker-pulse"></div>
-              </div>
-              <div class="step-card">
-                <div class="step-card-content">
-                  <div class="step-icon">🚀</div>
-                  <h3>3. Deploy</h3>
-                  <p>Paste the code blocks into your stylesheet and markup directly. Your components inherit variables dynamically and compile in &lt; 1ms.</p>
-                </div>
-                <div class="step-card-preview">
-                  <div class="preview-deploy-stage">
-                    <div class="mock-browser-window">
-                      <div class="browser-header">
-                        <span class="browser-dot red"></span>
-                        <span class="browser-dot yellow"></span>
-                        <span class="browser-dot green"></span>
-                        <div class="browser-address">localhost:3000</div>
-                      </div>
-                      <div class="browser-body">
-                        <div class="mock-app-wireframe">
-                          <div class="wireframe-nav">
-                            <div class="wireframe-nav-logo"></div>
-                            <div class="wireframe-nav-links">
-                              <span></span><span></span>
-                            </div>
-                          </div>
-                          <div class="wireframe-hero">
-                            <div class="wireframe-line long"></div>
-                            <div class="wireframe-line short"></div>
-                            <div class="mock-deploy-btn-wrapper">
-                              <div class="mock-deployed-btn">⚡ Inserted!</div>
-                            </div>
-                          </div>
+              <!-- Sandbox Stage 3: Browser Injection Viewport -->
+              <div class="sandbox-stage stage-deploy" id="sandbox-stage-3">
+                <div class="mock-browser-viewport-premium" id="pipeline-browser-window">
+                  <div class="browser-address-header">
+                    <div class="browser-actions-dots">
+                      <span></span><span></span><span></span>
+                    </div>
+                    <div class="address-bar-url">localhost:3000</div>
+                  </div>
+                  <div class="browser-display-screen">
+                    <div class="demo-application-wireframe">
+                      <div class="mock-app-logo"></div>
+                      <div class="mock-app-content">
+                        <div class="mock-line wide"></div>
+                        <div class="mock-line"></div>
+                        <div class="mock-live-inject-target">
+                          <div class="mock-injected-aurora-text" id="pipeline-deployed-btn">Aurora Gradient</div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Right: Scrolling Text Cards -->
+          <div class="pipeline-scroll-steps">
+            
+            <div class="scroll-step active" data-step="1">
+              <div class="step-line-indicator">
+                <div class="indicator-dot">1</div>
+                <div class="indicator-bar"></div>
+              </div>
+              <div class="step-card-detail">
+                <span class="step-small-badge">Step 01</span>
+                <h3>Discover Perfect UI Vibes</h3>
+                <p>
+                  Search through dozens of hand-crafted CSS and Web Component animations. 
+                  Filter by category—from liquid motion badges to futuristic glitch headers—and preview 
+                  their responsive styles instantly at full resolution.
+                </p>
+              </div>
+            </div>
+
+            <div class="scroll-step" data-step="2">
+              <div class="step-line-indicator">
+                <div class="indicator-dot">2</div>
+                <div class="indicator-bar"></div>
+              </div>
+              <div class="step-card-detail">
+                <span class="step-small-badge">Step 02</span>
+                <h3>1-Click Clean Code Copy</h3>
+                <p>
+                  Copy production-ready CSS variables and markup configurations in one single tap. 
+                  SnippetUI compiles all declarations into modular styles, preventing bloated libraries or 
+                  external dependencies from dragging down your performance scores.
+                </p>
+              </div>
+            </div>
+
+            <div class="scroll-step" data-step="3">
+              <div class="step-line-indicator">
+                <div class="indicator-dot">3</div>
+                <div class="indicator-bar"></div>
+              </div>
+              <div class="step-card-detail">
+                <span class="step-small-badge">Step 03</span>
+                <h3>Deploy & Compile Instantly</h3>
+                <p>
+                  Paste the generated structures directly into your files. The snippets compile in under 1ms, 
+                  automatically inheriting your project's custom layout parameters. Witness clean, high-refresh 
+                  rate visuals deployed immediately in your viewport.
+                </p>
               </div>
             </div>
 
@@ -810,7 +966,7 @@ export function renderLanding(onNavigate) {
                 </div>
               </div>
 
-              <a href="https://marketplace.visualstudio.com" target="_blank" class="btn-extension">
+              <a href="#extension" class="btn-extension">
                 <span>Get VS Code Extension</span>
                 <span class="btn-arrow">→</span>
               </a>
@@ -1216,14 +1372,14 @@ export function renderLanding(onNavigate) {
             <div class="footer-link-group">
               <h4>Community</h4>
               <a href="https://github.com/NavishKumar1/Snippetui" target="_blank">GitHub</a>
-              <a href="https://discord.com" target="_blank">Discord</a>
-              <a href="https://twitter.com" target="_blank">Twitter</a>
+              <a href="#404" id="footer-link-discord">Discord</a>
+              <a href="#404" id="footer-link-twitter">Twitter</a>
             </div>
             
             <div class="footer-link-group">
               <h4>Legals</h4>
-              <a href="#">Privacy Policy</a>
-              <a href="#">Terms of Service</a>
+              <a href="#privacy" id="footer-link-privacy">Privacy Policy</a>
+              <a href="#terms" id="footer-link-terms">Terms of Service</a>
             </div>
           </div>
         </div>
@@ -1251,6 +1407,30 @@ export function renderLanding(onNavigate) {
       document.getElementById('footer-link-library')?.addEventListener('click', (e) => {
         e.preventDefault();
         onNavigate('library');
+      });
+      document.getElementById('footer-link-privacy')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        onNavigate('privacy');
+      });
+      document.getElementById('footer-link-terms')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        onNavigate('terms');
+      });
+      document.getElementById('footer-link-discord')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        onNavigate('404');
+      });
+      document.getElementById('footer-link-twitter')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        onNavigate('404');
+      });
+      
+      // Route extension showcase page buttons
+      appContainer.querySelectorAll('.btn-hero-extension, .btn-extension').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          onNavigate('extension');
+        });
       });
 
       // 2. Animated Stats & Counters IntersectionObserver
@@ -1308,38 +1488,52 @@ export function renderLanding(onNavigate) {
 
       if (statsSection) statsObserver.observe(statsSection);
 
-      // 3. Scroll-linked SVG Path filling for pipeline
-      const activePath = appContainer.querySelector('#pipeline-active-path');
-      let pathLength = 0;
-      if (activePath) {
-        pathLength = activePath.getTotalLength();
-        activePath.style.strokeDasharray = `${pathLength}`;
-        activePath.style.strokeDashoffset = `${pathLength}`;
-      }
-
+            // 3. Scroll-linked pipeline stage morphing and progress
       function updatePipelinePath() {
         const section = appContainer.querySelector('#pipeline-section');
-        if (!section || !activePath) return;
+        if (!section) return;
 
-        const rect = section.getBoundingClientRect();
+        const steps = appContainer.querySelectorAll('.scroll-step');
+        const stages = appContainer.querySelectorAll('.sandbox-stage');
         const windowHeight = window.innerHeight;
-        
-        // Calculate scroll ratio
-        const start = rect.top - windowHeight * 0.4;
-        const totalHeight = rect.height;
-        const scrollRatio = Math.max(0, Math.min(1, -start / (totalHeight - windowHeight * 0.5)));
 
-        activePath.style.strokeDashoffset = `${pathLength * (1 - scrollRatio)}`;
-
-        // Highlight pipeline markers
-        const steps = appContainer.querySelectorAll('.pipeline-step');
+        let activeIdx = 0;
         steps.forEach((step, idx) => {
           const stepRect = step.getBoundingClientRect();
-          if (stepRect.top < windowHeight * 0.6) {
+          if (stepRect.top < windowHeight * 0.55) {
+            activeIdx = idx;
+          }
+        });
+
+        steps.forEach((step, idx) => {
+          const stage = stages[idx];
+          if (idx === activeIdx) {
             step.classList.add('active');
+            if (stage) {
+              stage.classList.add('visible');
+              if (idx === 0) runStep1Animation(stage);
+              if (idx === 1) runStep2Animation(stage);
+              if (idx === 2) runStep3Animation(stage);
+            }
           } else {
             step.classList.remove('active');
+            if (stage) {
+              stage.classList.remove('visible');
+              if (idx === 0) resetStep1Animation(stage);
+              if (idx === 1) resetStep2Animation(stage);
+              if (idx === 2) resetStep3Animation(stage);
+            }
           }
+        });
+
+        // Compute --scroll-progress for each indicator bar
+        steps.forEach((step, idx) => {
+          const bar = step.querySelector('.indicator-bar');
+          if (!bar) return;
+          const rect = step.getBoundingClientRect();
+          const startTrigger = windowHeight * 0.55;
+          const progress = Math.max(0, Math.min(1, (startTrigger - rect.top) / rect.height));
+          bar.style.setProperty('--scroll-progress', `${progress * 100}%`);
         });
       }
 

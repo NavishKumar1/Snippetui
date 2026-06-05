@@ -4,6 +4,10 @@
 import './style.css';
 import { renderLanding } from './landing.js';
 import { renderLibrary } from './library.js';
+import { renderExtensionShowcase } from './extension.js';
+import { renderPrivacy } from './privacy.js';
+import { renderTerms } from './terms.js';
+import { render404 } from './error404.js';
 import Lenis from 'lenis';
 
 // Elements Cache
@@ -20,11 +24,20 @@ let currentView = null; // 'landing' or 'library'
 let currentPage = null; // Store active page instance with destroy hooks
 let globalLenis = null;  // Store global Lenis scroll controller
 
+function closeMobileMenu() {
+  mobileToggle.classList.remove('active');
+  navMenu.classList.remove('active');
+  const bars = mobileToggle.querySelectorAll('.bar');
+  bars.forEach(bar => {
+    bar.style.transform = 'none';
+    bar.style.opacity = '1';
+  });
+}
+
 // 1. Core Routing Manager
 function navigate(target) {
   // Clear any existing active mobile menu states
-  mobileToggle.classList.remove('active');
-  navMenu.classList.remove('active');
+  closeMobileMenu();
 
   // Prevent redundant renders
   if (currentView === target) return;
@@ -69,6 +82,50 @@ function navigate(target) {
     const category = parts[1]?.split('=')[1] || 'all';
     page = renderLibrary(navigate, category);
     window.location.hash = target;
+  } else if (target === 'extension') {
+    navbar.style.display = 'none';
+    appContainer.classList.remove('with-nav');
+    appContainer.classList.add('no-nav');
+    document.body.classList.remove('library-page-active');
+
+    // Resume global Lenis scroll tracking
+    globalLenis.start();
+
+    page = renderExtensionShowcase(navigate);
+    window.location.hash = 'extension';
+  } else if (target === 'privacy') {
+    navbar.style.display = 'block';
+    appContainer.classList.remove('no-nav');
+    appContainer.classList.add('with-nav');
+    document.body.classList.remove('library-page-active');
+
+    // Resume global Lenis scroll tracking
+    globalLenis.start();
+
+    page = renderPrivacy(navigate);
+    window.location.hash = 'privacy';
+  } else if (target === 'terms') {
+    navbar.style.display = 'block';
+    appContainer.classList.remove('no-nav');
+    appContainer.classList.add('with-nav');
+    document.body.classList.remove('library-page-active');
+
+    // Resume global Lenis scroll tracking
+    globalLenis.start();
+
+    page = renderTerms(navigate);
+    window.location.hash = 'terms';
+  } else if (target === '404') {
+    navbar.style.display = 'block';
+    appContainer.classList.remove('no-nav');
+    appContainer.classList.add('with-nav');
+    document.body.classList.remove('library-page-active');
+
+    // Resume global Lenis scroll tracking
+    globalLenis.start();
+
+    page = render404(navigate);
+    window.location.hash = '404';
   } else {
     navbar.style.display = 'block';
     appContainer.classList.remove('no-nav');
@@ -101,13 +158,54 @@ function navigate(target) {
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
-// 2. Reactive Scroll sizing capsule Navbar Animation
+// 2. Reactive Scroll sizing capsule Navbar Animation & Scroll Spy
+function updateNavbarActiveLink() {
+  if (currentView !== 'landing') return;
+
+  const sections = [
+    { id: 'landing', link: document.querySelector('.nav-link[data-target="landing"]') },
+    { id: 'pipeline-section', link: document.querySelector('a[href="#pipeline-section"]') },
+    { id: 'categories-scroll-track', link: document.querySelector('a[href="#categories-scroll-track"]') },
+    { id: 'extension-section', link: document.querySelector('a[href="#extension-section"]') },
+    { id: 'faq-section', link: document.querySelector('a[href="#faq-section"]') }
+  ];
+
+  let activeSectionId = 'landing';
+
+  sections.forEach(sec => {
+    if (!sec.link) return;
+    let element;
+    if (sec.id === 'landing') {
+      element = document.querySelector('.hero-section');
+    } else {
+      element = document.getElementById(sec.id);
+    }
+    
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      if (rect.top <= window.innerHeight * 0.45) {
+        activeSectionId = sec.id;
+      }
+    }
+  });
+
+  sections.forEach(sec => {
+    if (!sec.link) return;
+    if (sec.id === activeSectionId) {
+      sec.link.classList.add('active');
+    } else {
+      sec.link.classList.remove('active');
+    }
+  });
+}
+
 window.addEventListener('scroll', () => {
   if (window.scrollY > 50) {
     navbar.classList.add('scrolled');
   } else {
     navbar.classList.remove('scrolled');
   }
+  updateNavbarActiveLink();
 });
 
 // 3. Setup Navigation Event Listeners
@@ -116,7 +214,38 @@ navLinks.forEach(link => {
     const target = link.getAttribute('data-target');
     if (target) {
       e.preventDefault();
+      closeMobileMenu();
       navigate(target);
+    }
+  });
+});
+
+// Intercept scroll anchors with Lenis smooth scroll
+document.querySelectorAll('.nav-anchor').forEach(anchor => {
+  anchor.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeMobileMenu();
+    const hash = anchor.getAttribute('href');
+    
+    if (currentView !== 'landing') {
+      navigate('landing');
+      
+      // Let the landing page render, then scroll smoothly
+      setTimeout(() => {
+        const targetElement = document.querySelector(hash);
+        if (targetElement && globalLenis) {
+          globalLenis.scrollTo(targetElement);
+        } else if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 350);
+    } else {
+      const targetElement = document.querySelector(hash);
+      if (targetElement && globalLenis) {
+        globalLenis.scrollTo(targetElement);
+      } else if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   });
 });
@@ -124,11 +253,13 @@ navLinks.forEach(link => {
 // Brand Logo & CTAs triggers
 brandLogo.addEventListener('click', (e) => {
   e.preventDefault();
+  closeMobileMenu();
   navigate('landing');
 });
 
 btnBrowseCta.addEventListener('click', (e) => {
   e.preventDefault();
+  closeMobileMenu();
   navigate('library');
 });
 
@@ -157,8 +288,18 @@ function handleHashRoute() {
     const parts = hash.substring(1).split('?');
     const category = parts[1]?.split('=')[1] || 'all';
     navigate(`library?category=${category}`);
-  } else {
+  } else if (hash === '#extension') {
+    navigate('extension');
+  } else if (hash === '#privacy') {
+    navigate('privacy');
+  } else if (hash === '#terms') {
+    navigate('terms');
+  } else if (hash === '#404') {
+    navigate('404');
+  } else if (hash === '' || hash === '#landing') {
     navigate('landing');
+  } else {
+    navigate('404');
   }
 }
 
