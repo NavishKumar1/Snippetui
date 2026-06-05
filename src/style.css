@@ -5110,6 +5110,266 @@ a {
   box-sizing: border-box;
 }
 
+/* ==========================================================================
+   Wavy Divider & Premium Light Mode Content Wrapper
+   ========================================================================== */
+.hero-wave-divider {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  z-index: 10;
+}
+
+.hero-wave-divider svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 60px;
+}
+
+.hero-wave-divider .wave-path {
+  fill: #f8fafc;
+}
+
+/* Light Theme Container below Hero */
+.landing-body-light {
+  background: #f8fafc;
+  color: #0f172a;
+  width: 100%;
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Custom Overrides for Light Mode Sections */
+.landing-body-light .section-title {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #0f172a;
+}
+
+.landing-body-light .section-subtitle {
+  color: #475569;
+}
+
+.landing-body-light .tech-badge {
+  background: rgba(0, 242, 254, 0.08);
+  color: #0284c7;
+  border-color: rgba(0, 242, 254, 0.25);
+}
+
+/* Stats Cards in Light Mode */
+.landing-body-light .stat-card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.01);
+}
+
+.landing-body-light .stat-card:hover {
+  background: #ffffff;
+  border-color: rgba(0, 242, 254, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(0, 242, 254, 0.08);
+  transform: translateY(-5px);
+}
+
+.landing-body-light .stat-number {
+  color: #0f172a;
+}
+
+.landing-body-light .stat-label {
+  color: #64748b;
+}
+
+.landing-body-light .progress-ring-bg {
+  stroke: rgba(15, 23, 42, 0.04);
+}
+
+/* How It Works Pipeline in Light Mode */
+.landing-body-light .pipeline-path-bg {
+  stroke: rgba(15, 23, 42, 0.06);
+}
+
+.landing-body-light .pipeline-step .step-card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03);
+}
+
+.landing-body-light .pipeline-step.active .step-card {
+  border-color: rgba(0, 242, 254, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(0, 242, 254, 0.08);
+}
+
+.landing-body-light .pipeline-step .step-card h3 {
+  color: #0f172a;
+}
+
+.landing-body-light .pipeline-step .step-card p {
+  color: #64748b;
+}
+
+.landing-body-light .pipeline-step .step-marker {
+  background: #f1f5f9;
+  border-color: rgba(15, 23, 42, 0.08);
+  color: #64748b;
+}
+
+.landing-body-light .pipeline-step.active .step-marker {
+  background: var(--primary-gradient);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+/* Category Cards in Light Mode */
+.landing-body-light .category-card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03);
+  color: #0f172a;
+}
+
+.landing-body-light .category-card:hover {
+  border-color: rgba(0, 242, 254, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(0, 242, 254, 0.08);
+  background: #ffffff;
+}
+
+.landing-body-light .category-card h3 {
+  color: #0f172a;
+}
+
+.landing-body-light .category-card p {
+  color: #64748b;
+}
+
+.landing-body-light .category-card-icon {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.landing-body-light .category-card:hover .category-card-icon {
+  background: var(--primary-gradient);
+  color: #ffffff;
+}
+
+.landing-body-light .card-arrow {
+  color: #64748b;
+}
+
+.landing-body-light .category-card:hover .card-arrow {
+  color: #00f2fe;
+}
+
+/* Elite Cards in Light Mode */
+.landing-body-light .elite-card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03);
+  color: #0f172a;
+}
+
+.landing-body-light .elite-card:hover {
+  border-color: rgba(0, 242, 254, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(0, 242, 254, 0.08);
+  background: #ffffff;
+}
+
+.landing-body-light .elite-card h3 {
+  color: #0f172a;
+}
+
+.landing-body-light .elite-card p {
+  color: #64748b;
+}
+
+.landing-body-light .elite-card-icon {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.landing-body-light .elite-card:hover .elite-card-icon {
+  background: var(--primary-gradient);
+  color: #ffffff;
+}
+
+/* Live Customizer Playground in Light Mode */
+.landing-body-light .landing-playground-section {
+  background: #f8fafc;
+}
+
+.landing-body-light .playground-panel {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.05);
+}
+
+.landing-body-light .playground-controls {
+  border-right: 1px solid rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+}
+
+.landing-body-light .playground-controls h3 {
+  color: #0f172a;
+}
+
+.landing-body-light .control-group label {
+  color: #475569;
+}
+
+.landing-body-light .control-group label span {
+  color: #0f172a;
+}
+
+.landing-body-light .btn-theme {
+  background: #f1f5f9;
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  color: #475569;
+}
+
+.landing-body-light .btn-theme:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.landing-body-light .btn-theme.active {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.landing-body-light .theme-selector-group label {
+  color: #475569;
+}
+
+/* Footer in Light Mode */
+.landing-body-light .global-footer {
+  background: #f1f5f9;
+  border-top: 1px solid rgba(15, 23, 42, 0.05);
+  color: #475569;
+  width: 100%;
+}
+
+.landing-body-light .footer-logo-img {
+  filter: brightness(0.2) contrast(1.5);
+}
+
+.landing-body-light .global-footer h4 {
+  color: #0f172a;
+}
+
+.landing-body-light .global-footer a {
+  color: #64748b;
+}
+
+.landing-body-light .global-footer a:hover {
+  color: #00f2fe;
+}
+
 
 
 

@@ -383,10 +383,18 @@ export function renderLanding(onNavigate) {
             </div>
           </div>
         </div>
+        
+        <!-- Curved Wave Divider -->
+        <div class="hero-wave-divider">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" preserveAspectRatio="none">
+            <path d="M0,120 C180,120 300,40 450,40 C650,40 850,120 1050,120 C1200,120 1350,70 1440,70 L1440,120 L0,120 Z" class="wave-path"></path>
+          </svg>
+        </div>
       </section>
 
-      <!-- Section 1: Animated Statistics & Counter Dashboard -->
-      <section class="landing-stats-section" id="stats-section">
+      <div class="landing-body-light">
+        <!-- Section 1: Animated Statistics & Counter Dashboard -->
+        <section class="landing-stats-section" id="stats-section">
         <div class="stats-grid">
           
           <div class="stat-card" data-target="350">
@@ -715,6 +723,7 @@ export function renderLanding(onNavigate) {
           </div>
         </div>
       </footer>
+      </div>
     </div>
   `;
 
