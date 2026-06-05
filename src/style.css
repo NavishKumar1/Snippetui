@@ -5190,184 +5190,33 @@ a {
   stroke: rgba(15, 23, 42, 0.04);
 }
 
-/* How It Works Pipeline in Light Mode */
-.landing-body-light .pipeline-path-bg {
-  stroke: rgba(15, 23, 42, 0.06);
+/* Stats Section Padding Override inside Light Container */
+.landing-body-light .landing-stats-section {
+  padding-bottom: 120px; /* Room for the bottom wave divider */
+  padding-top: 60px;
 }
 
-.landing-body-light .pipeline-step .step-card {
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03);
-}
-
-.landing-body-light .pipeline-step.active .step-card {
-  border-color: rgba(0, 242, 254, 0.4);
-  box-shadow: 0 20px 40px -10px rgba(0, 242, 254, 0.08);
-}
-
-.landing-body-light .pipeline-step .step-card h3 {
-  color: #0f172a;
-}
-
-.landing-body-light .pipeline-step .step-card p {
-  color: #64748b;
-}
-
-.landing-body-light .pipeline-step .step-marker {
-  background: #f1f5f9;
-  border-color: rgba(15, 23, 42, 0.08);
-  color: #64748b;
-}
-
-.landing-body-light .pipeline-step.active .step-marker {
-  background: var(--primary-gradient);
-  color: #ffffff;
-  border-color: transparent;
-}
-
-/* Category Cards in Light Mode */
-.landing-body-light .category-card {
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03);
-  color: #0f172a;
-}
-
-.landing-body-light .category-card:hover {
-  border-color: rgba(0, 242, 254, 0.4);
-  box-shadow: 0 20px 40px -10px rgba(0, 242, 254, 0.08);
-  background: #ffffff;
-}
-
-.landing-body-light .category-card h3 {
-  color: #0f172a;
-}
-
-.landing-body-light .category-card p {
-  color: #64748b;
-}
-
-.landing-body-light .category-card-icon {
-  background: #f1f5f9;
-  color: #0f172a;
-}
-
-.landing-body-light .category-card:hover .category-card-icon {
-  background: var(--primary-gradient);
-  color: #ffffff;
-}
-
-.landing-body-light .card-arrow {
-  color: #64748b;
-}
-
-.landing-body-light .category-card:hover .card-arrow {
-  color: #00f2fe;
-}
-
-/* Elite Cards in Light Mode */
-.landing-body-light .elite-card {
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03);
-  color: #0f172a;
-}
-
-.landing-body-light .elite-card:hover {
-  border-color: rgba(0, 242, 254, 0.4);
-  box-shadow: 0 20px 40px -10px rgba(0, 242, 254, 0.08);
-  background: #ffffff;
-}
-
-.landing-body-light .elite-card h3 {
-  color: #0f172a;
-}
-
-.landing-body-light .elite-card p {
-  color: #64748b;
-}
-
-.landing-body-light .elite-card-icon {
-  background: #f1f5f9;
-  color: #0f172a;
-}
-
-.landing-body-light .elite-card:hover .elite-card-icon {
-  background: var(--primary-gradient);
-  color: #ffffff;
-}
-
-/* Live Customizer Playground in Light Mode */
-.landing-body-light .landing-playground-section {
-  background: #f8fafc;
-}
-
-.landing-body-light .playground-panel {
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.05);
-}
-
-.landing-body-light .playground-controls {
-  border-right: 1px solid rgba(15, 23, 42, 0.06);
-  color: #0f172a;
-}
-
-.landing-body-light .playground-controls h3 {
-  color: #0f172a;
-}
-
-.landing-body-light .control-group label {
-  color: #475569;
-}
-
-.landing-body-light .control-group label span {
-  color: #0f172a;
-}
-
-.landing-body-light .btn-theme {
-  background: #f1f5f9;
-  border: 1px solid rgba(15, 23, 42, 0.05);
-  color: #475569;
-}
-
-.landing-body-light .btn-theme:hover {
-  background: #e2e8f0;
-  color: #0f172a;
-}
-
-.landing-body-light .btn-theme.active {
-  background: #0f172a;
-  color: #ffffff;
-}
-
-.landing-body-light .theme-selector-group label {
-  color: #475569;
-}
-
-/* Footer in Light Mode */
-.landing-body-light .global-footer {
-  background: #f1f5f9;
-  border-top: 1px solid rgba(15, 23, 42, 0.05);
-  color: #475569;
+/* Bottom Wave Divider (Stats to Pipeline transition) */
+.stats-wave-divider {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
   width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  z-index: 10;
 }
 
-.landing-body-light .footer-logo-img {
-  filter: brightness(0.2) contrast(1.5);
+.stats-wave-divider svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 60px;
+  transform: scaleX(-1); /* Flips horizontally for an alternating wave flow */
 }
 
-.landing-body-light .global-footer h4 {
-  color: #0f172a;
-}
-
-.landing-body-light .global-footer a {
-  color: #64748b;
-}
-
-.landing-body-light .global-footer a:hover {
-  color: #00f2fe;
+.stats-wave-divider .wave-path-dark {
+  fill: #08080c; /* Merges seamlessly with the dark pipeline background below */
 }
 
 
