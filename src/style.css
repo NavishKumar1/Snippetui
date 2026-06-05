@@ -6549,6 +6549,423 @@ a {
   box-shadow: inset 0 0 8px rgba(2, 132, 199, 0.05);
 }
 
+/* ==========================================================================
+   Custom Visual Transition Shelf (Light to Black Theme Divider)
+   ========================================================================== */
+.customizer-bottom-divider {
+  width: 100%;
+  background-color: #f8fafc; /* Matches light customizer background */
+  line-height: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 4;
+}
+
+.customizer-bottom-divider svg {
+  display: block;
+  width: 100%;
+  height: 120px;
+}
+
+.customizer-divider-path {
+  fill: #08080c; /* Matches dark theme background */
+  stroke: none;
+}
+
+/* ==========================================================================
+   Premium FAQ Section Styles (Black Theme)
+   ========================================================================== */
+.landing-faq-section {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 100px 24px 120px;
+  position: relative;
+  z-index: 10;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header Overrides for FAQ Section (In Black Theme) */
+.landing-faq-section .section-header {
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.landing-faq-section .section-title {
+  background: linear-gradient(180deg, #ffffff 30%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #ffffff;
+}
+
+.landing-faq-section .section-subtitle {
+  color: var(--text-secondary);
+}
+
+.landing-faq-section .tech-badge {
+  background: rgba(0, 242, 254, 0.08);
+  border-color: rgba(0, 242, 254, 0.25);
+  color: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+}
+
+/* FAQ Controls Layout (Search + Filtering Tabs) */
+.faq-controls {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  margin-bottom: 60px;
+}
+
+/* Glassmorphic FAQ Search Input Container */
+.faq-search-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  background: rgba(13, 13, 21, 0.45);
+  border: 1px solid var(--border-color);
+  border-radius: 100px;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-premium), inset 0 1px 1px rgba(255, 255, 255, 0.02);
+  transition: var(--transition-smooth);
+}
+
+.faq-search-wrapper:focus-within {
+  border-color: rgba(0, 242, 254, 0.4);
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.15), var(--shadow-premium);
+  transform: translateY(-2px);
+}
+
+.faq-search-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+  margin-left: 24px;
+  flex-shrink: 0;
+  transition: var(--transition-fast);
+}
+
+.faq-search-wrapper:focus-within .faq-search-icon {
+  color: var(--accent-cyan);
+}
+
+.faq-search-wrapper input {
+  flex-grow: 1;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  padding: 16px 20px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  outline: none;
+}
+
+.faq-search-wrapper input::placeholder {
+  color: var(--text-muted);
+}
+
+.faq-search-clear-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  margin-right: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.85);
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.faq-search-clear-btn.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.faq-search-clear-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.faq-search-clear-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Category Filter Tabs buttons group */
+.faq-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+  padding: 6px;
+  border-radius: 100px;
+  backdrop-filter: blur(10px);
+}
+
+.btn-faq-filter {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 10px 24px;
+  border-radius: 100px;
+  font-family: var(--font-heading);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-faq-filter:hover {
+  color: #ffffff;
+}
+
+.btn-faq-filter.active {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  box-shadow: inset 0 0 10px rgba(0, 242, 254, 0.03);
+}
+
+/* FAQ Accordion List Layout */
+.faq-accordion-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  perspective: 1000px;
+}
+
+/* Individual Accordion Items */
+.faq-item {
+  width: 100%;
+  background: rgba(13, 13, 21, 0.45);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  box-shadow: var(--shadow-premium);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+  will-change: transform, box-shadow;
+  position: relative;
+  opacity: 1;
+}
+
+.faq-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--primary-gradient);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.faq-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+}
+
+/* Active Open Accordion State styling */
+.faq-item.active {
+  background: rgba(17, 17, 25, 0.75);
+  border-color: rgba(0, 242, 254, 0.25);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 242, 254, 0.08);
+  transform: scale(1.01) translateY(-2px);
+}
+
+.faq-item.active::before {
+  opacity: 1;
+}
+
+/* Trigger Button styles */
+.faq-trigger {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 24px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  text-align: left;
+  outline: none;
+}
+
+.faq-question {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.4;
+  padding-right: 20px;
+  transition: var(--transition-fast);
+}
+
+.faq-item.active .faq-question {
+  color: var(--accent-cyan);
+}
+
+/* Morphing Plus/Minus Toggle Icon */
+.faq-icon-wrapper {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.faq-icon-line {
+  position: absolute;
+  background-color: var(--text-secondary);
+  border-radius: 2px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s;
+}
+
+.faq-icon-line.horizontal {
+  width: 16px;
+  height: 2px;
+}
+
+.faq-icon-line.vertical {
+  width: 2px;
+  height: 16px;
+}
+
+/* Rotation and morph logic */
+.faq-item:hover .faq-icon-line {
+  background-color: #ffffff;
+}
+
+.faq-item.active .faq-icon-line {
+  background-color: var(--accent-cyan);
+}
+
+.faq-item.active .faq-icon-line.vertical {
+  transform: rotate(90deg); /* merges with horizontal line to form a minus */
+}
+
+.faq-item.active .faq-icon-line.horizontal {
+  transform: rotate(180deg);
+}
+
+/* Smooth Grid height transitions (Prevents layout shifting) */
+.faq-answer-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.faq-item.active .faq-answer-wrapper {
+  grid-template-rows: 1fr;
+}
+
+.faq-answer-content {
+  overflow: hidden;
+}
+
+.faq-answer-content p {
+  padding: 0 30px 28px;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Hide transition classes for Search and Filter controls */
+.faq-item.faq-hide {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* FAQ No Results mock styling */
+.faq-no-results {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.faq-no-results.visible {
+  display: flex;
+  opacity: 1;
+}
+
+.no-results-icon {
+  font-size: 36px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+  animation: bounceSearchIcon 2s infinite alternate ease-in-out;
+}
+
+@keyframes bounceSearchIcon {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
+}
+
+.faq-no-results h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.faq-no-results p {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 320px;
+}
+
+/* FAQ Responsive Media Queries */
+@media (max-width: 768px) {
+  .landing-faq-section {
+    padding: 80px 16px 100px;
+  }
+  .faq-search-wrapper input {
+    font-size: 14px;
+    padding: 12px 16px;
+  }
+  .faq-question {
+    font-size: 16px;
+  }
+  .btn-faq-filter {
+    padding: 8px 18px;
+    font-size: 12.5px;
+  }
+}
+
 
 
 

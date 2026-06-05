@@ -937,7 +937,219 @@ export function renderLanding(onNavigate) {
           </div>
         </div>
       </section>
-      
+      </div> <!-- Close the second landing-body-light container -->
+
+      <!-- Customizer bottom curved wave shelf transition to FAQ dark section -->
+      <div class="customizer-bottom-divider">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path d="M 0,90 L 180,90 C 280,90 320,70 420,60 L 1020,30 C 1120,20 1160,20 1260,20 L 1440,20 L 1440,120 L 0,120 Z" class="customizer-divider-path"></path>
+        </svg>
+      </div>
+
+      <!-- Section 5: Premium Interactive FAQ Section -->
+      <section class="landing-faq-section" id="faq-section">
+        <div class="section-header">
+          <div class="tech-badge">
+            <span>Frequently Asked Questions</span>
+          </div>
+          <h2 class="section-title">Got Questions? We've Got Answers</h2>
+          <p class="section-subtitle">Everything you need to know about SnippetUI's premium components, licensing, and integration workflows.</p>
+        </div>
+
+        <!-- FAQ Search and Tabs Controls -->
+        <div class="faq-controls">
+          <!-- Glassmorphism Search Panel -->
+          <div class="faq-search-wrapper">
+            <svg class="faq-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="faq-search-input" placeholder="Search questions, keywords..." aria-label="Search FAQs" />
+            <button id="btn-faq-search-clear" aria-label="Clear Search" class="faq-search-clear-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+
+          <!-- FAQ Category Filtering tabs -->
+          <div class="faq-tabs" id="faq-category-tabs">
+            <button class="btn-faq-filter active" data-category="all">All FAQs</button>
+            <button class="btn-faq-filter" data-category="general">General</button>
+            <button class="btn-faq-filter" data-category="integration">Integration</button>
+            <button class="btn-faq-filter" data-category="extension">VS Code Extension</button>
+            <button class="btn-faq-filter" data-category="licensing">Licensing</button>
+          </div>
+        </div>
+
+        <!-- FAQ Accordion List -->
+        <div class="faq-accordion-list" id="faq-accordion">
+          
+          <!-- Item 1: General -->
+          <div class="faq-item" data-categories="general">
+            <button class="faq-trigger" aria-expanded="false">
+              <span class="faq-question">What is SnippetUI and how does it work?</span>
+              <span class="faq-icon-wrapper">
+                <span class="faq-icon-line horizontal"></span>
+                <span class="faq-icon-line vertical"></span>
+              </span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>SnippetUI is a premium repository of beautifully crafted, copy-paste CSS and HTML design components. Rather than shipping heavy Javascript framework dependencies, we provide clean, modular, and optimized styles that utilize CSS custom properties (variables) for immediate visual integration.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2: Integration -->
+          <div class="faq-item" data-categories="integration">
+            <button class="faq-trigger" aria-expanded="false">
+              <span class="faq-question">Can I use SnippetUI in frameworks like React, Vue, Svelte, or Next.js?</span>
+              <span class="faq-icon-wrapper">
+                <span class="faq-icon-line horizontal"></span>
+                <span class="faq-icon-line vertical"></span>
+              </span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>Yes, absolutely. Because our components are built using native HTML5 markup structure and vanilla CSS variables, they are 100% framework-agnostic. You can copy the code snippet directly and drop it into React JSX, Vue SFC templates, or Svelte files without any translation needed. It compiles instantly in under 1ms.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 3: Extension (Under Development Info) -->
+          <div class="faq-item" data-categories="extension">
+            <button class="faq-trigger" aria-expanded="false">
+              <span class="faq-question">Where can I download the SnippetUI VS Code Extension?</span>
+              <span class="faq-icon-wrapper">
+                <span class="faq-icon-line horizontal"></span>
+                <span class="faq-icon-line vertical"></span>
+              </span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>The official SnippetUI VS Code Extension is currently under active development and has not been published to the VS Code Marketplace yet. We are working hard to build a secure, zero-lag code injection pipeline. You can review the beta build instructions on our GitHub repository or join our community channels to get notified the second it goes live.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 4: Licensing -->
+          <div class="faq-item" data-categories="licensing">
+            <button class="faq-trigger" aria-expanded="false">
+              <span class="faq-question">Are these components free to use for commercial projects?</span>
+              <span class="faq-icon-wrapper">
+                <span class="faq-icon-line horizontal"></span>
+                <span class="faq-icon-line vertical"></span>
+              </span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>Yes, all components available on SnippetUI are fully open-source and free to use for both personal and commercial web projects under the MIT License. You are free to modify styles, customize color palettes, and build applications without attribution, though credit to SnippetUI is always appreciated.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 5: Integration -->
+          <div class="faq-item" data-categories="integration">
+            <button class="faq-trigger" aria-expanded="false">
+              <span class="faq-question">Do these snippets affect my page speed or performance metrics?</span>
+              <span class="faq-icon-wrapper">
+                <span class="faq-icon-line horizontal"></span>
+                <span class="faq-icon-line vertical"></span>
+              </span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>Not at all. SnippetUI components are optimized for maximum page load efficiency. By omitting bloated external script packages, standard JS libraries, and large asset structures, we rely entirely on hardware-accelerated CSS filters and transition layouts. This guarantees smooth, lag-free renders on both desktop and mobile viewports.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 6: General -->
+          <div class="faq-item" data-categories="general">
+            <button class="faq-trigger" aria-expanded="false">
+              <span class="faq-question">How customizable are the components? Can I adjust variables easily?</span>
+              <span class="faq-icon-wrapper">
+                <span class="faq-icon-line horizontal"></span>
+                <span class="faq-icon-line vertical"></span>
+              </span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>Every single snippet exposes CSS custom variables at the root selector level (like <code>--card-glow</code>, <code>--card-blur</code>, <code>--card-border-radius</code>). You can customize the color profiles, corner radiuses, and glow intensities instantly by changing these single declarations in your stylesheet, or dynamically hook them to a theme toggle manager.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 7: Licensing & General -->
+          <div class="faq-item" data-categories="licensing general">
+            <button class="faq-trigger" aria-expanded="false">
+              <span class="faq-question">Is SnippetUI completely free, or is there a premium tier?</span>
+              <span class="faq-icon-wrapper">
+                <span class="faq-icon-line horizontal"></span>
+                <span class="faq-icon-line vertical"></span>
+              </span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>SnippetUI is 100% free and open-source under the MIT license. Every component, text animation, dynamic button, and loader in our library is accessible to everyone. There are no hidden subscription tiers, credit-packs, or premium paywalls—feel free to copy, tweak, and deploy anything you see.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 8: Integration -->
+          <div class="faq-item" data-categories="integration">
+            <button class="faq-trigger" aria-expanded="false">
+              <span class="faq-question">How do I update the style of a copied component without affecting others?</span>
+              <span class="faq-icon-wrapper">
+                <span class="faq-icon-line horizontal"></span>
+                <span class="faq-icon-line vertical"></span>
+              </span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>Each SnippetUI component is fully self-contained. The styling properties are bound to unique CSS class names and local variables (like <code>--card-glow</code>). This means editing the parameters of one component will not bleed into or break other instances of the same component on your page, maintaining strict visual isolation.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 9: General -->
+          <div class="faq-item" data-categories="general">
+            <button class="faq-trigger" aria-expanded="false">
+              <span class="faq-question">Can I submit or contribute my own custom snippets to SnippetUI?</span>
+              <span class="faq-icon-wrapper">
+                <span class="faq-icon-line horizontal"></span>
+                <span class="faq-icon-line vertical"></span>
+              </span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>Yes, we absolutely welcome community contributions! SnippetUI is built by the community, for the community. If you have designed a beautiful glassmorphic loader, magnetic button, or hover effect, you can open a Pull Request on our GitHub repository. Once reviewed for quality and style alignment, we'll feature it on the landing page.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 10: Extension -->
+          <div class="faq-item" data-categories="extension">
+            <button class="faq-trigger" aria-expanded="false">
+              <span class="faq-question">Will the VS Code Extension support framework file auto-detection?</span>
+              <span class="faq-icon-wrapper">
+                <span class="faq-icon-line horizontal"></span>
+                <span class="faq-icon-line vertical"></span>
+              </span>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer-content">
+                <p>Yes. When released, the VS Code Extension will automatically detect your active file type (such as <code>.jsx</code>, <code>.vue</code>, <code>.svelte</code>, or <code>.html</code>) and inject the appropriate syntax format. It will also expose auto-complete IntelliSense triggers for SnippetUI utility variables directly inside your stylesheets.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- No Results Mock Element -->
+          <div class="faq-no-results" id="faq-no-results-msg">
+            <div class="no-results-icon">🔍</div>
+            <h4>No matching questions found</h4>
+            <p>Try searching for different terms, or check other categories.</p>
+          </div>
+
+        </div>
+      </section>
+
       <!-- Footer Section -->
       <footer class="global-footer">
         <div class="footer-container">
@@ -969,7 +1181,6 @@ export function renderLanding(onNavigate) {
           </div>
         </div>
       </footer>
-      </div>
     </div>
   `;
 
@@ -1404,6 +1615,104 @@ export function renderLanding(onNavigate) {
 
       // Init on load
       updatePlayground();
+
+      // --- FAQ Interactive Accordion & Filter/Search Logic ---
+      const faqItems = appContainer.querySelectorAll('.faq-item');
+      const faqSearchInput = appContainer.querySelector('#faq-search-input');
+      const btnFaqSearchClear = appContainer.querySelector('#btn-faq-search-clear');
+      const faqFilterButtons = appContainer.querySelectorAll('.btn-faq-filter');
+      const faqNoResults = appContainer.querySelector('#faq-no-results-msg');
+
+      let faqSearchQuery = '';
+      let faqActiveCategory = 'all';
+
+      // 1. Accordion Toggle Logic (using height transition for high performance)
+      faqItems.forEach(item => {
+        const trigger = item.querySelector('.faq-trigger');
+        trigger?.addEventListener('click', () => {
+          const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+          
+          // Collapse all other active items
+          faqItems.forEach(otherItem => {
+            if (otherItem !== item && otherItem.classList.contains('active')) {
+              otherItem.classList.remove('active');
+              otherItem.querySelector('.faq-trigger')?.setAttribute('aria-expanded', 'false');
+            }
+          });
+
+          // Toggle current
+          if (isExpanded) {
+            item.classList.remove('active');
+            trigger.setAttribute('aria-expanded', 'false');
+          } else {
+            item.classList.add('active');
+            trigger.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+
+      // 2. Filter Evaluation
+      function filterFaqItems() {
+        let visibleCount = 0;
+        const query = faqSearchQuery.toLowerCase().trim();
+
+        faqItems.forEach(item => {
+          const categoriesAttr = item.getAttribute('data-categories') || '';
+          const categories = categoriesAttr.split(' ');
+          const questionText = item.querySelector('.faq-question')?.textContent.toLowerCase() || '';
+          const answerText = item.querySelector('.faq-answer-content p')?.textContent.toLowerCase() || '';
+
+          const matchesCategory = faqActiveCategory === 'all' || categories.includes(faqActiveCategory);
+          const matchesSearch = query === '' || questionText.includes(query) || answerText.includes(query);
+
+          if (matchesCategory && matchesSearch) {
+            item.classList.remove('faq-hide');
+            visibleCount++;
+          } else {
+            item.classList.add('faq-hide');
+            // Ensure collapsed when hidden
+            item.classList.remove('active');
+            item.querySelector('.faq-trigger')?.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        if (faqNoResults) {
+          if (visibleCount === 0) {
+            faqNoResults.classList.add('visible');
+          } else {
+            faqNoResults.classList.remove('visible');
+          }
+        }
+      }
+
+      // 3. Search events
+      faqSearchInput?.addEventListener('input', (e) => {
+        faqSearchQuery = e.target.value;
+        if (faqSearchQuery.length > 0) {
+          btnFaqSearchClear?.classList.add('visible');
+        } else {
+          btnFaqSearchClear?.classList.remove('visible');
+        }
+        filterFaqItems();
+      });
+
+      btnFaqSearchClear?.addEventListener('click', () => {
+        if (faqSearchInput) faqSearchInput.value = '';
+        faqSearchQuery = '';
+        btnFaqSearchClear.classList.remove('visible');
+        filterFaqItems();
+        faqSearchInput?.focus();
+      });
+
+      // 4. Category Filter tabs click
+      faqFilterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          faqFilterButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          faqActiveCategory = btn.getAttribute('data-category') || 'all';
+          filterFaqItems();
+        });
+      });
     },
     destroy: () => {
       if (window.currentLandingScrollListener) {
