@@ -1228,6 +1228,11 @@ export function renderLanding(onNavigate) {
           </div>
         </div>
       </footer>
+
+      <!-- Footer Huge Signature Branding -->
+      <div class="footer-signature-wrap">
+        <h1 class="footer-signature-text">SnippetUI</h1>
+      </div>
     </div>
   `;
 

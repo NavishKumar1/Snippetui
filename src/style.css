@@ -7209,6 +7209,56 @@ a {
   }
 }
 
+/* ==========================================================================
+   Footer Huge Signature Branding (SnippetUI)
+   ========================================================================== */
+.footer-signature-wrap {
+  width: 100%;
+  background-color: #08080c; /* Matches dark theme background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 0 100px;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+}
 
+.footer-signature-text {
+  font-family: var(--font-heading);
+  font-size: clamp(80px, 15.5vw, 240px);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height: 0.8;
+  margin: 0;
+  text-align: center;
+  user-select: none;
+  pointer-events: none;
+  
+  /* Modern premium outline styling */
+  color: transparent;
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.12) 60%, rgba(0, 242, 254, 0.22) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
+  
+  /* Ambient glow effect */
+  filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.04));
+  position: relative;
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-
+/* Ambient glow reflection directly beneath the text */
+.footer-signature-wrap::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 45%;
+  height: 140px;
+  background: radial-gradient(ellipse at bottom, rgba(0, 242, 254, 0.08) 0%, rgba(138, 43, 226, 0.04) 50%, transparent 70%);
+  z-index: 1;
+  pointer-events: none;
+}
