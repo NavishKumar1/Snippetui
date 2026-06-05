@@ -246,7 +246,7 @@ ${comp.html}
         <aside class="library-sidebar">
           <div class="search-wrapper">
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" class="search-input" id="search-snippets" placeholder="Search components..." value="${searchQuery}" />
+            <input type="text" class="search-input" id="search-snippets" placeholder="Search components... (${shortcutLabel})" value="${searchQuery}" />
           </div>
           
           <div class="sidebar-section-wrapper">
@@ -571,6 +571,7 @@ ${comp.html}
   let activeModalCleanup = null;
   let sidebarLenis = null;
   let mainLenis = null;
+  let searchShortcutListener = null;
 
   // Helper to execute component JS scoped to its container and return cleanup function
   function executeComponentJS(component, elementContainer) {
@@ -1088,12 +1089,26 @@ ${comp.html}
 
 
 
-      // 2. Search Input Listener
+      // 2. Search Input Listener & Keyboard Shortcut
       const searchInp = container.querySelector('#search-snippets');
       searchInp?.addEventListener('input', (e) => {
         searchQuery = e.target.value;
         updateUI(container);
       });
+
+      // Global search shortcut listener
+      searchShortcutListener = (e) => {
+        const isK = e.key === 'k' || e.key === 'K';
+        const isModifier = e.ctrlKey || e.metaKey;
+        if (isK && isModifier) {
+          e.preventDefault();
+          if (searchInp) {
+            searchInp.focus();
+            searchInp.select();
+          }
+        }
+      };
+      window.addEventListener('keydown', searchShortcutListener);
 
       // 3. Category Buttons Filter listeners
       const catList = container.querySelector('#sidebar-categories');
@@ -1462,6 +1477,10 @@ ${comp.html}
       if (activeModalCleanup) {
         activeModalCleanup();
         activeModalCleanup = null;
+      }
+      if (searchShortcutListener) {
+        window.removeEventListener('keydown', searchShortcutListener);
+        searchShortcutListener = null;
       }
     }
   };
