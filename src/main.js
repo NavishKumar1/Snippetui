@@ -69,6 +69,7 @@ function navigate(target) {
 
   // Render view & Navbar visibility coordination
   let page;
+  let title = 'SnippetUI | Premium CSS & HTML Components Library';
   if (target.startsWith('library')) {
     navbar.style.display = 'none';
     appContainer.classList.remove('with-nav');
@@ -82,6 +83,7 @@ function navigate(target) {
     const category = parts[1]?.split('=')[1] || 'all';
     page = renderLibrary(navigate, category);
     window.location.hash = target;
+    title = 'Components Library | SnippetUI';
   } else if (target === 'extension') {
     navbar.style.display = 'none';
     appContainer.classList.remove('with-nav');
@@ -93,6 +95,7 @@ function navigate(target) {
 
     page = renderExtensionShowcase(navigate);
     window.location.hash = 'extension';
+    title = 'VS Code Extension Integration | SnippetUI';
   } else if (target === 'privacy') {
     navbar.style.display = 'block';
     appContainer.classList.remove('no-nav');
@@ -104,6 +107,7 @@ function navigate(target) {
 
     page = renderPrivacy(navigate);
     window.location.hash = 'privacy';
+    title = 'Privacy Policy | SnippetUI';
   } else if (target === 'terms') {
     navbar.style.display = 'block';
     appContainer.classList.remove('no-nav');
@@ -115,6 +119,7 @@ function navigate(target) {
 
     page = renderTerms(navigate);
     window.location.hash = 'terms';
+    title = 'Terms of Service | SnippetUI';
   } else if (target === '404') {
     navbar.style.display = 'block';
     appContainer.classList.remove('no-nav');
@@ -126,6 +131,7 @@ function navigate(target) {
 
     page = render404(navigate);
     window.location.hash = '404';
+    title = 'Page Not Found | SnippetUI';
   } else {
     navbar.style.display = 'block';
     appContainer.classList.remove('no-nav');
@@ -137,8 +143,10 @@ function navigate(target) {
 
     page = renderLanding(navigate);
     window.location.hash = 'landing';
+    title = 'SnippetUI | Premium CSS & HTML Components Library';
   }
   currentPage = page;
+  document.title = title;
 
   // Smooth fade transition between pages
   appContainer.style.opacity = 0;
