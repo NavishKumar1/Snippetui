@@ -6975,6 +6975,197 @@ a {
   }
 }
 
+/* ==========================================================================
+   Premium Page-Peel CTA Banner (White Theme)
+   ========================================================================== */
+.landing-banner-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+.peel-banner-container {
+  width: 100%;
+  height: 290px;
+  background: linear-gradient(135deg, #e2eefc 0%, #cbdcf5 100%);
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 15px 35px -15px rgba(15, 23, 42, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.7);
+  box-sizing: border-box;
+}
+
+.peel-banner-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  z-index: 4;
+}
+
+.peel-banner-title {
+  font-family: var(--font-heading);
+  font-size: 38px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.25;
+  margin: 0;
+  letter-spacing: -0.03em;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.btn-peel-cta {
+  background: #1e293b;
+  color: #ffffff;
+  border: none;
+  border-radius: 100px;
+  padding: 14px 38px;
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 25px -5px rgba(30, 41, 59, 0.35);
+  transition: var(--transition-smooth);
+}
+
+.btn-peel-cta:hover {
+  background: #0f172a;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 30px -5px rgba(30, 41, 59, 0.45);
+}
+
+/* Floating Avatars and Speech Bubbles */
+.floating-avatar-wrap {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 3;
+}
+
+.left-wrap {
+  left: 60px;
+  bottom: 40px;
+  animation: float-avatar-left 4.5s ease-in-out infinite alternate;
+}
+
+.right-wrap {
+  right: 60px;
+  top: 40px;
+  animation: float-avatar-right 5s ease-in-out infinite alternate;
+}
+
+.avatar-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: #cbdcf5;
+}
+
+.avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.speech-bubble {
+  background: #ffffff;
+  color: #475569;
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+  position: relative;
+  white-space: nowrap;
+}
+
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: #ffffff;
+}
+
+/* Page Peel Effect (Pure CSS Corner fold) */
+.peel-cutout {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 75px;
+  height: 75px;
+  background-color: #f8fafc; /* Matches light landing-body-light background */
+  clip-path: polygon(100% 100%, 0 100%, 100% 0);
+  z-index: 2;
+}
+
+.peel-fold {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 75px;
+  height: 75px;
+  background: linear-gradient(135deg, transparent 50%, rgba(15, 23, 42, 0.05) 50.5%, #cbdbee 52%, #ffffff 100%);
+  border-bottom-left-radius: 24px;
+  box-shadow: -8px -8px 15px rgba(15, 23, 42, 0.08), -2px -2px 5px rgba(15, 23, 42, 0.04);
+  z-index: 5;
+}
+
+/* Floating Animations */
+@keyframes float-avatar-left {
+  0% { transform: translateY(0) rotate(-1deg); }
+  100% { transform: translateY(-8px) rotate(1deg); }
+}
+
+@keyframes float-avatar-right {
+  0% { transform: translateY(0) rotate(1deg); }
+  100% { transform: translateY(-10px) rotate(-1deg); }
+}
+
+/* Banner Responsive Styling */
+@media (max-width: 992px) {
+  .floating-avatar-wrap {
+    display: none; /* Hide avatars on smaller screens to prevent overlap */
+  }
+}
+
+@media (max-width: 768px) {
+  .peel-banner-container {
+    height: 240px;
+    padding: 30px;
+  }
+  .peel-banner-title {
+    font-size: 26px;
+  }
+  .btn-peel-cta {
+    padding: 12px 30px;
+    font-size: 14px;
+  }
+  .peel-fold, .peel-cutout {
+    width: 60px;
+    height: 60px;
+  }
+  .peel-fold {
+    border-bottom-left-radius: 18px;
+  }
+}
+
 
 
 
