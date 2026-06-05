@@ -635,6 +635,10 @@ a {
   z-index: 10;
 }
 
+.landing-categories-section .section-header {
+  margin-bottom: 28px; /* Tighter layout to prevent page bottom overflow */
+}
+
 .category-sticky-wrap {
   position: sticky;
   top: 0;
@@ -656,7 +660,7 @@ a {
 .categories-row {
   display: flex;
   flex-direction: row;
-  gap: 40px;
+  gap: 24px;
   width: max-content;
   padding: 0 120px;
   will-change: transform;
@@ -667,11 +671,11 @@ a {
 .category-card {
   position: relative;
   flex-shrink: 0;
-  width: 380px;
+  width: 340px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 24px;
-  padding: 40px 30px;
+  padding: 24px;
   cursor: pointer;
   overflow: hidden;
   backdrop-filter: blur(25px);
@@ -695,26 +699,26 @@ a {
 }
 
 .category-card-icon {
-  font-size: 36px;
-  margin-bottom: 24px;
+  font-size: 28px;
+  margin-bottom: 16px;
   position: relative;
   z-index: 2;
 }
 
 .category-card h3 {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   position: relative;
   z-index: 2;
   font-family: var(--font-heading);
 }
 
 .category-card p {
-  font-size: 14px;
+  font-size: 13.5px;
   color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 24px;
+  line-height: 1.5;
+  margin-bottom: 18px;
   position: relative;
   z-index: 2;
 }
@@ -738,13 +742,13 @@ a {
   width: 100%;
   overflow: visible;
   position: relative;
-  margin-top: 40px; /* Space out Categories and Elite Highlights row */
+  margin-top: 24px; /* Space out Categories and Elite Highlights row */
 }
 
 .elite-row {
   display: flex;
   flex-direction: row;
-  gap: 40px;
+  gap: 24px;
   width: max-content;
   padding: 0 120px;
   will-change: transform;
@@ -755,11 +759,11 @@ a {
 .elite-card {
   position: relative;
   flex-shrink: 0;
-  width: 380px;
+  width: 340px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 24px;
-  padding: 40px 30px;
+  padding: 24px;
   overflow: hidden;
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
@@ -774,25 +778,25 @@ a {
 }
 
 .elite-card-icon {
-  font-size: 36px;
-  margin-bottom: 24px;
+  font-size: 28px;
+  margin-bottom: 16px;
   position: relative;
   z-index: 2;
 }
 
 .elite-card h3 {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   position: relative;
   z-index: 2;
   font-family: var(--font-heading);
 }
 
 .elite-card p {
-  font-size: 14px;
+  font-size: 13.5px;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.5;
   position: relative;
   z-index: 2;
 }
