@@ -1,0 +1,17 @@
+{
+  "name": "SnippetUI - Premium CSS & HTML Components Library",
+  "short_name": "SnippetUI",
+  "description": "Discover stunning, high-performance, and responsive copy-paste CSS and HTML snippets.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "theme_color": "#06060a",
+  "background_color": "#06060a",
+  "display": "standalone",
+  "start_url": "/"
+}
