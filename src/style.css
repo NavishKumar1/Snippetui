@@ -5219,6 +5219,41 @@ a {
   fill: #08080c; /* Merges seamlessly with the dark pipeline background below */
 }
 
+/* Glowing Vector Transition Line (Pipeline to Categories) */
+.pipeline-bottom-divider {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  z-index: 10;
+  margin-top: -30px; /* Pulls it up to sit between the sections */
+  margin-bottom: 20px;
+}
+
+.pipeline-bottom-divider svg {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 80px;
+}
+
+.glow-vector-line {
+  filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.7)) drop-shadow(0 0 3px rgba(138, 43, 226, 0.7));
+  opacity: 0.85;
+  animation: pulseGlowLine 4s ease-in-out infinite alternate;
+}
+
+@keyframes pulseGlowLine {
+  0% {
+    filter: drop-shadow(0 0 5px rgba(0, 242, 254, 0.5)) drop-shadow(0 0 2px rgba(138, 43, 226, 0.5));
+    opacity: 0.7;
+  }
+  100% {
+    filter: drop-shadow(0 0 12px rgba(0, 242, 254, 0.85)) drop-shadow(0 0 4px rgba(138, 43, 226, 0.85));
+    opacity: 0.95;
+  }
+}
+
 
 
 

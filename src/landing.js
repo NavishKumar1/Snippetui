@@ -524,6 +524,20 @@ export function renderLanding(onNavigate) {
           </div>
         </div>
       </section>
+      
+      <!-- Glowing Vector Transition Line -->
+      <div class="pipeline-bottom-divider">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" preserveAspectRatio="none">
+          <path d="M0,50 Q360,90 720,50 T1440,50" fill="none" stroke="url(#cyan-purple-grad)" stroke-width="3" class="glow-vector-line"></path>
+          <defs>
+            <linearGradient id="cyan-purple-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00f2fe" />
+              <stop offset="50%" stop-color="#4facfe" />
+              <stop offset="100%" stop-color="#8a2be2" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
 
       <!-- Section 3: Featured Category Grid with Horizontal Scroll Pinning -->
       <section class="landing-categories-section" id="categories-scroll-track">
