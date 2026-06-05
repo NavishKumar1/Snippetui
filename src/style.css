@@ -172,19 +172,16 @@ a {
 }
 
 .brand-img {
-  height: 64px !important;
-  width: auto !important;
-  max-width: none !important;
-  object-fit: contain !important;
-  display: block !important;
-  margin-top: -12px;
-  margin-bottom: -12px;
+  height: 42px;
+  width: auto;
+  max-width: none;
+  object-fit: contain;
+  display: block;
+  transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .global-navbar.scrolled .brand-img {
-  height: 48px;
-  margin-top: -8px;
-  margin-bottom: -8px;
+  height: 34px;
 }
 
 /* Nav Menu Links */
@@ -3076,14 +3073,12 @@ a {
 }
 
 #library-brand-logo .brand-img {
-  height: 64px !important; /* Fixed lock branding scale */
-  width: auto !important;
-  max-width: none !important;
-  object-fit: contain !important;
-  display: block !important;
+  height: 42px;
+  width: auto;
+  max-width: none;
+  object-fit: contain;
+  display: block;
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  margin-top: -10px;
-  margin-bottom: -10px;
 }
 
 #library-brand-logo:hover .brand-img {
