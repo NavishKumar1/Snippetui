@@ -52,18 +52,20 @@ export function renderPrivacy(onNavigate) {
             <!-- Section 2 -->
             <section class="policy-section">
               <div class="section-num">02</div>
-              <h2>Google Fonts CDN & Telemetry</h2>
+              <h2>Integrations, CDN, & Performance Analytics</h2>
               <p>
-                To provide the custom typography displayed on our platform (including <em>Inter</em>, <em>Outfit</em>, 
-                and <em>Fira Code</em>), SnippetUI utilizes Google Fonts' Content Delivery Network (CDN). 
-                When loading these fonts, your web browser establishes a direct connection with Google's servers. 
-                Google may automatically log connection telemetry, such as your IP address, browser user-agent string, 
-                and referring URL, to serve the assets efficiently and aggregate system health metrics.
+                To deliver custom typography (including <em>Inter</em>, <em>Outfit</em>, and <em>Fira Code</em>), optimize content delivery, and analyze site performance and search indexation, SnippetUI integrates standard web telemetry, content delivery networks (CDNs), and diagnostics tools provided by Google.
+              </p>
+              <p>
+                When you access our platform, these integrated services may automatically compile technical log data (such as your IP address, browser configuration, page views, and navigation behavior) in an aggregated, anonymous format. This data is used solely to improve site performance, analyze traffic flow, and ensure optimal service.
               </p>
               <p class="privacy-google-disclosure">
-                For more detailed information regarding Google's telemetry practices and terms, please review the 
+                For detailed disclosures on how this third-party provider manages and processes data, please visit the 
                 <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="privacy-link">
                   Google Privacy Policy <span class="external-arrow">↗</span>
+                </a> and the 
+                <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer" class="privacy-link">
+                  Google Partner Policy <span class="external-arrow">↗</span>
                 </a>.
               </p>
             </section>
@@ -110,7 +112,7 @@ export function renderPrivacy(onNavigate) {
                   GitHub. Anyone can review, run, or audit the compiler structure for absolute safety compliance.
                 </li>
                 <li>
-                  <strong>No Advertising Cookies:</strong> We deploy absolutely zero third-party advertising cookies, marketing beacons, or cross-site tracking profiles. We may utilize basic, privacy-focused analytics (such as Google Analytics) in the future to monitor load speeds and component page traffic. Any such telemetry is compiled in aggregate and configured to respect user privacy settings.
+                  <strong>No Advertising Cookies:</strong> We deploy absolutely zero third-party advertising cookies, marketing beacons, or cross-site tracking profiles. We utilize standard, privacy-conscious performance analytics and site tools to monitor load speeds and aggregate component page traffic. This data remains non-identifying and is processed in the aggregate to preserve visitor privacy.
                 </li>
               </ul>
             </section>

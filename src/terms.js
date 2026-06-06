@@ -104,12 +104,12 @@ export function renderTerms(onNavigate) {
             <!-- Section 5 -->
             <section class="policy-section">
               <div class="section-num">05</div>
-              <h2>External Resources & CDN Dependencies</h2>
+              <h2>External Resources & Third-Party Services</h2>
               <p>
-                SnippetUI contains integrations with third-party delivery nodes (such as Google Fonts CDNs, GitHub repositories, 
-                and the Visual Studio Code Extension Marketplace). We do not control, monitor, or assume liability for 
-                the uptime, policies, API changes, or privacy disclosures of these external platforms. Your interactions 
-                with them are subject to their respective terms of use.
+                SnippetUI incorporates integrations with external services and third-party delivery nodes (such as custom font CDNs, web performance diagnostics tools, search optimization services provided by Google, GitHub repositories, and the Visual Studio Code Extension Marketplace). 
+              </p>
+              <p>
+                We do not control, monitor, or assume liability for the uptime, operational policies, API adjustments, or data handling methods of these external entities. Your engagement with any third-party tools is governed strictly by their respective terms of service and privacy declarations.
               </p>
             </section>
 
