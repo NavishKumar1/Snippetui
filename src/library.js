@@ -229,7 +229,7 @@ ${comp.html}
           <!-- Back to Home Button -->
           <a href="#landing" class="btn-header-back" id="header-btn-back">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-            Back to Home
+            <span>Back to Home</span>
           </a>
           
           <!-- GitHub Repo Link -->
@@ -1060,24 +1060,26 @@ ${comp.html}
   return {
     html: htmlContent,
     init: (container) => {
-      // Initialize Lenis smooth scroll for library panels
-      const sidebar = container.querySelector('.library-sidebar');
-      const main = container.querySelector('.library-main');
-      if (sidebar) {
-        sidebarLenis = new Lenis({
-          wrapper: sidebar,
-          autoRaf: true,
-          lerp: 0.1,
-          duration: 1.2
-        });
-      }
-      if (main) {
-        mainLenis = new Lenis({
-          wrapper: main,
-          autoRaf: true,
-          lerp: 0.1,
-          duration: 1.2
-        });
+      // Initialize Lenis smooth scroll for library panels (desktop only for performance)
+      if (window.innerWidth > 768) {
+        const sidebar = container.querySelector('.library-sidebar');
+        const main = container.querySelector('.library-main');
+        if (sidebar) {
+          sidebarLenis = new Lenis({
+            wrapper: sidebar,
+            autoRaf: true,
+            lerp: 0.1,
+            duration: 1.2
+          });
+        }
+        if (main) {
+          mainLenis = new Lenis({
+            wrapper: main,
+            autoRaf: true,
+            lerp: 0.1,
+            duration: 1.2
+          });
+        }
       }
 
       // 0. Bind Logo and Header return navigation

@@ -399,7 +399,9 @@
   }
 
   .library-brand-header {
-    padding: 10px 16px !important;
+    height: 64px !important;
+    min-height: 64px !important;
+    padding: 0 16px !important;
     position: sticky !important;
     top: 0 !important;
     background: rgba(8, 8, 12, 0.95) !important;
@@ -407,6 +409,31 @@
     -webkit-backdrop-filter: blur(16px) !important;
     z-index: 1000 !important;
     border-bottom: 1px solid var(--border-color) !important;
+  }
+
+  #library-brand-logo .brand-img {
+    height: 36px !important;
+  }
+
+  /* Compact circle buttons for back-to-home and github link on mobile */
+  .btn-header-back span, .github-header-link span {
+    display: none !important;
+  }
+
+  .btn-header-back, .github-header-link {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    gap: 0 !important;
+  }
+
+  .btn-header-back svg, .github-header-link svg {
+    margin: 0 !important;
   }
 
   .library-view {
@@ -476,6 +503,7 @@
     box-shadow: 20px 0 50px rgba(0, 0, 0, 0.8) !important;
     opacity: 1 !important;
     animation: none !important;
+    will-change: transform !important; /* Force GPU composite layer */
   }
 
   .library-sidebar.active {
@@ -581,9 +609,28 @@
 
   .btn-card-action {
     flex: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
     justify-content: center !important;
-    font-size: 12px !important;
-    padding: 10px !important;
+    gap: 6px !important;
+    height: 40px !important;
+    font-size: 12.5px !important;
+    padding: 0 12px !important;
+    border-radius: 100px !important;
+    box-sizing: border-box !important;
+  }
+
+  .btn-view-code {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid var(--border-color) !important;
+    color: #ffffff !important;
+  }
+
+  .btn-copy-prompt {
+    background: #ffffff !important;
+    color: #08080c !important;
+    border: 1px solid transparent !important;
+    font-weight: 600 !important;
   }
 
   /* Modal Overlay 1: Interactive Preview Modal */
@@ -604,6 +651,7 @@
     height: 70vh !important;
     max-height: 480px !important;
     border-radius: 18px !important;
+    will-change: transform !important; /* Force GPU composite layer */
   }
 
   .modal-box-reload-floating {
@@ -619,6 +667,7 @@
     max-width: 100% !important;
     border-left: none !important;
     border-top: 1px solid var(--border-color) !important;
+    will-change: transform !important; /* Force GPU composite layer */
   }
 
   .drawer-header {

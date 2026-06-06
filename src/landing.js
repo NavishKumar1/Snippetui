@@ -1577,10 +1577,17 @@ export function renderLanding(onNavigate) {
         }
       }
 
-      // Combine all scroll listeners into a single optimized scroll engine
+      // Combine all scroll listeners into a single optimized scroll engine with RAF throttling
+      let ticking = false;
       function handleScrollActions() {
-        updatePipelinePath();
-        updateHorizontalScroll();
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            updatePipelinePath();
+            updateHorizontalScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
       }
 
       // De-duplicate scroll listeners to avoid memory leaks
