@@ -15,6 +15,7 @@ export function renderLibrary(onNavigate, initialFilter = 'all') {
   const isMac = typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
   const shortcutLabel = isMac ? '⌘K' : 'Ctrl K';
   let activeDetailComponent = null;
+  let clickOutsideCloseCategories = null;
   
   // Track active selections in dropdowns
   let selectedScript = 'js'; // 'js' or 'ts'
@@ -240,6 +241,12 @@ ${comp.html}
           </a>
         </div>
       </div>
+
+      <!-- Mobile Floating Categories Toggle Button -->
+      <button class="mobile-categories-toggle" id="mobile-categories-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 6px;"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+        <span>Categories</span>
+      </button>
 
       <div class="library-view" style="margin-top: 0; padding: 0;">
         <!-- Left Sidebar Filters -->
@@ -1112,6 +1119,7 @@ ${comp.html}
 
       // 3. Category Buttons Filter listeners
       const catList = container.querySelector('#sidebar-categories');
+      const mobileSidebar = container.querySelector('.library-sidebar');
       catList?.addEventListener('click', (e) => {
         const btn = e.target.closest('.category-btn');
         if (!btn) return;
@@ -1122,8 +1130,30 @@ ${comp.html}
         catList.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
+        // Auto-close categories drawer on mobile after selection
+        if (window.innerWidth <= 768) {
+          mobileSidebar?.classList.remove('active');
+        }
+        
         updateUI(container);
       });
+
+      // Mobile Categories Drawer Toggle Trigger
+      const mobCatBtn = container.querySelector('#mobile-categories-btn');
+      mobCatBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileSidebar?.classList.toggle('active');
+      });
+
+      // Click outside to close categories drawer
+      clickOutsideCloseCategories = (e) => {
+        if (mobileSidebar && mobileSidebar.classList.contains('active')) {
+          if (!mobileSidebar.contains(e.target) && e.target !== mobCatBtn && !mobCatBtn?.contains(e.target)) {
+            mobileSidebar.classList.remove('active');
+          }
+        }
+      };
+      document.addEventListener('click', clickOutsideCloseCategories);
 
       // 4. Close Preview Modal hooks
       container.querySelector('#modal-close-btn')?.addEventListener('click', () => closePreviewModal(container));
@@ -1481,6 +1511,10 @@ ${comp.html}
       if (searchShortcutListener) {
         window.removeEventListener('keydown', searchShortcutListener);
         searchShortcutListener = null;
+      }
+      if (clickOutsideCloseCategories) {
+        document.removeEventListener('click', clickOutsideCloseCategories);
+        clickOutsideCloseCategories = null;
       }
     }
   };

@@ -2,6 +2,7 @@
  * SnippetUI - Core Application Controller
  */
 import './style.css';
+import './mobile.css';
 import { renderLanding } from './landing.js';
 import { renderLibrary } from './library.js';
 import { renderExtensionShowcase } from './extension.js';
