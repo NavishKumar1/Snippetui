@@ -59,15 +59,6 @@ function navigate(target) {
     }
   });
 
-  // Lazy initialize global Lenis on window if not exists
-  if (!globalLenis) {
-    globalLenis = new Lenis({
-      autoRaf: true,
-      lerp: 0.09,
-      duration: 1.2
-    });
-  }
-
   // Render view & Navbar visibility coordination
   let page;
   let title = 'SnippetUI | Premium CSS & HTML Components Library';
@@ -77,8 +68,11 @@ function navigate(target) {
     appContainer.classList.add('no-nav');
     document.body.classList.add('library-page-active');
 
-    // Pause global Lenis scroll tracking to avoid viewport conflicts
-    globalLenis.stop();
+    // Destroy global Lenis scroll tracking to avoid viewport conflicts
+    if (globalLenis) {
+      globalLenis.destroy();
+      globalLenis = null;
+    }
 
     const parts = target.split('?');
     const category = parts[1]?.split('=')[1] || 'all';
@@ -91,6 +85,14 @@ function navigate(target) {
     appContainer.classList.add('no-nav');
     document.body.classList.remove('library-page-active');
 
+    // Lazy initialize global Lenis on window if not exists
+    if (!globalLenis) {
+      globalLenis = new Lenis({
+        autoRaf: true,
+        lerp: 0.09,
+        duration: 1.2
+      });
+    }
     // Resume global Lenis scroll tracking
     globalLenis.start();
 
@@ -103,6 +105,14 @@ function navigate(target) {
     appContainer.classList.add('with-nav');
     document.body.classList.remove('library-page-active');
 
+    // Lazy initialize global Lenis on window if not exists
+    if (!globalLenis) {
+      globalLenis = new Lenis({
+        autoRaf: true,
+        lerp: 0.09,
+        duration: 1.2
+      });
+    }
     // Resume global Lenis scroll tracking
     globalLenis.start();
 
@@ -115,6 +125,14 @@ function navigate(target) {
     appContainer.classList.add('with-nav');
     document.body.classList.remove('library-page-active');
 
+    // Lazy initialize global Lenis on window if not exists
+    if (!globalLenis) {
+      globalLenis = new Lenis({
+        autoRaf: true,
+        lerp: 0.09,
+        duration: 1.2
+      });
+    }
     // Resume global Lenis scroll tracking
     globalLenis.start();
 
@@ -127,6 +145,14 @@ function navigate(target) {
     appContainer.classList.add('with-nav');
     document.body.classList.remove('library-page-active');
 
+    // Lazy initialize global Lenis on window if not exists
+    if (!globalLenis) {
+      globalLenis = new Lenis({
+        autoRaf: true,
+        lerp: 0.09,
+        duration: 1.2
+      });
+    }
     // Resume global Lenis scroll tracking
     globalLenis.start();
 
@@ -139,6 +165,14 @@ function navigate(target) {
     appContainer.classList.add('with-nav');
     document.body.classList.remove('library-page-active');
 
+    // Lazy initialize global Lenis on window if not exists
+    if (!globalLenis) {
+      globalLenis = new Lenis({
+        autoRaf: true,
+        lerp: 0.09,
+        duration: 1.2
+      });
+    }
     // Resume global Lenis scroll tracking
     globalLenis.start();
 

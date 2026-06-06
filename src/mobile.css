@@ -391,7 +391,7 @@
      Component Library Page Mobile Adaptation
      ========================================================================== */
   .library-view-container {
-    height: 100vh !important;
+    height: 100dvh !important;
     max-width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
@@ -438,7 +438,7 @@
 
   .library-view {
     flex-direction: row !important; /* side-by-side structure */
-    height: calc(100vh - 72px) !important; /* fill remaining screen */
+    height: calc(100dvh - 64px) !important; /* fill remaining screen */
     width: 100% !important;
     overflow: hidden !important;
     padding: 12px !important;
@@ -504,6 +504,7 @@
     opacity: 1 !important;
     animation: none !important;
     will-change: transform !important; /* Force GPU composite layer */
+    overflow: hidden !important;
   }
 
   .library-sidebar.active {
@@ -521,6 +522,8 @@
     width: 100% !important;
     overflow-y: auto !important; /* Scrollable drawer options */
     flex-grow: 1 !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
   }
 
   .library-sidebar .sidebar-section-title {
@@ -547,7 +550,12 @@
     background: rgba(255, 255, 255, 0.02) !important;
     border: 1px solid var(--border-color) !important;
     color: var(--text-secondary) !important;
-    transition: var(--transition-fast) !important;
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
+  }
+
+  .library-sidebar .category-btn:active {
+    transform: scale(0.97) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
   }
 
   .library-sidebar .category-btn.active {
@@ -569,6 +577,8 @@
     overflow-y: auto !important;
     border-radius: 20px !important;
     gap: 20px !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
   }
 
   .library-header h2 {
@@ -624,6 +634,12 @@
     background: rgba(255, 255, 255, 0.04) !important;
     border: 1px solid var(--border-color) !important;
     color: #ffffff !important;
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease !important;
+  }
+
+  .btn-view-code:active {
+    transform: scale(0.96) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
   }
 
   .btn-copy-prompt {
@@ -631,6 +647,12 @@
     color: #08080c !important;
     border: 1px solid transparent !important;
     font-weight: 600 !important;
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease !important;
+  }
+
+  .btn-copy-prompt:active {
+    transform: scale(0.96) !important;
+    background: rgba(255, 255, 255, 0.85) !important;
   }
 
   /* Modal Overlay 1: Interactive Preview Modal */
