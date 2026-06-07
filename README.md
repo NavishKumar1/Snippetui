@@ -39,6 +39,12 @@ We use the **Lenis smooth scrolling engine** to optimize interactive scroll pipe
 * For marketing showcases (morphing scroll timelines, sticky Glassmorphic Sandboxes), Lenis coordinates fluid inertial scrolling.
 * During catalog transitions, Lenis is dynamically detached and suspended. This ensures standard, native document scrolling heights and eliminates scroll-spy viewport conflicts within the complex search filters list.
 
+### 4. Dynamic Multi-Framework Transpilation Engine
+SnippetUI features a robust client-side transpiler that translates core component definitions into custom wrappers:
+* **React & SolidJS Output:** Converts classes to `className`/`class` attributes, parses inline style properties to JSX object structures, closes self-closing elements, and binds JavaScript logic inside lifecycle hooks (`useEffect`/`onMount`) using container-scoped query scopes to avoid global collision.
+* **Vue 3 & Svelte Output:** Packages scripts, markup, and scoped stylesheets into Single File Components (`.vue` / `.svelte`).
+* **Format Flexibility:** Instantly switches between JavaScript and TypeScript syntax, as well as Vanilla CSS and Tailwind CSS layouts.
+
 ---
 
 ## 📐 Application Architecture & Routing Pipeline
@@ -252,7 +258,10 @@ pnpm dlx snippetui@latest add [component-id]
 ### Method C: Manual Integration
 1. Browse the component inside the library interface.
 2. Open the **Code** tab inside the detail drawer.
-3. Copy the raw HTML, CSS rules, and functional JS/TS controllers to your local sheets.
+3. Select your target **Framework** (HTML, React, Vue, Svelte, or SolidJS).
+4. Select your preferred **Styling** layout (Vanilla CSS or Tailwind CSS).
+5. Choose your scripting targets (**JavaScript** or type-safe **TypeScript**).
+6. Copy the compiled component code blocks directly into your workspace.
 
 ---
 
