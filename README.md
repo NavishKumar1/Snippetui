@@ -45,6 +45,20 @@ SnippetUI features a robust client-side transpiler that translates core componen
 * **Vue 3 & Svelte Output:** Packages scripts, markup, and scoped stylesheets into Single File Components (`.vue` / `.svelte`).
 * **Format Flexibility:** Instantly switches between JavaScript and TypeScript syntax, as well as Vanilla CSS and Tailwind CSS layouts.
 
+### 5. Client-Side Fuzzy Search & Dynamic Performance Tagging
+SnippetUI incorporates a lightning-fast client-side fuzzy search engine (powered by a subsequence letter matching algorithm) coupled with automated performance classification tags:
+* **Fuzzy Matching:** Matches query patterns with a character distance penalty and consecutive letters bonus (e.g. searching `"mgb"` matches *Magnetic Gravity Button*).
+* **Automated Component Tagging:**
+  * `[GPU]`: Identifies 100% hardware-accelerated animations (using `transform`/`opacity` transitions).
+  * `[Pure CSS]`: Scans code for zero JavaScript runtime dependencies.
+  * `[Interactive]`: Classifies complex hover and cursor-coordinate tracking scripts.
+
+### 6. Zero-Dependency Multi-Language (i18n) Engine
+Built from scratch to optimize SEO indexing and localization across the globe:
+* **Supported Languages:** English (`en`), Spanish (`es`), French (`fr`), German (`de`), Japanese (`ja`), and Chinese (`zh`) (excluding Hindi).
+* **Session Persistence:** Selections are saved cross-session in local browser cache.
+* **Native Select Controls:** Custom glassmorphic dropdowns in the navbar and library headers feature native name options (`English`, `Español`, `Français`, `Deutsch`, `日本語`, `简体中文`) to enable smooth, localized navigations.
+
 ---
 
 ## 📐 Application Architecture & Routing Pipeline
