@@ -18,6 +18,7 @@ export function renderLibrary(onNavigate, initialFilter = 'all') {
   let clickOutsideCloseCategories = null;
   
   // Track active selections in dropdowns
+  let selectedFramework = 'html'; // 'html', 'react', 'vue', 'svelte', 'solid'
   let selectedScript = 'js'; // 'js' or 'ts'
   let selectedStyle = 'css';  // 'css' or 'tailwind'
 
@@ -119,6 +120,196 @@ ${comp.html}
 <!-- Step 2: Style Integration -->
 <!-- Head over to the 'Code' tab to copy either Vanilla CSS or Tailwind utility integrations! -->
 <link rel="stylesheet" href="style.css">`;
+  }
+
+  // Compile components to React, Vue, Svelte, and SolidJS
+  function compileComponent(comp, framework, scriptType, styleType) {
+    if (!comp) return { markup: '', script: '', style: '' };
+
+    const isTS = scriptType === 'ts';
+    const isTailwind = styleType === 'tailwind';
+    
+    const rawHtml = comp.html || '';
+    const rawCss = comp.css || '';
+    const rawTailwind = comp.tailwind || '';
+    const rawScript = isTS ? (comp.ts || comp.js || '') : (comp.js || '');
+
+    // Helper: Convert CSS class to className for JSX
+    function toJSX(htmlStr) {
+      let jsx = htmlStr;
+      // Replace class="..." with className="..."
+      jsx = jsx.replace(/\bclass="/g, 'className="');
+      
+      // Replace inline styles style="display: flex; cursor: pointer;" with style={{ display: 'flex', cursor: 'pointer' }}
+      jsx = jsx.replace(/style="([^"]*)"/g, (match, styleStr) => {
+        const rules = styleStr.split(';').filter(r => r.trim());
+        const reactRules = rules.map(rule => {
+          const parts = rule.split(':');
+          if (parts.length < 2) return null;
+          const key = parts[0].trim().replace(/-([a-z])/g, (m, c) => c.toUpperCase());
+          const val = parts.slice(1).join(':').trim().replace(/'/g, "\\'");
+          return `${key}: '${val}'`;
+        }).filter(Boolean);
+        return `style={{ ${reactRules.join(', ')} }}`;
+      });
+
+      // Close self-closing tags like img, input, br, hr
+      jsx = jsx.replace(/<(img|input|br|hr|meta|link)([^>]*)(?<!\/)>/gi, '<$1$2 />');
+
+      return jsx;
+    }
+
+    // Helper: Scope query selectors in script to the ref container
+    function scopeScript(scriptStr) {
+      if (!scriptStr) return '';
+      let scoped = scriptStr;
+      // Replace document.querySelector with select
+      scoped = scoped.replace(/document\.querySelector/g, 'select');
+      // Replace document.querySelectorAll with selectAll
+      scoped = scoped.replace(/document\.querySelectorAll/g, 'selectAll');
+      // Replace document.getElementById(id) with select('#' + id)
+      scoped = scoped.replace(/document\.getElementById\((['"`])([^'"`]+)\1\)/g, "select('#$2')");
+      return scoped;
+    }
+
+    const camelCaseName = comp.name.replace(/[^a-zA-Z0-9]/g, '');
+    const scopedScript = scopeScript(rawScript);
+
+    if (framework === 'react') {
+      const jsxContent = toJSX(rawHtml);
+      const hasScript = scopedScript && scopedScript.trim();
+      const useEffectImport = hasScript ? ', useEffect' : '';
+      
+      const reactCode = `import React${useEffectImport}, { useRef } from 'react';
+${isTailwind ? '' : "import './" + comp.id + ".css';\n"}
+export default function ${camelCaseName}() {
+  const containerRef = useRef${isTS ? '<HTMLDivElement>' : ''}(null);
+${hasScript ? `
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const select = ${isTS ? '<T extends HTMLElement = HTMLElement>(selector: string) => container.querySelector<T>(selector)' : '(selector) => container.querySelector(selector)'};
+    const selectAll = ${isTS ? '<T extends HTMLElement = HTMLElement>(selector: string) => container.querySelectorAll<T>(selector)' : '(selector) => container.querySelectorAll(selector)'};
+
+    ${scopedScript.split('\n').join('\n    ')}
+  }, []);
+` : ''}
+  return (
+    <div ref={containerRef} style={{ display: 'contents' }}>
+      ${jsxContent.split('\n').join('\n      ')}
+    </div>
+  );
+}`;
+      return {
+        markup: reactCode,
+        script: '',
+        style: isTailwind ? '/* Tailwind utility classes are embedded inside JSX className attributes. */' : rawCss
+      };
+    }
+
+    if (framework === 'solid') {
+      const jsxContent = toJSX(rawHtml);
+      const hasScript = scopedScript && scopedScript.trim();
+      const onMountImport = hasScript ? "import { onMount } from 'solid-js';\n" : '';
+      
+      const solidCode = `${onMountImport}${isTailwind ? '' : "import './" + comp.id + ".css';\n"}
+export default function ${camelCaseName}() {
+  let containerRef${isTS ? ': HTMLDivElement | undefined' : ''};
+${hasScript ? `
+  onMount(() => {
+    const container = containerRef;
+    if (!container) return;
+
+    const select = (selector${isTS ? ': string' : ''}) => container.querySelector(selector);
+    const selectAll = (selector${isTS ? ': string' : ''}) => container.querySelectorAll(selector);
+
+    ${scopedScript.split('\n').join('\n    ')}
+  });
+` : ''}
+  return (
+    <div ref={containerRef} style={{ display: 'contents' }}>
+      ${jsxContent.split('\n').join('\n      ')}
+    </div>
+  );
+}`;
+      return {
+        markup: solidCode,
+        script: '',
+        style: isTailwind ? '/* Tailwind classes are embedded inside SolidJS class attributes. */' : rawCss
+      };
+    }
+
+    if (framework === 'vue') {
+      const hasScript = scopedScript && scopedScript.trim();
+      const onMountedImport = hasScript ? ', onMounted' : '';
+      
+      const styleBlock = isTailwind ? '' : `\n\n<style scoped>\n${rawCss}\n</style>`;
+      const scriptSetup = hasScript ? `<script setup${isTS ? ' lang="ts"' : ''}>
+import { ref${onMountedImport} } from 'vue';
+
+const containerRef = ref${isTS ? '<HTMLDivElement | null>(null)' : '(null)'};
+
+onMounted(() => {
+  const container = containerRef.value;
+  if (!container) return;
+
+  const select = (selector${isTS ? ': string' : ''}) => container.querySelector(selector);
+  const selectAll = (selector${isTS ? ': string' : ''}) => container.querySelectorAll(selector);
+
+  ${scopedScript.split('\n').join('\n  ')}
+});
+</script>\n\n` : '';
+
+      const vueCode = `${scriptSetup}<template>
+  <div ref="containerRef" style="display: contents;">
+    ${rawHtml.split('\n').join('\n    ')}
+  </div>
+</template>${styleBlock}`;
+
+      return {
+        markup: vueCode,
+        script: '',
+        style: ''
+      };
+    }
+
+    if (framework === 'svelte') {
+      const hasScript = scopedScript && scopedScript.trim();
+      const styleBlock = isTailwind ? '' : `\n\n<style>\n${rawCss}\n</style>`;
+      
+      const scriptBlock = hasScript ? `<script${isTS ? ' lang="ts"' : ''}>
+  import { onMount } from 'svelte';
+
+  let containerRef${isTS ? ': HTMLDivElement' : ''};
+
+  onMount(() => {
+    if (!containerRef) return;
+
+    const select = (selector${isTS ? ': string' : ''}) => containerRef.querySelector(selector);
+    const selectAll = (selector${isTS ? ': string' : ''}) => containerRef.querySelectorAll(selector);
+
+    ${scopedScript.split('\n').join('\n    ')}
+  });
+</script>\n\n` : '';
+      
+      const svelteCode = `${scriptBlock}<div bind:this={containerRef} style="display: contents;">
+  ${rawHtml.split('\n').join('\n  ')}
+</div>${styleBlock}`;
+
+      return {
+        markup: svelteCode,
+        script: '',
+        style: ''
+      };
+    }
+
+    // Fallback: standard html
+    return {
+      markup: rawHtml,
+      script: rawScript,
+      style: isTailwind ? rawTailwind : rawCss
+    };
   }
 
   // Extract unique categories from components database dynamically
@@ -476,8 +667,36 @@ ${comp.html}
 
           <!-- Pane 3: Code (Existing content) -->
           <div class="drawer-pane" data-pane="code" style="display: none; flex-direction: column; overflow: hidden; height: 100%;">
-            <!-- Code Selectors Row: Double custom dropdown capsule filters -->
-            <div class="code-selectors-row" style="padding: 16px 24px;">
+            <!-- Code Selectors Row: Triple custom dropdown capsule filters -->
+            <div class="code-selectors-row" style="padding: 16px 24px; display: flex; gap: 10px; flex-wrap: wrap;">
+              <!-- Dropdown 0: Framework Selector -->
+              <div class="custom-dropdown-container" id="dropdown-framework-container">
+                <button class="custom-dropdown-btn" id="btn-framework-selector">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="dropdown-badge-prefix html" id="framework-badge">HTML</span>
+                    <span id="framework-label" style="font-size: 13px;">HTML / JS</span>
+                  </div>
+                  <span class="dropdown-chevron"></span>
+                </button>
+                <div class="custom-dropdown-menu" id="menu-framework">
+                  <button class="custom-dropdown-option selected" data-value="html">
+                    <span class="dropdown-badge-prefix html">HTML</span> HTML / JS
+                  </button>
+                  <button class="custom-dropdown-option" data-value="react">
+                    <span class="dropdown-badge-prefix react">JSX</span> React
+                  </button>
+                  <button class="custom-dropdown-option" data-value="vue">
+                    <span class="dropdown-badge-prefix vue">VUE</span> Vue
+                  </button>
+                  <button class="custom-dropdown-option" data-value="svelte">
+                    <span class="dropdown-badge-prefix svelte">SVT</span> Svelte
+                  </button>
+                  <button class="custom-dropdown-option" data-value="solid">
+                    <span class="dropdown-badge-prefix solid">SLD</span> SolidJS
+                  </button>
+                </div>
+              </div>
+
               <!-- Dropdown 1: Script Selector -->
               <div class="custom-dropdown-container" id="dropdown-script-container">
                 <button class="custom-dropdown-btn" id="btn-script-selector">
@@ -520,9 +739,9 @@ ${comp.html}
             <!-- Drawer Code Display Panel -->
             <div class="drawer-code-body" style="display: flex; flex-direction: column; gap: 24px; padding: 24px; overflow-y: auto; flex-grow: 1;">
               <!-- HTML Structure Card -->
-              <div class="code-card-wrapper" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; height: 240px; min-height: 240px;">
+              <div class="code-card-wrapper" id="drawer-html-card" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; height: 240px; min-height: 240px;">
                 <div class="code-card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); height: 42px; min-height: 42px;">
-                  <span style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">HTML Structure Markup</span>
+                  <span id="title-html-card" style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">HTML Structure Markup</span>
                   <button class="btn-drawer-copy inline-copy" id="copy-html-btn">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     <span>Copy</span>
@@ -532,7 +751,7 @@ ${comp.html}
               </div>
 
               <!-- Script Code Card -->
-              <div class="code-card-wrapper" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; height: 240px; min-height: 240px;">
+              <div class="code-card-wrapper" id="drawer-script-card" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; height: 240px; min-height: 240px;">
                 <div class="code-card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); height: 42px; min-height: 42px;">
                   <span style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">Scripting Implementation</span>
                   <button class="btn-drawer-copy inline-copy" id="copy-script-btn">
@@ -544,9 +763,9 @@ ${comp.html}
               </div>
               
               <!-- Styling Code Card -->
-              <div class="code-card-wrapper" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; height: 240px; min-height: 240px;">
+              <div class="code-card-wrapper" id="drawer-style-card" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; height: 240px; min-height: 240px;">
                 <div class="code-card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); height: 42px; min-height: 42px;">
-                  <span style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">Styling Implementation</span>
+                  <span id="title-style-card" style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">Styling Implementation</span>
                   <button class="btn-drawer-copy inline-copy" id="copy-style-btn">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     <span>Copy</span>
@@ -917,16 +1136,37 @@ ${comp.html}
     }
 
     // Update active dropdown UI to match initial state
+    selectedFramework = 'html';
     selectedScript = 'js';
     selectedStyle = 'css';
+
+    // Framework selectors update
+    const btnFramework = container.querySelector('#btn-framework-selector');
+    const badgeFramework = container.querySelector('#framework-badge');
+    const labelFramework = container.querySelector('#framework-label');
+    if (badgeFramework) {
+      badgeFramework.className = 'dropdown-badge-prefix html';
+      badgeFramework.textContent = 'HTML';
+    }
+    if (labelFramework) {
+      labelFramework.textContent = 'HTML / JS';
+    }
+    container.querySelectorAll('#menu-framework .custom-dropdown-option').forEach(opt => {
+      if (opt.getAttribute('data-value') === 'html') opt.classList.add('selected');
+      else opt.classList.remove('selected');
+    });
 
     // Scripting selectors update
     const btnScript = container.querySelector('#btn-script-selector');
     const badgeScript = container.querySelector('#script-badge');
     const labelScript = container.querySelector('#script-label');
-    badgeScript.className = 'dropdown-badge-prefix';
-    badgeScript.textContent = 'JS';
-    labelScript.textContent = 'JavaScript';
+    if (badgeScript) {
+      badgeScript.className = 'dropdown-badge-prefix';
+      badgeScript.textContent = 'JS';
+    }
+    if (labelScript) {
+      labelScript.textContent = 'JavaScript';
+    }
     container.querySelectorAll('#menu-script .custom-dropdown-option').forEach(opt => {
       if (opt.getAttribute('data-value') === 'js') opt.classList.add('selected');
       else opt.classList.remove('selected');
@@ -936,9 +1176,13 @@ ${comp.html}
     const btnStyle = container.querySelector('#btn-style-selector');
     const badgeStyle = container.querySelector('#style-badge');
     const labelStyle = container.querySelector('#style-label');
-    badgeStyle.className = 'dropdown-badge-prefix css';
-    badgeStyle.textContent = 'css';
-    labelStyle.textContent = 'CSS';
+    if (badgeStyle) {
+      badgeStyle.className = 'dropdown-badge-prefix css';
+      badgeStyle.textContent = 'css';
+    }
+    if (labelStyle) {
+      labelStyle.textContent = 'CSS';
+    }
     container.querySelectorAll('#menu-style .custom-dropdown-option').forEach(opt => {
       if (opt.getAttribute('data-value') === 'css') opt.classList.add('selected');
       else opt.classList.remove('selected');
@@ -992,27 +1236,53 @@ ${comp.html}
   function updateCodeBoxes(container) {
     if (!activeDetailComponent) return;
     
+    const htmlCard = container.querySelector('#drawer-html-card');
+    const scriptCard = container.querySelector('#drawer-script-card');
+    const styleCard = container.querySelector('#drawer-style-card');
+
     const htmlBox = container.querySelector('#drawer-html-box');
     const scriptBox = container.querySelector('#drawer-script-box');
     const styleBox = container.querySelector('#drawer-style-box');
 
-    // Resolve HTML Box content
-    if (htmlBox) {
-      htmlBox.textContent = activeDetailComponent.html;
-    }
+    const titleHtml = container.querySelector('#title-html-card');
+    const titleStyle = container.querySelector('#title-style-card');
 
-    // Resolve Script Box content
-    if (selectedScript === 'js') {
-      scriptBox.textContent = activeDetailComponent.js;
-    } else {
-      scriptBox.textContent = activeDetailComponent.ts;
-    }
+    const compiled = compileComponent(activeDetailComponent, selectedFramework, selectedScript, selectedStyle);
 
-    // Resolve Style Box content
-    if (selectedStyle === 'css') {
-      styleBox.textContent = activeDetailComponent.css;
-    } else {
-      styleBox.textContent = activeDetailComponent.tailwind;
+    // Setup toggling and label mappings based on selected framework
+    if (selectedFramework === 'html') {
+      if (htmlCard) htmlCard.style.display = 'flex';
+      if (scriptCard) scriptCard.style.display = 'flex';
+      if (styleCard) styleCard.style.display = 'flex';
+
+      if (titleHtml) titleHtml.textContent = 'HTML Structure Markup';
+      if (titleStyle) titleStyle.textContent = 'Styling Implementation';
+
+      if (htmlBox) htmlBox.textContent = compiled.markup;
+      if (scriptBox) scriptBox.textContent = compiled.script;
+      if (styleBox) styleBox.textContent = compiled.style;
+    } else if (selectedFramework === 'react' || selectedFramework === 'solid') {
+      if (htmlCard) htmlCard.style.display = 'flex';
+      if (scriptCard) scriptCard.style.display = 'none';
+      if (styleCard) styleCard.style.display = 'flex';
+
+      const fileExt = selectedScript === 'ts' ? 'tsx' : 'jsx';
+      const frameworkName = selectedFramework === 'react' ? 'React' : 'SolidJS';
+      if (titleHtml) titleHtml.textContent = `${frameworkName} Component (${fileExt})`;
+      if (titleStyle) titleStyle.textContent = 'Styling Implementation';
+
+      if (htmlBox) htmlBox.textContent = compiled.markup;
+      if (styleBox) styleBox.textContent = compiled.style;
+    } else if (selectedFramework === 'vue' || selectedFramework === 'svelte') {
+      if (htmlCard) htmlCard.style.display = 'flex';
+      if (scriptCard) scriptCard.style.display = 'none';
+      if (styleCard) styleCard.style.display = 'none';
+
+      const fileExt = selectedFramework;
+      const frameworkName = selectedFramework === 'vue' ? 'Vue 3' : 'Svelte';
+      if (titleHtml) titleHtml.textContent = `${frameworkName} Component (.${fileExt})`;
+
+      if (htmlBox) htmlBox.textContent = compiled.markup;
     }
   }
 
@@ -1051,6 +1321,8 @@ ${comp.html}
     activeDetailComponent = null;
 
     // Close any open dropdown menus
+    container.querySelector('#btn-framework-selector')?.classList.remove('active');
+    container.querySelector('#menu-framework')?.classList.remove('active');
     container.querySelector('#btn-script-selector')?.classList.remove('active');
     container.querySelector('#menu-script')?.classList.remove('active');
     container.querySelector('#btn-style-selector')?.classList.remove('active');
@@ -1220,19 +1492,35 @@ ${comp.html}
 
 
       // 6. Custom Dropdown Selectors Click Toggles
+      const btnFramework = container.querySelector('#btn-framework-selector');
+      const menuFramework = container.querySelector('#menu-framework');
       const btnScript = container.querySelector('#btn-script-selector');
       const menuScript = container.querySelector('#menu-script');
       const btnStyle = container.querySelector('#btn-style-selector');
       const menuStyle = container.querySelector('#menu-style');
+
+      btnFramework?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        btnFramework.classList.toggle('active');
+        menuFramework.classList.toggle('active');
+        
+        // Close other dropdowns
+        btnScript?.classList.remove('active');
+        menuScript?.classList.remove('active');
+        btnStyle?.classList.remove('active');
+        menuStyle?.classList.remove('active');
+      });
 
       btnScript?.addEventListener('click', (e) => {
         e.stopPropagation();
         btnScript.classList.toggle('active');
         menuScript.classList.toggle('active');
         
-        // Close styling dropdown
-        btnStyle.classList.remove('active');
-        menuStyle.classList.remove('active');
+        // Close other dropdowns
+        btnFramework?.classList.remove('active');
+        menuFramework?.classList.remove('active');
+        btnStyle?.classList.remove('active');
+        menuStyle?.classList.remove('active');
       });
 
       btnStyle?.addEventListener('click', (e) => {
@@ -1240,13 +1528,17 @@ ${comp.html}
         btnStyle.classList.toggle('active');
         menuStyle.classList.toggle('active');
         
-        // Close scripting dropdown
-        btnScript.classList.remove('active');
-        menuScript.classList.remove('active');
+        // Close other dropdowns
+        btnFramework?.classList.remove('active');
+        menuFramework?.classList.remove('active');
+        btnScript?.classList.remove('active');
+        menuScript?.classList.remove('active');
       });
 
       // Close dropdowns on outside clicks
       document.addEventListener('click', () => {
+        btnFramework?.classList.remove('active');
+        menuFramework?.classList.remove('active');
         btnScript?.classList.remove('active');
         menuScript?.classList.remove('active');
         btnStyle?.classList.remove('active');
@@ -1254,6 +1546,38 @@ ${comp.html}
       });
 
       // 7. Dropdown Option Selections Click Actions
+      // 0. Framework options select
+      container.querySelectorAll('#menu-framework .custom-dropdown-option').forEach(option => {
+        option.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const val = option.getAttribute('data-value');
+          selectedFramework = val;
+
+          // Update active option class UI
+          container.querySelectorAll('#menu-framework .custom-dropdown-option').forEach(o => o.classList.remove('selected'));
+          option.classList.add('selected');
+
+          // Update main button badge & text
+          const badge = container.querySelector('#framework-badge');
+          const label = container.querySelector('#framework-label');
+          if (badge) {
+            badge.className = `dropdown-badge-prefix ${val}`;
+            badge.textContent = val === 'html' ? 'HTML' : val === 'react' ? 'JSX' : val === 'vue' ? 'VUE' : val === 'svelte' ? 'SVT' : 'SLD';
+          }
+          if (label) {
+            label.textContent = val === 'html' ? 'HTML / JS' : val === 'react' ? 'React' : val === 'vue' ? 'Vue' : val === 'svelte' ? 'Svelte' : 'SolidJS';
+          }
+
+          // Close menu & update boxes
+          btnFramework.classList.remove('active');
+          menuFramework.classList.remove('active');
+          updateCodeBoxes(container);
+          
+          let displayVal = val === 'html' ? 'HTML / Vanilla JS' : val === 'react' ? 'React (JSX)' : val === 'vue' ? 'Vue 3' : val === 'svelte' ? 'Svelte' : 'SolidJS';
+          triggerToast(`Switched Framework to ${displayVal}!`);
+        });
+      });
+
       // A. Scripting options select
       container.querySelectorAll('#menu-script .custom-dropdown-option').forEach(option => {
         option.addEventListener('click', (e) => {

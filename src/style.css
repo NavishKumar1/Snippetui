@@ -4617,6 +4617,31 @@ a {
   color: #38bdf8; /* Tailwind Cyan */
 }
 
+.dropdown-badge-prefix.html {
+  background: rgba(227, 79, 38, 0.15);
+  color: #e34f26; /* HTML Orange-Red */
+}
+
+.dropdown-badge-prefix.react {
+  background: rgba(97, 218, 251, 0.15);
+  color: #61dafb; /* React Cyan Blue */
+}
+
+.dropdown-badge-prefix.vue {
+  background: rgba(66, 184, 131, 0.15);
+  color: #42b883; /* Vue Green */
+}
+
+.dropdown-badge-prefix.svelte {
+  background: rgba(255, 62, 0, 0.15);
+  color: #ff3e00; /* Svelte Orange */
+}
+
+.dropdown-badge-prefix.solid {
+  background: rgba(118, 179, 226, 0.15);
+  color: #76b3e2; /* SolidJS Blue */
+}
+
 /* Chevron Arrow indicator */
 .dropdown-chevron {
   width: 6px;
