@@ -1,6 +1,7 @@
 /**
  * SnippetUI - Landing Page Component
  */
+import { t } from './i18n.js';
 
 // Step 1: Discover Animation (Auto-typing "glassmorphic-card")
 let typingTimer = null;
@@ -62,7 +63,7 @@ function runStep2Animation(stepEl) {
   copyBtn.classList.remove('copied');
   copyBtn.style.background = '';
   copyBtn.style.color = '';
-  copyBtn.innerHTML = '<span class="copy-icon">📋</span><span class="copy-text"></span>';
+  copyBtn.innerHTML = `<span class="copy-icon">📋</span><span class="copy-text" style="margin-left: 4px;">${t('pipeline_copy_btn')}</span>`;
 
   if (copyAnimationTimer) clearTimeout(copyAnimationTimer);
 
@@ -70,7 +71,7 @@ function runStep2Animation(stepEl) {
     copyBtn.classList.add('copied');
     copyBtn.style.background = '#00f2fe';
     copyBtn.style.color = '#08080c';
-    copyBtn.innerHTML = '<span class="copy-icon">✓</span><span class="copy-text" style="font-family: var(--font-heading); font-size: 11px; margin-left: 4px; font-weight: 700;">Copied!</span>';
+    copyBtn.innerHTML = `<span class="copy-icon">✓</span><span class="copy-text" style="font-family: var(--font-heading); font-size: 11px; margin-left: 4px; font-weight: 700;">${t('pipeline_copied_btn')}</span>`;
     
     codeEditor.style.borderColor = 'rgba(0, 242, 254, 0.4)';
     codeEditor.style.boxShadow = '0 10px 40px rgba(0, 242, 254, 0.15)';
@@ -96,7 +97,7 @@ function resetStep2Animation(stepEl) {
     copyBtn.classList.remove('copied');
     copyBtn.style.background = '';
     copyBtn.style.color = '';
-    copyBtn.innerHTML = '<span class="copy-icon">📋</span><span class="copy-text"></span>';
+    copyBtn.innerHTML = `<span class="copy-icon">📋</span><span class="copy-text" style="margin-left: 4px;">${t('pipeline_copy_btn')}</span>`;
   }
   if (codeEditor) {
     codeEditor.style.borderColor = '';
@@ -163,20 +164,20 @@ export function renderLanding(onNavigate) {
         <div class="hero-content-left">
 
           <h1 class="hero-title">
-            Find your vibe<br/>We'll <span>code it right</span>
+            ${t('hero_title')}
           </h1>
           
           <p class="hero-subtitle">
-            Turn your components into the look you love, without any guesswork. Frosted glassmorphism, animated capsule elements, glowing gradient borders, and mesmerizing micro-animations.
+            ${t('hero_subtitle')}
           </p>
           
           <div class="hero-actions">
             <a href="#library" class="btn-hero-primary" id="hero-btn-browse">
-              Browse Components
+              ${t('hero_btn_browse')}
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-left: 6px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </a>
             <a href="#extension" class="btn-hero-secondary btn-hero-extension">
-              Get Extension
+              ${t('hero_btn_extension')}
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-left: 6px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </a>
           </div>
@@ -554,7 +555,7 @@ export function renderLanding(onNavigate) {
             </div>
             <div class="stat-info">
               <h2 class="stat-number"><span class="counter-value">0</span>+</h2>
-              <p class="stat-label">Premium Components</p>
+              <p class="stat-label">${t('stat_components')}</p>
             </div>
           </div>
 
@@ -568,7 +569,7 @@ export function renderLanding(onNavigate) {
             </div>
             <div class="stat-info">
               <h2 class="stat-number">&lt; <span class="counter-value">0</span>ms</h2>
-              <p class="stat-label">Execution Time</p>
+              <p class="stat-label">${t('stat_speed')}</p>
             </div>
           </div>
 
@@ -582,7 +583,7 @@ export function renderLanding(onNavigate) {
             </div>
             <div class="stat-info">
               <h2 class="stat-number"><span class="counter-value">0</span>%</h2>
-              <p class="stat-label">Free & Open-Source</p>
+              <p class="stat-label">${t('stat_open_source')}</p>
             </div>
           </div>
 
@@ -596,7 +597,7 @@ export function renderLanding(onNavigate) {
             </div>
             <div class="stat-info">
               <h2 class="stat-number"><span class="counter-value">0</span>/7</h2>
-              <p class="stat-label">Seamless Customization</p>
+              <p class="stat-label">${t('stat_customization')}</p>
             </div>
           </div>
 
@@ -614,9 +615,9 @@ export function renderLanding(onNavigate) {
       <!-- Section 2: Visual "How It Works" Sticky Pipeline -->
       <section class="landing-pipeline-section" id="pipeline-section">
         <div class="section-header">
-          <div class="tech-badge">Interactive Flow</div>
-          <h2 class="section-title">How It Works</h2>
-          <p class="section-subtitle">Get production-ready components integrated into your project in three seconds flat.</p>
+          <div class="tech-badge">${t('pipeline_badge')}</div>
+          <h2 class="section-title">${t('pipeline_title')}</h2>
+          <p class="section-subtitle">${t('pipeline_subtitle')}</p>
         </div>
 
         <div class="pipeline-split-layout">
@@ -665,7 +666,7 @@ export function renderLanding(onNavigate) {
 }</code></pre>
                   <button class="mock-copy-btn-premium" id="pipeline-copy-btn">
                     <span class="copy-icon">📋</span>
-                    <span class="copy-text">Copy Code</span>
+                    <span class="copy-text">${t('pipeline_copy_btn')}</span>
                   </button>
                 </div>
               </div>
@@ -706,12 +707,10 @@ export function renderLanding(onNavigate) {
                 <div class="indicator-bar"></div>
               </div>
               <div class="step-card-detail">
-                <span class="step-small-badge">Step 01</span>
-                <h3>Discover Perfect UI Vibes</h3>
+                <span class="step-small-badge">${t('step1_badge')}</span>
+                <h3>${t('step1_title')}</h3>
                 <p>
-                  Search through dozens of hand-crafted CSS and Web Component animations. 
-                  Filter by category—from liquid motion badges to futuristic glitch headers—and preview 
-                  their responsive styles instantly at full resolution.
+                  ${t('step1_desc')}
                 </p>
               </div>
             </div>
@@ -722,12 +721,10 @@ export function renderLanding(onNavigate) {
                 <div class="indicator-bar"></div>
               </div>
               <div class="step-card-detail">
-                <span class="step-small-badge">Step 02</span>
-                <h3>1-Click Clean Code Copy</h3>
+                <span class="step-small-badge">${t('step2_badge')}</span>
+                <h3>${t('step2_title')}</h3>
                 <p>
-                  Copy production-ready CSS variables and markup configurations in one single tap. 
-                  SnippetUI compiles all declarations into modular styles, preventing bloated libraries or 
-                  external dependencies from dragging down your performance scores.
+                  ${t('step2_desc')}
                 </p>
               </div>
             </div>
@@ -738,12 +735,10 @@ export function renderLanding(onNavigate) {
                 <div class="indicator-bar"></div>
               </div>
               <div class="step-card-detail">
-                <span class="step-small-badge">Step 03</span>
-                <h3>Deploy & Compile Instantly</h3>
+                <span class="step-small-badge">${t('step3_badge')}</span>
+                <h3>${t('step3_title')}</h3>
                 <p>
-                  Paste the generated structures directly into your files. The snippets compile in under 1ms, 
-                  automatically inheriting your project's custom layout parameters. Witness clean, high-refresh 
-                  rate visuals deployed immediately in your viewport.
+                  ${t('step3_desc')}
                 </p>
               </div>
             </div>
@@ -771,9 +766,9 @@ export function renderLanding(onNavigate) {
         <div class="category-sticky-wrap">
           
           <div class="section-header">
-            <div class="tech-badge">Categories</div>
-            <h2 class="section-title">Explore Featured Categories</h2>
-            <p class="section-subtitle">Scroll to explore our main component collections side-by-side.</p>
+            <div class="tech-badge">${t('cat_badge')}</div>
+            <h2 class="section-title">${t('cat_title')}</h2>
+            <p class="section-subtitle">${t('cat_subtitle')}</p>
           </div>
 
           <div class="categories-row-container">
@@ -782,41 +777,41 @@ export function renderLanding(onNavigate) {
               <div class="category-card" data-category="text-animation">
                 <div class="card-glow"></div>
                 <div class="category-card-icon">✍️</div>
-                <h3>Text Animations</h3>
-                <p>Glassmorphic text gradients, neon glows, typing terminals, and sliding text reveals.</p>
-                <span class="card-arrow">Explore Category →</span>
+                <h3>${t('cat_text')}</h3>
+                <p>${t('cat_text_desc')}</p>
+                <span class="card-arrow">${t('cat_explore')}</span>
               </div>
 
               <div class="category-card" data-category="buttons">
                 <div class="card-glow"></div>
                 <div class="category-card-icon">⚡</div>
-                <h3>Dynamic Buttons</h3>
-                <p>Liquid gradients, magnetic gravity triggers, elastic press ripples, and particles.</p>
-                <span class="card-arrow">Explore Category →</span>
+                <h3>${t('cat_buttons')}</h3>
+                <p>${t('cat_buttons_desc')}</p>
+                <span class="card-arrow">${t('cat_explore')}</span>
               </div>
 
               <div class="category-card" data-category="page-transitions">
                 <div class="card-glow"></div>
                 <div class="category-card-icon">🔄</div>
-                <h3>Page Transitions</h3>
-                <p>Frosted scroll-linked stacks, liquid sweeps, and cascading grid reveal animations.</p>
-                <span class="card-arrow">Explore Category →</span>
+                <h3>${t('cat_transitions')}</h3>
+                <p>${t('cat_transitions_desc')}</p>
+                <span class="card-arrow">${t('cat_explore')}</span>
               </div>
 
               <div class="category-card" data-category="loaders">
                 <div class="card-glow"></div>
                 <div class="category-card-icon">🌀</div>
-                <h3>Premium Loaders</h3>
-                <p>Soundwave amplitude gauges, DNA strand helices, and orbital quantum progress rings.</p>
-                <span class="card-arrow">Explore Category →</span>
+                <h3>${t('cat_loaders')}</h3>
+                <p>${t('cat_loaders_desc')}</p>
+                <span class="card-arrow">${t('cat_explore')}</span>
               </div>
 
               <div class="category-card" data-category="dock-navigations">
                 <div class="card-glow"></div>
                 <div class="category-card-icon">💻</div>
-                <h3>Capsule Docks</h3>
-                <p>Xbox-inspired dashboard bars, minimal streaming headers, and dynamic OS docks.</p>
-                <span class="card-arrow">Explore Category →</span>
+                <h3>${t('cat_docks')}</h3>
+                <p>${t('cat_docks_desc')}</p>
+                <span class="card-arrow">${t('cat_explore')}</span>
               </div>
 
             </div>
@@ -828,36 +823,36 @@ export function renderLanding(onNavigate) {
               <div class="elite-card">
                 <div class="card-glow"></div>
                 <div class="elite-card-icon">💫</div>
-                <h3>Micro-Animations</h3>
-                <p>Supercharged hover animations, magnetic snaps, and organic ripple interactions built using pure, performant CSS.</p>
+                <h3>${t('elite_micro_title')}</h3>
+                <p>${t('elite_micro_desc')}</p>
               </div>
 
               <div class="elite-card">
                 <div class="card-glow"></div>
                 <div class="elite-card-icon">📦</div>
-                <h3>Zero Dependencies</h3>
-                <p>Clean, framework-agnostic HTML and CSS files. Drop them into React, Svelte, Vue, or HTML templates instantly.</p>
+                <h3>${t('elite_zero_title')}</h3>
+                <p>${t('elite_zero_desc')}</p>
               </div>
 
               <div class="elite-card">
                 <div class="card-glow"></div>
                 <div class="elite-card-icon">🔮</div>
-                <h3>Radiant Neon Glows</h3>
-                <p>Highly customizable glows and border drop-shadows optimized for high refresh-rate monitors.</p>
+                <h3>${t('elite_neon_title')}</h3>
+                <p>${t('elite_neon_desc')}</p>
               </div>
 
               <div class="elite-card">
                 <div class="card-glow"></div>
                 <div class="elite-card-icon">♿</div>
-                <h3>Strict Accessibility</h3>
-                <p>Semantic markup structures and ARIA roles implemented out-of-the-box for beautiful, screen-reader friendly designs.</p>
+                <h3>${t('elite_access_title')}</h3>
+                <p>${t('elite_access_desc')}</p>
               </div>
 
               <div class="elite-card">
                 <div class="card-glow"></div>
                 <div class="elite-card-icon">🧪</div>
-                <h3>CSS Custom Variables</h3>
-                <p>Exposes clear CSS Custom Properties (--glow-color, --radius) to allow fast styling adjustments directly in your stylesheet.</p>
+                <h3>${t('elite_vars_title')}</h3>
+                <p>${t('elite_vars_desc')}</p>
               </div>
 
             </div>
@@ -947,27 +942,27 @@ export function renderLanding(onNavigate) {
 
             <!-- Content Container (Right Side) -->
             <div class="extension-content">
-              <div class="tech-badge">VS Code Integration</div>
-              <h2 class="section-title">Access Snippets Instantly Anywhere You Code</h2>
-              <p class="section-subtitle">Our official VS Code extension brings the entire SnippetUI library of premium glassmorphic components right into your editor. Search, preview, and insert code blocks with a single shortcut.</p>
+              <div class="tech-badge">${t('ext_badge')}</div>
+              <h2 class="section-title">${t('ext_title')}</h2>
+              <p class="section-subtitle">${t('ext_subtitle')}</p>
               
               <div class="extension-features-list">
                 <div class="extension-feature-item">
                   <span class="feature-check">✓</span>
-                  <span>1-Click Code Injection directly into files</span>
+                  <span>${t('ext_f1')}</span>
                 </div>
                 <div class="extension-feature-item">
                   <span class="feature-check">✓</span>
-                  <span>Global Variable Sync with your CSS design tokens</span>
+                  <span>${t('ext_f2')}</span>
                 </div>
                 <div class="extension-feature-item">
                   <span class="feature-check">✓</span>
-                  <span>Support for Vanilla HTML/CSS, React, Vue, & Svelte</span>
+                  <span>${t('ext_f3')}</span>
                 </div>
               </div>
 
               <a href="#extension" class="btn-extension">
-                <span>Get VS Code Extension</span>
+                <span>${t('ext_btn')}</span>
                 <span class="btn-arrow">→</span>
               </a>
             </div>
@@ -1005,56 +1000,56 @@ export function renderLanding(onNavigate) {
         <!-- Section 4: Live Styling Playground -->
         <section class="landing-playground-section" id="playground-section">
         <div class="section-header">
-          <div class="tech-badge">Interactive Playground</div>
-          <h2 class="section-title">Live Customizer</h2>
-          <p class="section-subtitle">Tweak CSS customization tokens in real-time and export production-ready code dynamically.</p>
+          <div class="tech-badge">${t('play_badge')}</div>
+          <h2 class="section-title">${t('play_title')}</h2>
+          <p class="section-subtitle">${t('play_subtitle')}</p>
         </div>
 
         <div class="playground-panel">
           <!-- Controls Panel (Left) -->
           <div class="playground-controls">
-            <h3>Style Variables</h3>
+            <h3>${t('play_vars')}</h3>
             
             <div class="component-selector-group">
-              <label>Select Component</label>
+              <label>${t('play_select')}</label>
               <div class="component-buttons">
-                <button class="btn-comp active" data-component="card">Card</button>
-                <button class="btn-comp" data-component="button">Button</button>
-                <button class="btn-comp" data-component="badge">Badge</button>
+                <button class="btn-comp active" data-component="card">${t('play_comp_card')}</button>
+                <button class="btn-comp" data-component="button">${t('play_comp_button')}</button>
+                <button class="btn-comp" data-component="badge">${t('play_comp_badge')}</button>
               </div>
             </div>
 
             <div class="control-group">
-              <label>Glow Intensity: <span id="label-glow">40%</span></label>
+              <label>${t('play_glow')}: <span id="label-glow">40%</span></label>
               <input type="range" id="slider-glow" min="0" max="100" value="40" class="premium-slider" />
             </div>
 
             <div class="control-group">
-              <label>Border Radius: <span id="label-radius">24px</span></label>
+              <label>${t('play_radius')}: <span id="label-radius">24px</span></label>
               <input type="range" id="slider-radius" min="0" max="50" value="24" class="premium-slider" />
             </div>
 
             <div class="control-group">
-              <label>Backdrop Blur: <span id="label-blur">12px</span></label>
+              <label>${t('play_blur')}: <span id="label-blur">12px</span></label>
               <input type="range" id="slider-blur" min="0" max="40" value="12" class="premium-slider" />
             </div>
 
             <div class="control-group">
-              <label>Animation Speed: <span id="label-speed">1.5s</span></label>
+              <label>${t('play_speed')}: <span id="label-speed">1.5s</span></label>
               <input type="range" id="slider-speed" min="5" max="30" value="15" class="premium-slider" />
             </div>
 
             <div class="control-group">
-              <label>Color Hue Shift: <span id="label-hue">180deg</span></label>
+              <label>${t('play_hue')}: <span id="label-hue">180deg</span></label>
               <input type="range" id="slider-hue" min="0" max="360" value="180" class="premium-slider" />
             </div>
             
             <div class="theme-selector-group">
-              <label>Ambient Backdrop Theme</label>
+              <label>${t('play_theme')}</label>
               <div class="theme-buttons">
-                <button class="btn-theme active" data-theme="dark">Deep Nebula</button>
-                <button class="btn-theme" data-theme="cyber">Cyber Grid</button>
-                <button class="btn-theme" data-theme="glass">Pure Frost</button>
+                <button class="btn-theme active" data-theme="dark">${t('play_theme_nebula')}</button>
+                <button class="btn-theme" data-theme="cyber">${t('play_theme_cyber')}</button>
+                <button class="btn-theme" data-theme="glass">${t('play_theme_glass')}</button>
               </div>
             </div>
           </div>
@@ -1071,10 +1066,10 @@ export function renderLanding(onNavigate) {
               <div class="preview-card-float-wrap">
                 <!-- Live customizable component -->
                 <div class="custom-premium-card" id="custom-preview-card">
-                  <div class="preview-badge">Preview</div>
-                  <h4 class="preview-card-title">Responsive Glassmorphic Card</h4>
-                  <p>Tweak sliders on the left to see variables apply instantly with smooth, hardware-accelerated transitions.</p>
-                  <button class="preview-card-action">Interact</button>
+                  <div class="preview-badge">${t('play_preview')}</div>
+                  <h4 class="preview-card-title">${t('play_card_title')}</h4>
+                  <p>${t('play_card_desc')}</p>
+                  <button class="preview-card-action">${t('play_interact')}</button>
                 </div>
               </div>
             </div>
@@ -1085,10 +1080,10 @@ export function renderLanding(onNavigate) {
                 <span>generated-styles.css</span>
                 <button class="btn-copy-export" id="btn-copy-playground-css">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  <span>Copy CSS</span>
+                  <span>${t('play_copy_css')}</span>
                 </button>
               </div>
-              <pre class="code-display" id="playground-code-snippet"><code>/* CSS Output Loading... */</code></pre>
+              <pre class="code-display" id="playground-code-snippet"><code>${t('play_loading')}</code></pre>
             </div>
           </div>
         </div>
@@ -1107,10 +1102,10 @@ export function renderLanding(onNavigate) {
         <div class="faq-container-inner">
           <div class="section-header">
           <div class="tech-badge">
-            <span>Frequently Asked Questions</span>
+            <span>${t('faq_badge')}</span>
           </div>
-          <h2 class="section-title">Got Questions? We've Got Answers</h2>
-          <p class="section-subtitle">Everything you need to know about SnippetUI's premium components, licensing, and integration workflows.</p>
+          <h2 class="section-title">${t('faq_title')}</h2>
+          <p class="section-subtitle">${t('faq_subtitle')}</p>
         </div>
 
         <!-- FAQ Search and Tabs Controls -->
@@ -1118,7 +1113,7 @@ export function renderLanding(onNavigate) {
           <!-- Glassmorphism Search Panel -->
           <div class="faq-search-wrapper">
             <svg class="faq-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="faq-search-input" placeholder="Search questions, keywords..." aria-label="Search FAQs" />
+            <input type="text" id="faq-search-input" placeholder="${t('faq_search_placeholder')}" aria-label="Search FAQs" />
             <button id="btn-faq-search-clear" aria-label="Clear Search" class="faq-search-clear-btn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
@@ -1126,11 +1121,11 @@ export function renderLanding(onNavigate) {
 
           <!-- FAQ Category Filtering tabs -->
           <div class="faq-tabs" id="faq-category-tabs">
-            <button class="btn-faq-filter active" data-category="all">All FAQs</button>
-            <button class="btn-faq-filter" data-category="general">General</button>
-            <button class="btn-faq-filter" data-category="integration">Integration</button>
-            <button class="btn-faq-filter" data-category="extension">VS Code Extension</button>
-            <button class="btn-faq-filter" data-category="licensing">Licensing</button>
+            <button class="btn-faq-filter active" data-category="all">${t('faq_cat_all')}</button>
+            <button class="btn-faq-filter" data-category="general">${t('faq_cat_general')}</button>
+            <button class="btn-faq-filter" data-category="integration">${t('faq_cat_integration')}</button>
+            <button class="btn-faq-filter" data-category="extension">${t('faq_cat_extension')}</button>
+            <button class="btn-faq-filter" data-category="licensing">${t('faq_cat_licensing')}</button>
           </div>
         </div>
 
@@ -1140,7 +1135,7 @@ export function renderLanding(onNavigate) {
           <!-- Item 1: General -->
           <div class="faq-item" data-categories="general">
             <button class="faq-trigger" aria-expanded="false">
-              <span class="faq-question">What is SnippetUI and how does it work?</span>
+              <span class="faq-question">${t('faq_q1')}</span>
               <span class="faq-icon-wrapper">
                 <span class="faq-icon-line horizontal"></span>
                 <span class="faq-icon-line vertical"></span>
@@ -1148,7 +1143,7 @@ export function renderLanding(onNavigate) {
             </button>
             <div class="faq-answer-wrapper">
               <div class="faq-answer-content">
-                <p>SnippetUI is a premium repository of beautifully crafted, copy-paste CSS and HTML design components. Rather than shipping heavy Javascript framework dependencies, we provide clean, modular, and optimized styles that utilize CSS custom properties (variables) for immediate visual integration.</p>
+                <p>${t('faq_a1')}</p>
               </div>
             </div>
           </div>
@@ -1156,7 +1151,7 @@ export function renderLanding(onNavigate) {
           <!-- Item 2: Integration -->
           <div class="faq-item" data-categories="integration">
             <button class="faq-trigger" aria-expanded="false">
-              <span class="faq-question">Can I use SnippetUI in frameworks like React, Vue, Svelte, or Next.js?</span>
+              <span class="faq-question">${t('faq_q2')}</span>
               <span class="faq-icon-wrapper">
                 <span class="faq-icon-line horizontal"></span>
                 <span class="faq-icon-line vertical"></span>
@@ -1164,7 +1159,7 @@ export function renderLanding(onNavigate) {
             </button>
             <div class="faq-answer-wrapper">
               <div class="faq-answer-content">
-                <p>Yes, absolutely. Because our components are built using native HTML5 markup structure and vanilla CSS variables, they are 100% framework-agnostic. You can copy the code snippet directly and drop it into React JSX, Vue SFC templates, or Svelte files without any translation needed. It compiles instantly in under 1ms.</p>
+                <p>${t('faq_a2')}</p>
               </div>
             </div>
           </div>
@@ -1172,7 +1167,7 @@ export function renderLanding(onNavigate) {
           <!-- Item 3: Extension (Under Development Info) -->
           <div class="faq-item" data-categories="extension">
             <button class="faq-trigger" aria-expanded="false">
-              <span class="faq-question">Where can I download the SnippetUI VS Code Extension?</span>
+              <span class="faq-question">${t('faq_q3')}</span>
               <span class="faq-icon-wrapper">
                 <span class="faq-icon-line horizontal"></span>
                 <span class="faq-icon-line vertical"></span>
@@ -1180,7 +1175,7 @@ export function renderLanding(onNavigate) {
             </button>
             <div class="faq-answer-wrapper">
               <div class="faq-answer-content">
-                <p>The official SnippetUI VS Code Extension is currently under active development and has not been published to the VS Code Marketplace yet. We are working hard to build a secure, zero-lag code injection pipeline. You can review the beta build instructions on our GitHub repository or join our community channels to get notified the second it goes live.</p>
+                <p>${t('faq_a3')}</p>
               </div>
             </div>
           </div>
@@ -1188,7 +1183,7 @@ export function renderLanding(onNavigate) {
           <!-- Item 4: Licensing -->
           <div class="faq-item" data-categories="licensing">
             <button class="faq-trigger" aria-expanded="false">
-              <span class="faq-question">Are these components free to use for commercial projects?</span>
+              <span class="faq-question">${t('faq_q4')}</span>
               <span class="faq-icon-wrapper">
                 <span class="faq-icon-line horizontal"></span>
                 <span class="faq-icon-line vertical"></span>
@@ -1196,7 +1191,7 @@ export function renderLanding(onNavigate) {
             </button>
             <div class="faq-answer-wrapper">
               <div class="faq-answer-content">
-                <p>Yes, all components available on SnippetUI are fully open-source and free to use for both personal and commercial web projects under the MIT License. You are free to modify styles, customize color palettes, and build applications without attribution, though credit to SnippetUI is always appreciated.</p>
+                <p>${t('faq_a4')}</p>
               </div>
             </div>
           </div>
@@ -1204,7 +1199,7 @@ export function renderLanding(onNavigate) {
           <!-- Item 5: Integration -->
           <div class="faq-item" data-categories="integration">
             <button class="faq-trigger" aria-expanded="false">
-              <span class="faq-question">Do these snippets affect my page speed or performance metrics?</span>
+              <span class="faq-question">${t('faq_q5')}</span>
               <span class="faq-icon-wrapper">
                 <span class="faq-icon-line horizontal"></span>
                 <span class="faq-icon-line vertical"></span>
@@ -1212,7 +1207,7 @@ export function renderLanding(onNavigate) {
             </button>
             <div class="faq-answer-wrapper">
               <div class="faq-answer-content">
-                <p>Not at all. SnippetUI components are optimized for maximum page load efficiency. By omitting bloated external script packages, standard JS libraries, and large asset structures, we rely entirely on hardware-accelerated CSS filters and transition layouts. This guarantees smooth, lag-free renders on both desktop and mobile viewports.</p>
+                <p>${t('faq_a5')}</p>
               </div>
             </div>
           </div>
@@ -1220,7 +1215,7 @@ export function renderLanding(onNavigate) {
           <!-- Item 6: General -->
           <div class="faq-item" data-categories="general">
             <button class="faq-trigger" aria-expanded="false">
-              <span class="faq-question">How customizable are the components? Can I adjust variables easily?</span>
+              <span class="faq-question">${t('faq_q6')}</span>
               <span class="faq-icon-wrapper">
                 <span class="faq-icon-line horizontal"></span>
                 <span class="faq-icon-line vertical"></span>
@@ -1228,7 +1223,7 @@ export function renderLanding(onNavigate) {
             </button>
             <div class="faq-answer-wrapper">
               <div class="faq-answer-content">
-                <p>Every single snippet exposes CSS custom variables at the root selector level (like <code>--card-glow</code>, <code>--card-blur</code>, <code>--card-border-radius</code>). You can customize the color profiles, corner radiuses, and glow intensities instantly by changing these single declarations in your stylesheet, or dynamically hook them to a theme toggle manager.</p>
+                <p>${t('faq_a6')}</p>
               </div>
             </div>
           </div>
@@ -1236,7 +1231,7 @@ export function renderLanding(onNavigate) {
           <!-- Item 7: Licensing & General -->
           <div class="faq-item" data-categories="licensing general">
             <button class="faq-trigger" aria-expanded="false">
-              <span class="faq-question">Is SnippetUI completely free, or is there a premium tier?</span>
+              <span class="faq-question">${t('faq_q7')}</span>
               <span class="faq-icon-wrapper">
                 <span class="faq-icon-line horizontal"></span>
                 <span class="faq-icon-line vertical"></span>
@@ -1244,7 +1239,7 @@ export function renderLanding(onNavigate) {
             </button>
             <div class="faq-answer-wrapper">
               <div class="faq-answer-content">
-                <p>SnippetUI is 100% free and open-source under the MIT license. Every component, text animation, dynamic button, and loader in our library is accessible to everyone. There are no hidden subscription tiers, credit-packs, or premium paywalls—feel free to copy, tweak, and deploy anything you see.</p>
+                <p>${t('faq_a7')}</p>
               </div>
             </div>
           </div>
@@ -1252,7 +1247,7 @@ export function renderLanding(onNavigate) {
           <!-- Item 8: Integration -->
           <div class="faq-item" data-categories="integration">
             <button class="faq-trigger" aria-expanded="false">
-              <span class="faq-question">How do I update the style of a copied component without affecting others?</span>
+              <span class="faq-question">${t('faq_q8')}</span>
               <span class="faq-icon-wrapper">
                 <span class="faq-icon-line horizontal"></span>
                 <span class="faq-icon-line vertical"></span>
@@ -1260,7 +1255,7 @@ export function renderLanding(onNavigate) {
             </button>
             <div class="faq-answer-wrapper">
               <div class="faq-answer-content">
-                <p>Each SnippetUI component is fully self-contained. The styling properties are bound to unique CSS class names and local variables (like <code>--card-glow</code>). This means editing the parameters of one component will not bleed into or break other instances of the same component on your page, maintaining strict visual isolation.</p>
+                <p>${t('faq_a8')}</p>
               </div>
             </div>
           </div>
@@ -1268,7 +1263,7 @@ export function renderLanding(onNavigate) {
           <!-- Item 9: General -->
           <div class="faq-item" data-categories="general">
             <button class="faq-trigger" aria-expanded="false">
-              <span class="faq-question">Can I submit or contribute my own custom snippets to SnippetUI?</span>
+              <span class="faq-question">${t('faq_q9')}</span>
               <span class="faq-icon-wrapper">
                 <span class="faq-icon-line horizontal"></span>
                 <span class="faq-icon-line vertical"></span>
@@ -1276,7 +1271,7 @@ export function renderLanding(onNavigate) {
             </button>
             <div class="faq-answer-wrapper">
               <div class="faq-answer-content">
-                <p>Yes, we absolutely welcome community contributions! SnippetUI is built by the community, for the community. If you have designed a beautiful glassmorphic loader, magnetic button, or hover effect, you can open a Pull Request on our GitHub repository. Once reviewed for quality and style alignment, we'll feature it on the landing page.</p>
+                <p>${t('faq_a9')}</p>
               </div>
             </div>
           </div>
@@ -1284,7 +1279,7 @@ export function renderLanding(onNavigate) {
           <!-- Item 10: Extension -->
           <div class="faq-item" data-categories="extension">
             <button class="faq-trigger" aria-expanded="false">
-              <span class="faq-question">Will the VS Code Extension support framework file auto-detection?</span>
+              <span class="faq-question">${t('faq_q10')}</span>
               <span class="faq-icon-wrapper">
                 <span class="faq-icon-line horizontal"></span>
                 <span class="faq-icon-line vertical"></span>
@@ -1292,7 +1287,7 @@ export function renderLanding(onNavigate) {
             </button>
             <div class="faq-answer-wrapper">
               <div class="faq-answer-content">
-                <p>Yes. When released, the VS Code Extension will automatically detect your active file type (such as <code>.jsx</code>, <code>.vue</code>, <code>.svelte</code>, or <code>.html</code>) and inject the appropriate syntax format. It will also expose auto-complete IntelliSense triggers for SnippetUI utility variables directly inside your stylesheets.</p>
+                <p>${t('faq_a10')}</p>
               </div>
             </div>
           </div>
@@ -1300,8 +1295,8 @@ export function renderLanding(onNavigate) {
           <!-- No Results Mock Element -->
           <div class="faq-no-results" id="faq-no-results-msg">
             <div class="no-results-icon">🔍</div>
-            <h4>No matching questions found</h4>
-            <p>Try searching for different terms, or check other categories.</p>
+            <h4>${t('faq_no_results_title')}</h4>
+            <p>${t('faq_no_results_desc')}</p>
           </div>
 
         </div>
@@ -1328,8 +1323,8 @@ export function renderLanding(onNavigate) {
 
           <!-- Main Contents -->
           <div class="peel-banner-content">
-            <h2 class="peel-banner-title">Start Building Breathtaking<br/>Interfaces with SnippetUI</h2>
-            <button class="btn-peel-cta" id="btn-peel-browse">Browse Components</button>
+            <h2 class="peel-banner-title">${t('peel_title')}</h2>
+            <button class="btn-peel-cta" id="btn-peel-browse">${t('peel_btn')}</button>
           </div>
 
           <!-- Right floating avatar + bubble -->
@@ -1358,28 +1353,28 @@ export function renderLanding(onNavigate) {
         <div class="footer-container">
           <div class="footer-left">
             <img src="/assets/logo.png" alt="SnippetUI Logo" class="footer-logo-img" />
-            <p>Building the world's most breathtaking frontend component platform.</p>
-            <p>© 2026 SnippetUI. All rights reserved.</p>
+            <p>${t('footer_desc')}</p>
+            <p>${t('footer_copyright')}</p>
           </div>
           
           <div class="footer-links">
             <div class="footer-link-group">
-              <h4>Platform</h4>
-              <a href="#library" id="footer-link-library">Browse Snippets</a>
-              <a href="#" style="opacity: 0.5; pointer-events: none;">Templates (Coming Soon)</a>
+              <h4>${t('footer_products')}</h4>
+              <a href="#library" id="footer-link-library">${t('footer_library')}</a>
+              <a href="#" style="opacity: 0.5; pointer-events: none;">${t('footer_templates')}</a>
             </div>
             
             <div class="footer-link-group">
-              <h4>Community</h4>
+              <h4>${t('footer_resources')}</h4>
               <a href="https://github.com/NavishKumar1/Snippetui" target="_blank">GitHub</a>
               <a href="#404" id="footer-link-discord">Discord</a>
               <a href="#404" id="footer-link-twitter">Twitter</a>
             </div>
             
             <div class="footer-link-group">
-              <h4>Legals</h4>
-              <a href="#privacy" id="footer-link-privacy">Privacy Policy</a>
-              <a href="#terms" id="footer-link-terms">Terms of Service</a>
+              <h4>${t('footer_legal')}</h4>
+              <a href="#privacy" id="footer-link-privacy">${t('footer_privacy')}</a>
+              <a href="#terms" id="footer-link-terms">${t('footer_terms')}</a>
             </div>
           </div>
         </div>
@@ -1850,9 +1845,9 @@ export function renderLanding(onNavigate) {
         navigator.clipboard.writeText(text).then(() => {
           const copySpan = btnCopyPlaygroundCss.querySelector('span');
           if (copySpan) {
-            copySpan.textContent = 'Copied!';
+            copySpan.textContent = t('pipeline_copied_btn');
             setTimeout(() => {
-              copySpan.textContent = 'Copy CSS';
+              copySpan.textContent = t('play_copy_css');
             }, 2000);
           }
         });

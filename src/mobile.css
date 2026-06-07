@@ -754,4 +754,18 @@
   pre[id*="-box"], pre[class*="code-container"] {
     font-size: 11.5px !important;
   }
+
+  /* Compact language dropdown styling on mobile */
+  .global-lang-select {
+    padding: 6px 24px 6px 10px !important;
+    font-size: 11px !important;
+    border-radius: 6px !important;
+  }
+  .lang-select-container::after {
+    right: 8px !important;
+    border-top-width: 3px !important;
+    border-left-width: 3px !important;
+    border-right-width: 3px !important;
+  }
 }
+

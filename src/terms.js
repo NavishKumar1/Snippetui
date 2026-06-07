@@ -3,6 +3,8 @@
  * High-quality legal disclosure page detailing user agreements and platform liabilities
  */
 
+import { t } from './i18n.js';
+
 export function renderTerms(onNavigate) {
   const htmlContent = `
     <div class="privacy-view-container">
@@ -13,9 +15,9 @@ export function renderTerms(onNavigate) {
         
         <!-- Header -->
         <header class="privacy-header">
-          <div class="tech-badge">Legal & Terms</div>
-          <h1 class="privacy-title">Terms of Service</h1>
-          <p class="privacy-subtitle">Effective Date: June 5, 2026</p>
+          <div class="tech-badge">${t('terms_legal_badge')}</div>
+          <h1 class="privacy-title">${t('terms_title')}</h1>
+          <p class="privacy-subtitle">${t('terms_effective_date')}</p>
           <div class="header-divider"></div>
         </header>
 
@@ -26,11 +28,9 @@ export function renderTerms(onNavigate) {
           <div class="privacy-card intro-card">
             <div class="intro-icon">📄</div>
             <div class="intro-text">
-              <h3>Acceptance of Platform Agreements</h3>
+              <h3>${t('terms_intro_title')}</h3>
               <p>
-                By accessing or using the SnippetUI repository showcase, visual customizers, registry indexes, 
-                or VS Code Extensions, you agree to be bound by these Terms of Service. If you do not agree to 
-                these terms, please terminate your session and cease using our codebase.
+                ${t('terms_intro_p')}
               </p>
             </div>
           </div>
@@ -41,75 +41,60 @@ export function renderTerms(onNavigate) {
             <!-- Section 1 -->
             <section class="policy-section">
               <div class="section-num">01</div>
-              <h2>Open-Source License & Usage</h2>
+              <h2>${t('terms_sec1_title')}</h2>
               <p>
-                All modular web components, text animations, dynamic buttons, loaders, docks, and responsive layouts 
-                indexed within our repository are open-source software licensed under the terms of the 
-                <strong>MIT License</strong>.
+                ${t('terms_sec1_p1')}
               </p>
               <p>
-                You are granted a free, non-exclusive, worldwide license to copy, modify, merge, distribute, and compile 
-                the snippets into your commercial or personal software packages. No royalty payments, licensing fees, 
-                or visual attribution back to SnippetUI is required, although link-backs are appreciated.
+                ${t('terms_sec1_p2')}
               </p>
             </section>
 
             <!-- Section 2 -->
             <section class="policy-section">
               <div class="section-num">02</div>
-              <h2>Proprietary Assets & Intellectual Property</h2>
+              <h2>${t('terms_sec2_title')}</h2>
               <p>
-                While the individual code snippets are MIT-licensed, the SnippetUI brand identity, logos, custom graphics, 
-                website text content, compilation databases, visual layout of the showcase directory, and design aesthetics 
-                remain the exclusive proprietary property of SnippetUI.
+                ${t('terms_sec2_p1')}
               </p>
               <p>
-                You may not clone, scrape, or republish the core SnippetUI web application or its promotional materials 
-                to create a competing component library directory or distribute it under the SnippetUI trademark.
+                ${t('terms_sec2_p2')}
               </p>
             </section>
 
             <!-- Section 3 -->
             <section class="policy-section">
               <div class="section-num">03</div>
-              <h2>Disclaimer of Warranties ("AS IS")</h2>
+              <h2>${t('terms_sec3_title')}</h2>
               <p>
-                THE PLATFORM, REGISTRY INDEXES, INTEGRATED STYLESHEETS, AND VS CODE EXTENSIONS ARE PROVIDED 
-                <strong>"AS IS"</strong> AND <strong>"AS AVAILABLE"</strong>, WITHOUT WARRANTY OF ANY KIND, 
-                EXPRESS OR IMPLIED.
+                ${t('terms_sec3_p1')}
               </p>
               <p>
-                TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, SNIPPETUI DISCLAIMS ALL WARRANTIES, INCLUDING BUT NOT 
-                LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, COMPATIBILITY, NON-INFRINGEMENT, AND FITNESS FOR A 
-                PARTICULAR PURPOSE. WE DO NOT WARRANT THAT CODE INJECTIONS WILL COMPILE FLAWLESSLY IN ALL DEVELOPMENT ENVIRONMENT 
-                DOCKS, NOR THAT STYLES ARE COMPATIBLE WITH ALL LEGACY BROWSER VIEWPORTS.
+                ${t('terms_sec3_p2')}
               </p>
             </section>
 
             <!-- Section 4 -->
             <section class="policy-section">
               <div class="section-num">04</div>
-              <h2>Limitation of Liability</h2>
+              <h2>${t('terms_sec4_title')}</h2>
               <p>
-                IN NO EVENT SHALL SNIPPETUI, ITS DEVELOPERS, CONTRIBUTING AUTHORS, OR OWNERS BE LIABLE FOR ANY DAMAGES, 
-                INCLUDING BUT NOT LIMITED TO SPECIAL, INCIDENTAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES ARISING OUT OF 
-                OR IN CONNECTION WITH THE SOFTWARE, INGESTED SCRIPTS, WEBSITE OUTAGE, OR DATA OUTCOMES.
+                ${t('terms_sec4_p1')}
               </p>
               <p>
-                You assume full responsibility for auditing, testing, and verifying the security and structural integrity of 
-                any HTML, CSS, or Javascript snippets before deploying them into production databases or active client platforms.
+                ${t('terms_sec4_p2')}
               </p>
             </section>
 
             <!-- Section 5 -->
             <section class="policy-section">
               <div class="section-num">05</div>
-              <h2>External Resources & Third-Party Services</h2>
+              <h2>${t('terms_sec5_title')}</h2>
               <p>
-                SnippetUI incorporates integrations with external services and third-party delivery nodes (such as custom font CDNs, web performance diagnostics tools, search optimization services provided by Google, GitHub repositories, and the Visual Studio Code Extension Marketplace). 
+                ${t('terms_sec5_p1')}
               </p>
               <p>
-                We do not control, monitor, or assume liability for the uptime, operational policies, API adjustments, or data handling methods of these external entities. Your engagement with any third-party tools is governed strictly by their respective terms of service and privacy declarations.
+                ${t('terms_sec5_p2')}
               </p>
             </section>
 
@@ -122,7 +107,7 @@ export function renderTerms(onNavigate) {
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
               </svg>
-              Back to Home Page
+              ${t('terms_btn_back')}
             </button>
           </div>
 

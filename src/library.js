@@ -5,6 +5,7 @@
 
 import { COMPONENTS_DATABASE } from './library/index.js';
 import Lenis from 'lenis';
+import { t, getCurrentLanguage, setLanguage } from './i18n.js';
 
 
 
@@ -330,6 +331,29 @@ onMounted(() => {
 
   // Format category display names nicely (e.g. 'text-animation' -> 'Text Animation')
   function formatCategoryName(cat) {
+    const mapping = {
+      'text-animation': 'cat_text',
+      'buttons': 'cat_buttons',
+      'cards': 'cat_cards',
+      'inputs': 'cat_inputs',
+      'sliders-and-ranges': 'cat_sliders',
+      'dropdowns-and-menus': 'cat_menus',
+      'page-transitions': 'cat_transitions',
+      'tabs-and-navs': 'cat_tabs',
+      'progress-and-gauges': 'cat_progress',
+      'loaders': 'cat_loaders',
+      'background-animations': 'cat_backgrounds',
+      'dock-navigations': 'cat_docks',
+      'sidebar-navigations': 'cat_sidebars',
+      'containers': 'cat_containers',
+      'dashboard-widgets': 'cat_widgets',
+      'monetization': 'cat_monetization',
+      'dashboard-layouts': 'cat_layouts'
+    };
+    const key = mapping[cat];
+    if (key && t(key) !== key) {
+      return t(key);
+    }
     return cat
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -358,8 +382,8 @@ onMounted(() => {
       return `
         <div class="empty-results" style="grid-column: span 2;">
           <div class="empty-icon">🔍</div>
-          <h3>No Snippets Found</h3>
-          <p>We couldn't find any component matching "${searchQuery}". Try searching another keyword!</p>
+          <h3>${t('lib_empty_title')}</h3>
+          <p>${t('lib_empty_desc', { query: searchQuery })}</p>
         </div>
       `;
     }
@@ -368,7 +392,7 @@ onMounted(() => {
       <div class="component-card" id="card-${comp.id}">
         <div class="component-preview" style="cursor: default;">
           ${comp.html}
-          <button class="btn-card-fullscreen" data-id="${comp.id}" title="Open Preview">
+          <button class="btn-card-fullscreen" data-id="${comp.id}" title="${t('lib_fullscreen_tooltip')}">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
           </button>
         </div>
@@ -380,11 +404,11 @@ onMounted(() => {
           <div class="component-actions">
             <button class="btn-card-action btn-view-code" data-id="${comp.id}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-              View Code
+              ${t('lib_view_code')}
             </button>
             <button class="btn-card-action btn-copy-prompt" data-id="${comp.id}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-              Copy Prompt
+              ${t('lib_copy_prompt')}
             </button>
           </div>
         </div>
@@ -417,10 +441,22 @@ onMounted(() => {
         </div>
         
         <div class="header-right-group">
+          <!-- Language Dropdown Selector (Sync with navbar dropdown) -->
+          <div class="lang-select-container">
+            <select id="library-lang-select" class="global-lang-select" aria-label="Select Language">
+              <option value="en">English</option>
+              <option value="es">Español</option>
+              <option value="fr">Français</option>
+              <option value="de">Deutsch</option>
+              <option value="ja">日本語</option>
+              <option value="zh">简体中文</option>
+            </select>
+          </div>
+
           <!-- Back to Home Button -->
           <a href="#landing" class="btn-header-back" id="header-btn-back">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-            <span>Back to Home</span>
+            <span>${t('lib_back_home')}</span>
           </a>
           
           <!-- GitHub Repo Link -->
@@ -428,7 +464,7 @@ onMounted(() => {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
               <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.11.82-.26.82-.577v-2.234c-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.82 1.102.82 2.222v3.293c0 .319.22.694.825.576C20.565 21.795 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
             </svg>
-            <span>Star</span>
+            <span>${t('nav_star')}</span>
           </a>
         </div>
       </div>
@@ -436,7 +472,7 @@ onMounted(() => {
       <!-- Mobile Floating Categories Toggle Button -->
       <button class="mobile-categories-toggle" id="mobile-categories-btn">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 6px;"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
-        <span>Categories</span>
+        <span>${t('lib_categories')}</span>
       </button>
 
       <div class="library-view" style="margin-top: 0; padding: 0;">
@@ -444,11 +480,11 @@ onMounted(() => {
         <aside class="library-sidebar">
           <div class="search-wrapper">
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" class="search-input" id="search-snippets" placeholder="Search components... (${shortcutLabel})" value="${searchQuery}" />
+            <input type="text" class="search-input" id="search-snippets" placeholder="${t('lib_search_placeholder')} (${shortcutLabel})" value="${searchQuery}" />
           </div>
           
           <div class="sidebar-section-wrapper">
-            <h3 class="sidebar-section-title">Categories</h3>
+            <h3 class="sidebar-section-title">${t('lib_categories')}</h3>
             <ul class="category-list" id="sidebar-categories">
               ${renderSidebarCategories()}
             </ul>
@@ -459,8 +495,8 @@ onMounted(() => {
         <main class="library-main">
           <div class="library-header">
             <div class="library-info">
-              <h2>Components Library</h2>
-              <p>Sleek, copy-paste CSS snippets to bring your interfaces to life.</p>
+              <h2>${t('lib_title')}</h2>
+              <p>${t('lib_subtitle')}</p>
             </div>
           </div>
 
@@ -509,17 +545,17 @@ onMounted(() => {
       <div class="code-drawer">
         <div class="drawer-header">
           <div class="drawer-title">
-            <h3 id="drawer-comp-name">Component Code</h3>
-            <p style="font-size: 13px; color: var(--text-secondary);">Direct copy-paste versions ready for integration.</p>
+            <h3 id="drawer-comp-name">${t('lib_drawer_title')}</h3>
+            <p style="font-size: 13px; color: var(--text-secondary);">${t('lib_drawer_subtitle')}</p>
           </div>
           <button class="drawer-close-btn" id="drawer-close" aria-label="Close panel">✕</button>
         </div>
 
         <!-- Sidebar / Drawer Tabs navigation -->
         <div class="drawer-tabs">
-          <button class="drawer-tab-btn active" data-tab="install">Install</button>
-          <button class="drawer-tab-btn" data-tab="usage">Usage</button>
-          <button class="drawer-tab-btn" data-tab="code">Code</button>
+          <button class="drawer-tab-btn active" data-tab="install">${t('lib_tab_install')}</button>
+          <button class="drawer-tab-btn" data-tab="usage">${t('lib_tab_usage')}</button>
+          <button class="drawer-tab-btn" data-tab="code">${t('lib_tab_code')}</button>
         </div>
 
         <div class="drawer-panes-wrapper" style="flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; position: relative;">
@@ -528,7 +564,7 @@ onMounted(() => {
           <div class="drawer-pane active" data-pane="install" style="display: flex; flex-direction: column; gap: 24px; padding: 24px; overflow-y: auto; height: 100%;">
             <div class="section-container" style="display: flex; flex-direction: column; gap: 20px;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h4 style="font-size: 15px; font-weight: 700; color: #ffffff; letter-spacing: -0.01em;">Installation Commands</h4>
+                <h4 style="font-size: 15px; font-weight: 700; color: #ffffff; letter-spacing: -0.01em;">${t('lib_install_title')}</h4>
                 
                 <!-- CLI Version Indicator (Mirroring shadcn selector) -->
                 <button class="custom-dropdown-btn compact" style="width: auto; height: 32px; padding: 0 10px; border-radius: 6px; font-size: 11px; pointer-events: none; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
@@ -539,8 +575,8 @@ onMounted(() => {
 
               <!-- Install Sub-Tabs: CLI vs Manual -->
               <div class="install-mode-toggle">
-                <button class="install-mode-btn active" data-mode="cli">CLI</button>
-                <button class="install-mode-btn" data-mode="manual">Manual</button>
+                <button class="install-mode-btn active" data-mode="cli">${t('lib_install_cli')}</button>
+                <button class="install-mode-btn" data-mode="manual">${t('lib_install_manual')}</button>
               </div>
 
               <!-- Mode Content: CLI Installation Option -->
@@ -558,7 +594,7 @@ onMounted(() => {
                   <code id="cli-command-box" style="font-family: var(--font-mono); font-size: 12.5px; color: #e1e4e8; white-space: nowrap; overflow-x: auto; flex-grow: 1; padding-right: 16px;">pnpm dlx snippetui@latest add neon-glow-text</code>
                   <button class="btn-drawer-copy inline-copy" id="copy-cli-btn">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    <span>Copy</span>
+                    <span>${t('pipeline_copy_btn')}</span>
                   </button>
                 </div>
               </div>
@@ -570,8 +606,8 @@ onMounted(() => {
                   <div style="display: flex; gap: 12px; align-items: flex-start;">
                     <div style="font-family: var(--font-heading); font-size: 12px; font-weight: 800; color: var(--accent-cyan); background: rgba(0, 242, 254, 0.08); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; min-width: 24px; border: 1px solid rgba(0, 242, 254, 0.2);">1</div>
                     <div style="flex-grow: 1;">
-                      <strong style="color: #ffffff; display: block; font-size: 13.5px; margin-bottom: 2px;">Copy HTML Structure</strong>
-                      <span style="font-size: 12px; color: var(--text-secondary);">Add the markup structure below into your template or page:</span>
+                      <strong style="color: #ffffff; display: block; font-size: 13.5px; margin-bottom: 2px;">${t('lib_step_html')}</strong>
+                      <span style="font-size: 12px; color: var(--text-secondary);">${t('lib_step_html_desc')}</span>
                     </div>
                   </div>
                   <div class="code-card-wrapper" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; max-height: 140px;">
@@ -579,7 +615,7 @@ onMounted(() => {
                       <span style="font-size: 11px; color: var(--text-secondary);">HTML</span>
                       <button type="button" class="btn-drawer-copy inline-copy compact-copy" id="manual-copy-html-btn" style="position: static; padding: 2px 6px; font-size: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: #ffffff; border-radius: 4px; cursor: pointer;">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                        <span>Copy</span>
+                        <span>${t('pipeline_copy_btn')}</span>
                       </button>
                     </div>
                     <pre id="manual-html-box" style="margin: 0; padding: 10px; font-family: var(--font-mono); font-size: 11.5px; color: #e1e4e8; overflow: auto; white-space: pre-wrap; word-break: break-all; max-height: 110px;"></pre>
@@ -592,8 +628,8 @@ onMounted(() => {
                     <div style="display: flex; gap: 12px; align-items: flex-start;">
                       <div style="font-family: var(--font-heading); font-size: 12px; font-weight: 800; color: var(--accent-cyan); background: rgba(0, 242, 254, 0.08); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; min-width: 24px; border: 1px solid rgba(0, 242, 254, 0.2);">2</div>
                       <div style="flex-grow: 1;">
-                        <strong style="color: #ffffff; display: block; font-size: 13.5px; margin-bottom: 2px;">Copy Styles</strong>
-                        <span style="font-size: 12px; color: var(--text-secondary);">Paste these stylesheet rules into your CSS file or Tailwind configuration:</span>
+                        <strong style="color: #ffffff; display: block; font-size: 13.5px; margin-bottom: 2px;">${t('lib_step_styles')}</strong>
+                        <span style="font-size: 12px; color: var(--text-secondary);">${t('lib_step_styles_desc')}</span>
                       </div>
                     </div>
                     <!-- Inline CSS/Tailwind toggle -->
@@ -604,10 +640,10 @@ onMounted(() => {
                   </div>
                   <div class="code-card-wrapper" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; max-height: 140px;">
                     <div class="code-card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); min-height: 28px;">
-                      <span id="manual-style-title" style="font-size: 11px; color: var(--text-secondary);">CSS Styles</span>
+                      <span id="manual-style-title" style="font-size: 11px; color: var(--text-secondary);">${t('lib_style')}</span>
                       <button type="button" class="btn-drawer-copy inline-copy compact-copy" id="manual-copy-style-btn" style="position: static; padding: 2px 6px; font-size: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: #ffffff; border-radius: 4px; cursor: pointer;">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                        <span>Copy</span>
+                        <span>${t('pipeline_copy_btn')}</span>
                       </button>
                     </div>
                     <pre id="manual-style-box" style="margin: 0; padding: 10px; font-family: var(--font-mono); font-size: 11.5px; color: #e1e4e8; overflow: auto; white-space: pre-wrap; word-break: break-all; max-height: 110px;"></pre>
@@ -620,8 +656,8 @@ onMounted(() => {
                     <div style="display: flex; gap: 12px; align-items: flex-start;">
                       <div style="font-family: var(--font-heading); font-size: 12px; font-weight: 800; color: var(--accent-cyan); background: rgba(0, 242, 254, 0.08); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; min-width: 24px; border: 1px solid rgba(0, 242, 254, 0.2);">3</div>
                       <div style="flex-grow: 1;">
-                        <strong style="color: #ffffff; display: block; font-size: 13.5px; margin-bottom: 2px;">Copy Scripting Logic</strong>
-                        <span style="font-size: 12px; color: var(--text-secondary);">Initialize dynamic animations with standard JS or TypeSafe scripting:</span>
+                        <strong style="color: #ffffff; display: block; font-size: 13.5px; margin-bottom: 2px;">${t('lib_step_script')}</strong>
+                        <span style="font-size: 12px; color: var(--text-secondary);">${t('lib_step_script_desc')}</span>
                       </div>
                     </div>
                     <!-- Inline Script toggle -->
@@ -632,10 +668,10 @@ onMounted(() => {
                   </div>
                   <div class="code-card-wrapper" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; max-height: 140px;">
                     <div class="code-card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); min-height: 28px;">
-                      <span id="manual-script-title" style="font-size: 11px; color: var(--text-secondary);">JavaScript</span>
+                      <span id="manual-script-title" style="font-size: 11px; color: var(--text-secondary);">${t('lib_script')}</span>
                       <button type="button" class="btn-drawer-copy inline-copy compact-copy" id="manual-copy-script-btn" style="position: static; padding: 2px 6px; font-size: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: #ffffff; border-radius: 4px; cursor: pointer;">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                        <span>Copy</span>
+                        <span>${t('pipeline_copy_btn')}</span>
                       </button>
                     </div>
                     <pre id="manual-script-box" style="margin: 0; padding: 10px; font-family: var(--font-mono); font-size: 11.5px; color: #e1e4e8; overflow: auto; white-space: pre-wrap; word-break: break-all; max-height: 110px;"></pre>
@@ -649,16 +685,16 @@ onMounted(() => {
           <!-- Pane 2: Usage -->
           <div class="drawer-pane" data-pane="usage" style="display: none; flex-direction: column; gap: 16px; padding: 24px; overflow-y: auto; height: 100%;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <h4 style="font-size: 15px; font-weight: 700; color: #ffffff; letter-spacing: -0.01em;">Integration Instructions</h4>
+              <h4 style="font-size: 15px; font-weight: 700; color: #ffffff; letter-spacing: -0.01em;">${t('lib_integration_title')}</h4>
             </div>
             
             <!-- Usage Code Display Card -->
             <div class="code-card-wrapper" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; flex-grow: 1; min-height: 380px;">
               <div class="code-card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); height: 42px; min-height: 42px;">
-                <span style="font-family: var(--font-body); font-size: 12.5px; font-weight: 700; color: #ffffff;">Integration Template</span>
+                <span style="font-family: var(--font-body); font-size: 12.5px; font-weight: 700; color: #ffffff;">${t('lib_integration_desc')}</span>
                 <button class="btn-drawer-copy inline-copy" id="copy-usage-btn">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  <span>Copy</span>
+                  <span>${t('pipeline_copy_btn')}</span>
                 </button>
               </div>
               <pre class="code-container active" id="drawer-usage-box" style="flex-grow: 1; overflow-y: auto; padding: 16px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6; margin: 0; color: #c9d1d9; white-space: pre-wrap; word-break: break-all; display: block;"></pre>
@@ -741,10 +777,10 @@ onMounted(() => {
               <!-- HTML Structure Card -->
               <div class="code-card-wrapper" id="drawer-html-card" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; height: 240px; min-height: 240px;">
                 <div class="code-card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); height: 42px; min-height: 42px;">
-                  <span id="title-html-card" style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">HTML Structure Markup</span>
+                  <span id="title-html-card" style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">${t('lib_tab_code')} (HTML)</span>
                   <button class="btn-drawer-copy inline-copy" id="copy-html-btn">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    <span>Copy</span>
+                    <span>${t('pipeline_copy_btn')}</span>
                   </button>
                 </div>
                 <pre class="code-container active" id="drawer-html-box" style="flex-grow: 1; overflow-y: auto; padding: 16px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6; margin: 0; color: #c9d1d9; white-space: pre-wrap; word-break: break-all; display: block;"></pre>
@@ -753,10 +789,10 @@ onMounted(() => {
               <!-- Script Code Card -->
               <div class="code-card-wrapper" id="drawer-script-card" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; height: 240px; min-height: 240px;">
                 <div class="code-card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); height: 42px; min-height: 42px;">
-                  <span style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">Scripting Implementation</span>
+                  <span style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">${t('lib_script')}</span>
                   <button class="btn-drawer-copy inline-copy" id="copy-script-btn">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    <span>Copy</span>
+                    <span>${t('pipeline_copy_btn')}</span>
                   </button>
                 </div>
                 <pre class="code-container active" id="drawer-script-box" style="flex-grow: 1; overflow-y: auto; padding: 16px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6; margin: 0; color: #c9d1d9; white-space: pre-wrap; word-break: break-all; display: block;"></pre>
@@ -765,10 +801,10 @@ onMounted(() => {
               <!-- Styling Code Card -->
               <div class="code-card-wrapper" id="drawer-style-card" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; height: 240px; min-height: 240px;">
                 <div class="code-card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); height: 42px; min-height: 42px;">
-                  <span id="title-style-card" style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">Styling Implementation</span>
+                  <span id="title-style-card" style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">${t('lib_style')}</span>
                   <button class="btn-drawer-copy inline-copy" id="copy-style-btn">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    <span>Copy</span>
+                    <span>${t('pipeline_copy_btn')}</span>
                   </button>
                 </div>
                 <pre class="code-container active" id="drawer-style-box" style="flex-grow: 1; overflow-y: auto; padding: 16px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6; margin: 0; color: #c9d1d9; white-space: pre-wrap; word-break: break-all; display: block;"></pre>
@@ -783,7 +819,7 @@ onMounted(() => {
     <!-- Floating Global Copy Success Toast -->
     <div class="toast-copied" id="copy-toast">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="color: var(--accent-cyan);"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      <span>Copied snippet to clipboard!</span>
+      <span>${t('lib_toast_copied')}</span>
     </div>
 
     <!-- Dynamically Injected Component CSS Styles -->
@@ -1332,6 +1368,15 @@ onMounted(() => {
   return {
     html: htmlContent,
     init: (container) => {
+      // Bind language select dropdown event changes
+      const libLangSelect = container.querySelector('#library-lang-select');
+      if (libLangSelect) {
+        libLangSelect.value = getCurrentLanguage();
+        libLangSelect.addEventListener('change', (e) => {
+          setLanguage(e.target.value);
+        });
+      }
+
       // Initialize Lenis smooth scroll for library panels (desktop only for performance)
       if (window.innerWidth > 768) {
         const sidebar = container.querySelector('.library-sidebar');

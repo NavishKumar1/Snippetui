@@ -10,6 +10,7 @@ import { renderPrivacy } from './privacy.js';
 import { renderTerms } from './terms.js';
 import { render404 } from './error404.js';
 import Lenis from 'lenis';
+import { t, getCurrentLanguage, setLanguage } from './i18n.js';
 
 // Elements Cache
 const appContainer = document.getElementById('app');
@@ -19,6 +20,26 @@ const mobileToggle = document.getElementById('mobile-toggle');
 const navMenu = document.getElementById('nav-menu');
 const brandLogo = document.getElementById('brand-logo');
 const btnBrowseCta = document.getElementById('btn-browse-cta');
+
+function updateNavbarTranslations() {
+  const homeLink = document.querySelector('.nav-link[data-target="landing"]');
+  if (homeLink) homeLink.textContent = t('nav_home');
+  
+  const pipelineLink = document.querySelector('a[href="#pipeline-section"]');
+  if (pipelineLink) pipelineLink.textContent = t('nav_pipeline');
+  
+  const categoriesLink = document.querySelector('a[href="#categories-scroll-track"]');
+  if (categoriesLink) categoriesLink.textContent = t('nav_categories');
+  
+  const extensionLink = document.querySelector('a[href="#extension-section"]');
+  if (extensionLink) extensionLink.textContent = t('nav_extension');
+  
+  const faqLink = document.querySelector('a[href="#faq-section"]');
+  if (faqLink) faqLink.textContent = t('nav_faq');
+  
+  const browseCta = document.getElementById('btn-browse-cta');
+  if (browseCta) browseCta.textContent = t('nav_browse');
+}
 
 // Global Router State
 let currentView = null; // 'landing' or 'library'
@@ -61,7 +82,7 @@ function navigate(target) {
 
   // Render view & Navbar visibility coordination
   let page;
-  let title = 'SnippetUI | Premium CSS & HTML Components Library';
+  let title = 'SnippetUI | ' + t('lib_subtitle');
   if (target.startsWith('library')) {
     navbar.style.display = 'none';
     appContainer.classList.remove('with-nav');
@@ -78,7 +99,7 @@ function navigate(target) {
     const category = parts[1]?.split('=')[1] || 'all';
     page = renderLibrary(navigate, category);
     window.location.hash = target;
-    title = 'Components Library | SnippetUI';
+    title = t('lib_title') + ' | SnippetUI';
   } else if (target === 'extension') {
     navbar.style.display = 'none';
     appContainer.classList.remove('with-nav');
@@ -98,7 +119,7 @@ function navigate(target) {
 
     page = renderExtensionShowcase(navigate);
     window.location.hash = 'extension';
-    title = 'VS Code Extension Integration | SnippetUI';
+    title = t('nav_extension') + ' | SnippetUI';
   } else if (target === 'privacy') {
     navbar.style.display = 'block';
     appContainer.classList.remove('no-nav');
@@ -118,7 +139,7 @@ function navigate(target) {
 
     page = renderPrivacy(navigate);
     window.location.hash = 'privacy';
-    title = 'Privacy Policy | SnippetUI';
+    title = t('privacy_title') + ' | SnippetUI';
   } else if (target === 'terms') {
     navbar.style.display = 'block';
     appContainer.classList.remove('no-nav');
@@ -138,7 +159,7 @@ function navigate(target) {
 
     page = renderTerms(navigate);
     window.location.hash = 'terms';
-    title = 'Terms of Service | SnippetUI';
+    title = t('terms_title') + ' | SnippetUI';
   } else if (target === '404') {
     navbar.style.display = 'block';
     appContainer.classList.remove('no-nav');
@@ -158,7 +179,7 @@ function navigate(target) {
 
     page = render404(navigate);
     window.location.hash = '404';
-    title = 'Page Not Found | SnippetUI';
+    title = t('err_title') + ' | SnippetUI';
   } else {
     navbar.style.display = 'block';
     appContainer.classList.remove('no-nav');
@@ -178,10 +199,11 @@ function navigate(target) {
 
     page = renderLanding(navigate);
     window.location.hash = 'landing';
-    title = 'SnippetUI | Premium CSS & HTML Components Library';
+    title = 'SnippetUI | ' + t('lib_subtitle');
   }
   currentPage = page;
   document.title = title;
+  document.documentElement.lang = getCurrentLanguage();
 
   // Smooth fade transition between pages
   appContainer.style.opacity = 0;
@@ -326,6 +348,21 @@ mobileToggle.addEventListener('click', () => {
 
 // 5. Initial Hash Routing resolution
 function handleHashRoute() {
+  // Setup navbar language selector binding
+  const select = document.getElementById('global-lang-select');
+  if (select) {
+    select.value = getCurrentLanguage();
+    if (!select.hasAttribute('data-bound')) {
+      select.setAttribute('data-bound', 'true');
+      select.addEventListener('change', (e) => {
+        setLanguage(e.target.value);
+      });
+    }
+  }
+
+  // Update navbar translations
+  updateNavbarTranslations();
+
   const hash = window.location.hash;
   if (hash.startsWith('#library')) {
     const parts = hash.substring(1).split('?');
@@ -345,6 +382,20 @@ function handleHashRoute() {
     navigate('404');
   }
 }
+
+// Coordinate language changes globally to trigger re-renders
+window.addEventListener('languagechanged', (e) => {
+  const select = document.getElementById('global-lang-select');
+  if (select) select.value = e.detail.lang;
+
+  updateNavbarTranslations();
+
+  if (currentView) {
+    const activeTarget = currentView;
+    currentView = null; // Bypass routing cache check
+    navigate(activeTarget);
+  }
+});
 
 // Window load and hashchange hooks
 window.addEventListener('DOMContentLoaded', handleHashRoute);
