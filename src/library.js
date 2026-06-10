@@ -26,6 +26,8 @@ export function renderLibrary(onNavigate, initialFilter = 'all') {
   // Track active selections in manual wizard
   let selectedManualScript = 'js';
   let selectedManualStyle = 'css';
+  let renderedLimit = 24;
+  let loadMoreObserver = null;
 
   // Generate highly descriptive custom integration templates for each component
   function getComponentUsage(comp) {
@@ -375,20 +377,8 @@ onMounted(() => {
     }).join('');
   }
 
-  // Generate grid component cards HTML
-  function renderGridCards() {
-    const list = getFilteredComponents();
-    if (list.length === 0) {
-      return `
-        <div class="empty-results" style="grid-column: span 2;">
-          <div class="empty-icon">🔍</div>
-          <h3>${t('lib_empty_title')}</h3>
-          <p>${t('lib_empty_desc', { query: searchQuery })}</p>
-        </div>
-      `;
-    }
-
-    return list.map(comp => `
+  function renderSingleCardHtml(comp) {
+    return `
       <div class="component-card" id="card-${comp.id}">
         <div class="component-preview" style="cursor: default;">
           ${comp.html}
@@ -413,7 +403,51 @@ onMounted(() => {
           </div>
         </div>
       </div>
-    `).join('');
+    `;
+  }
+
+  function renderSkeletonCardHtml() {
+    return `
+      <div class="component-card card-skeleton-loading">
+        <div class="component-preview skeleton-glow-effect" style="height: 220px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.01);">
+          <div class="skeleton-shimmer-bar circle" style="width: 70px; height: 70px; border-radius: 50%;"></div>
+        </div>
+        <div class="component-footer" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+          <div class="skeleton-shimmer-bar text-bar" style="width: 60%; height: 16px; border-radius: 4px;"></div>
+          <div class="skeleton-shimmer-bar text-bar" style="width: 40%; height: 12px; border-radius: 4px;"></div>
+          <div class="skeleton-shimmer-bar text-bar" style="width: 90%; height: 28px; border-radius: 6px; margin-top: 6px;"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Generate grid component cards HTML
+  function renderGridCards() {
+    const list = getFilteredComponents();
+    if (list.length === 0) {
+      return `
+        <div class="empty-results" style="grid-column: span 2;">
+          <div class="empty-icon">🔍</div>
+          <h3>${t('lib_empty_title')}</h3>
+          <p>${t('lib_empty_desc', { query: searchQuery })}</p>
+        </div>
+      `;
+    }
+
+    const itemsToRender = list.slice(0, renderedLimit);
+    const hasMore = list.length > renderedLimit;
+
+    let cardsHtml = itemsToRender.map(renderSingleCardHtml).join('');
+
+    // If there are more components, render a set of shimmering skeleton loader placeholders
+    if (hasMore) {
+      const remainingCount = Math.min(list.length - renderedLimit, 8); // Render at most 8 skeletons at a time for performance
+      for (let i = 0; i < remainingCount; i++) {
+        cardsHtml += renderSkeletonCardHtml();
+      }
+    }
+
+    return cardsHtml;
   }
 
   // Gather all CSS from all components dynamically
@@ -503,6 +537,7 @@ onMounted(() => {
           <div class="component-grid" id="components-grid">
             ${renderGridCards()}
           </div>
+          <div id="library-sentinel" style="height: 20px; margin-top: 10px; width: 100%;"></div>
         </main>
       </div>
     </div>
@@ -833,6 +868,8 @@ onMounted(() => {
   let activeModalCleanup = null;
   let sidebarLenis = null;
   let mainLenis = null;
+  let sidebarResizeObserver = null;
+  let mainResizeObserver = null;
   let searchShortcutListener = null;
 
   // Helper to execute component JS scoped to its container and return cleanup function
@@ -906,47 +943,10 @@ onMounted(() => {
     }
   }
 
-  // Helper to execute JS for all rendered components lazily when visible
-  function initializeGridComponentJS(container) {
-    if (observer) {
-      observer.disconnect();
-    }
-    cardCleanups.forEach(cleanup => cleanup());
-    cardCleanups.clear();
-
-    const list = getFilteredComponents();
-    const mainContainer = container.querySelector('.library-main');
-    if (!mainContainer) return;
-
-    observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const cardEl = entry.target;
-        const compId = cardEl.getAttribute('data-comp-id');
-        const comp = list.find(c => c.id === compId);
-        if (!comp) return;
-
-        if (entry.isIntersecting) {
-          if (cardCleanups.has(compId)) return;
-          const preview = cardEl.querySelector('.component-preview');
-          if (preview) {
-            const cleanup = executeComponentJS(comp, preview);
-            cardCleanups.set(compId, cleanup);
-          }
-        } else {
-          const cleanup = cardCleanups.get(compId);
-          if (cleanup) {
-            cleanup();
-            cardCleanups.delete(compId);
-          }
-        }
-      });
-    }, {
-      root: mainContainer,
-      rootMargin: '120px',
-      threshold: 0.05
-    });
-
-    list.forEach(comp => {
+  // Helper to observe cards using the persistent IntersectionObserver
+  function observeCards(container, components) {
+    if (!observer) return;
+    components.forEach(comp => {
       const card = container.querySelector(`#card-${comp.id}`);
       if (card) {
         card.setAttribute('data-comp-id', comp.id);
@@ -955,21 +955,74 @@ onMounted(() => {
     });
   }
 
-  // Dynamic UI updating helper
-  function updateUI(container) {
-    // 1. Update Grid Cards
+  // Clear all observed cards and active scripts
+  function clearCardCleanups() {
+    if (observer) {
+      observer.disconnect();
+    }
+    cardCleanups.forEach(cleanup => {
+      if (typeof cleanup === 'function') {
+        try {
+          cleanup();
+        } catch (e) {
+          console.warn('Error during card cleanup:', e);
+        }
+      }
+    });
+    cardCleanups.clear();
+  }
+
+  // Dynamic UI updating helper with extremely high-performance DOM updates
+  function updateUI(container, isLoadMore = false) {
     const grid = container.querySelector('#components-grid');
-    if (grid) grid.innerHTML = renderGridCards();
-    
-    // 2. Re-attach action listeners on new cards
-    attachCardListeners(container);
+    if (!grid) return;
 
-    // 3. Initialize dynamic component script behaviors
-    initializeGridComponentJS(container);
+    const list = getFilteredComponents();
 
-    // 4. Smoothly reset scroll position of main content library container on content change
-    const main = container.querySelector('.library-main');
-    if (main) main.scrollTop = 0;
+    if (!isLoadMore) {
+      // Clear and render from scratch
+      renderedLimit = 24;
+      clearCardCleanups();
+
+      // Set initial grid contents
+      grid.innerHTML = renderGridCards();
+
+      // Re-observe the first batch
+      const itemsToObserve = list.slice(0, renderedLimit);
+      observeCards(container, itemsToObserve);
+
+      // Scroll main panel to top on search / category filter switch
+      const main = container.querySelector('.library-main');
+      if (main) main.scrollTop = 0;
+    } else {
+      // Append next batch dynamically to avoid re-rendering existing cards and layout shifts!
+      const oldLimit = renderedLimit;
+      renderedLimit += 24;
+
+      const newItems = list.slice(oldLimit, renderedLimit);
+      if (newItems.length === 0) return;
+
+      // 1. Remove all existing skeleton placeholders
+      grid.querySelectorAll('.card-skeleton-loading').forEach(el => el.remove());
+
+      // 2. Build the HTML of the new cards and append them
+      const newCardsHtml = newItems.map(renderSingleCardHtml).join('');
+      grid.insertAdjacentHTML('beforeend', newCardsHtml);
+
+      // 3. Re-append new skeleton placeholders if there are still more items left
+      const hasMore = list.length > renderedLimit;
+      if (hasMore) {
+        const remainingCount = Math.min(list.length - renderedLimit, 8);
+        let skeletonsHtml = '';
+        for (let i = 0; i < remainingCount; i++) {
+          skeletonsHtml += renderSkeletonCardHtml();
+        }
+        grid.insertAdjacentHTML('beforeend', skeletonsHtml);
+      }
+
+      // 4. Observe only the newly added cards
+      observeCards(container, newItems);
+    }
   }
 
   // Toast Trigger Helper
@@ -989,54 +1042,6 @@ onMounted(() => {
     navigator.clipboard.writeText(text)
       .then(() => triggerToast(successMsg))
       .catch(err => console.error('Failed to copy: ', err));
-  }
-
-  // Event handlers bindings for card actions
-  function attachCardListeners(container) {
-    // 1. Copy Prompt Action
-    container.querySelectorAll('.btn-copy-prompt').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevents opening the preview modal
-        const id = btn.getAttribute('data-id');
-        const comp = COMPONENTS_DATABASE.find(c => c.id === id);
-        if (comp) {
-          copyTextToClipboard(comp.prompt, `Copied ${comp.name} AI Prompt successfully!`);
-        }
-      });
-    });
-
-    // 2. View Code: slide out right-side drawer panel
-    container.querySelectorAll('.btn-view-code').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevents opening the preview modal
-        const id = btn.getAttribute('data-id');
-        const comp = COMPONENTS_DATABASE.find(c => c.id === id);
-        if (comp) {
-          activeDetailComponent = comp;
-          openCodeDrawer(container);
-        }
-      });
-    });
-
-    // 2b. Open Preview Modal (centered 900x600 window) on expand button click
-    container.querySelectorAll('.btn-card-fullscreen').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = btn.getAttribute('data-id');
-        const comp = COMPONENTS_DATABASE.find(c => c.id === id);
-        if (comp) {
-          activeDetailComponent = comp;
-          openPreviewModal(container, false); // Opens the standard centered modal
-        }
-      });
-    });
-
-    // 3. Click Component Card Preview: do not open modal anymore, allowing direct micro-interaction
-    container.querySelectorAll('.component-preview').forEach(cardPreview => {
-      cardPreview.addEventListener('click', (e) => {
-        // Clicks on the preview canvas itself will not trigger the modal popup
-      });
-    });
   }
 
   // Modal 1 controls: Clean Full-Screen Preview Box
@@ -1291,8 +1296,8 @@ onMounted(() => {
       if (scriptCard) scriptCard.style.display = 'flex';
       if (styleCard) styleCard.style.display = 'flex';
 
-      if (titleHtml) titleHtml.textContent = 'HTML Structure Markup';
-      if (titleStyle) titleStyle.textContent = 'Styling Implementation';
+      if (titleHtml) titleHtml.textContent = t('lib_drawer_html_title');
+      if (titleStyle) titleStyle.textContent = t('lib_drawer_style_title');
 
       if (htmlBox) htmlBox.textContent = compiled.markup;
       if (scriptBox) scriptBox.textContent = compiled.script;
@@ -1304,8 +1309,9 @@ onMounted(() => {
 
       const fileExt = selectedScript === 'ts' ? 'tsx' : 'jsx';
       const frameworkName = selectedFramework === 'react' ? 'React' : 'SolidJS';
-      if (titleHtml) titleHtml.textContent = `${frameworkName} Component (${fileExt})`;
-      if (titleStyle) titleStyle.textContent = 'Styling Implementation';
+      const componentLabel = t('lib_drawer_component_label');
+      if (titleHtml) titleHtml.textContent = `${frameworkName} ${componentLabel} (${fileExt})`;
+      if (titleStyle) titleStyle.textContent = t('lib_drawer_style_title');
 
       if (htmlBox) htmlBox.textContent = compiled.markup;
       if (styleBox) styleBox.textContent = compiled.style;
@@ -1316,7 +1322,8 @@ onMounted(() => {
 
       const fileExt = selectedFramework;
       const frameworkName = selectedFramework === 'vue' ? 'Vue 3' : 'Svelte';
-      if (titleHtml) titleHtml.textContent = `${frameworkName} Component (.${fileExt})`;
+      const componentLabel = t('lib_drawer_component_label');
+      if (titleHtml) titleHtml.textContent = `${frameworkName} ${componentLabel} (.${fileExt})`;
 
       if (htmlBox) htmlBox.textContent = compiled.markup;
     }
@@ -1388,6 +1395,11 @@ onMounted(() => {
             lerp: 0.1,
             duration: 1.2
           });
+          
+          sidebarResizeObserver = new ResizeObserver(() => {
+            if (sidebarLenis) sidebarLenis.resize();
+          });
+          sidebarResizeObserver.observe(sidebar);
         }
         if (main) {
           mainLenis = new Lenis({
@@ -1396,6 +1408,11 @@ onMounted(() => {
             lerp: 0.1,
             duration: 1.2
           });
+          
+          mainResizeObserver = new ResizeObserver(() => {
+            if (mainLenis) mainLenis.resize();
+          });
+          mainResizeObserver.observe(main);
         }
       }
 
@@ -1409,9 +1426,104 @@ onMounted(() => {
         onNavigate('landing');
       });
 
-      // 1. Initial listener attachments
-      attachCardListeners(container);
-      initializeGridComponentJS(container);
+      // Set up high-performance click event delegation on components grid
+      const grid = container.querySelector('#components-grid');
+      if (grid) {
+        grid.addEventListener('click', (e) => {
+          // A. Copy Prompt Action
+          const btnCopyPrompt = e.target.closest('.btn-copy-prompt');
+          if (btnCopyPrompt) {
+            e.stopPropagation();
+            const id = btnCopyPrompt.getAttribute('data-id');
+            const comp = COMPONENTS_DATABASE.find(c => c.id === id);
+            if (comp) {
+              copyTextToClipboard(comp.prompt, `Copied ${comp.name} AI Prompt successfully!`);
+            }
+            return;
+          }
+
+          // B. View Code: slide out right-side drawer panel
+          const btnViewCode = e.target.closest('.btn-view-code');
+          if (btnViewCode) {
+            e.stopPropagation();
+            const id = btnViewCode.getAttribute('data-id');
+            const comp = COMPONENTS_DATABASE.find(c => c.id === id);
+            if (comp) {
+              activeDetailComponent = comp;
+              openCodeDrawer(container);
+            }
+            return;
+          }
+
+          // C. Open Preview Modal (centered 900x600 window) on expand button click
+          const btnFullscreen = e.target.closest('.btn-card-fullscreen');
+          if (btnFullscreen) {
+            e.stopPropagation();
+            const id = btnFullscreen.getAttribute('data-id');
+            const comp = COMPONENTS_DATABASE.find(c => c.id === id);
+            if (comp) {
+              activeDetailComponent = comp;
+              openPreviewModal(container, false);
+            }
+            return;
+          }
+        });
+      }
+
+      // Initialize persistent observer for component execution
+      const mainContainer = container.querySelector('.library-main');
+      if (mainContainer) {
+        observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            const cardEl = entry.target;
+            const compId = cardEl.getAttribute('data-comp-id');
+            const comp = COMPONENTS_DATABASE.find(c => c.id === compId);
+            if (!comp) return;
+
+            if (entry.isIntersecting) {
+              if (cardCleanups.has(compId)) return;
+              const preview = cardEl.querySelector('.component-preview');
+              if (preview) {
+                const cleanup = executeComponentJS(comp, preview);
+                cardCleanups.set(compId, cleanup);
+              }
+            } else {
+              const cleanup = cardCleanups.get(compId);
+              if (cleanup) {
+                cleanup();
+                cardCleanups.delete(compId);
+              }
+            }
+          });
+        }, {
+          root: mainContainer,
+          rootMargin: '200px',
+          threshold: 0.01
+        });
+      }
+
+      // Observe initial set of cards
+      const list = getFilteredComponents();
+      const initialItems = list.slice(0, renderedLimit);
+      observeCards(container, initialItems);
+
+      // Setup Infinite Scroll Sentinel Observer
+      const sentinel = container.querySelector('#library-sentinel');
+      if (sentinel) {
+        loadMoreObserver = new IntersectionObserver((entries) => {
+          const entry = entries[0];
+          if (entry.isIntersecting) {
+            const list = getFilteredComponents();
+            if (renderedLimit < list.length) {
+              updateUI(container, true);
+            }
+          }
+        }, {
+          root: mainContainer,
+          rootMargin: '200px'
+        });
+        loadMoreObserver.observe(sentinel);
+      }
 
 
 
@@ -1869,12 +1981,22 @@ onMounted(() => {
         mainLenis.destroy();
         mainLenis = null;
       }
+      if (sidebarResizeObserver) {
+        sidebarResizeObserver.disconnect();
+        sidebarResizeObserver = null;
+      }
+      if (mainResizeObserver) {
+        mainResizeObserver.disconnect();
+        mainResizeObserver = null;
+      }
+      clearCardCleanups();
       if (observer) {
-        observer.disconnect();
         observer = null;
       }
-      cardCleanups.forEach(cleanup => cleanup());
-      cardCleanups.clear();
+      if (loadMoreObserver) {
+        loadMoreObserver.disconnect();
+        loadMoreObserver = null;
+      }
       if (activeModalCleanup) {
         activeModalCleanup();
         activeModalCleanup = null;
