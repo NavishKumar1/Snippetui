@@ -9,6 +9,115 @@ import { t, getCurrentLanguage, setLanguage } from './i18n.js';
 
 
 
+// CRC-32 Lookup Table & Helper for uncompressed Store ZIP writing
+const crcTable = [];
+for (let i = 0; i < 256; i++) {
+  let c = i;
+  for (let j = 0; j < 8; j++) {
+    c = ((c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1));
+  }
+  crcTable[i] = c;
+}
+
+function calculateCrc32(str) {
+  let crc = 0 ^ (-1);
+  const bytes = new TextEncoder().encode(str);
+  for (let i = 0; i < bytes.length; i++) {
+    crc = (crc >>> 8) ^ crcTable[(crc ^ bytes[i]) & 0xFF];
+  }
+  return (crc ^ (-1)) >>> 0;
+}
+
+function generateZip(files) {
+  const encoder = new TextEncoder();
+  let offset = 0;
+  const localHeaders = [];
+  const fileDatas = [];
+  const centralHeaders = [];
+  
+  files.forEach(file => {
+    const filenameBytes = encoder.encode(file.name);
+    const contentBytes = encoder.encode(file.content);
+    const crc = calculateCrc32(file.content);
+    const size = contentBytes.length;
+    
+    const date = new Date();
+    const dosTime = ((date.getHours() << 11) | (date.getMinutes() << 5) | (date.getSeconds() >> 1)) & 0xFFFF;
+    const dosDate = (((date.getFullYear() - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate()) & 0xFFFF;
+    
+    const localHeader = new Uint8Array(30 + filenameBytes.length);
+    const view = new DataView(localHeader.buffer);
+    
+    view.setUint32(0, 0x04034b50, true);
+    view.setUint16(4, 10, true);
+    view.setUint16(6, 0, true);
+    view.setUint16(8, 0, true);
+    view.setUint16(10, dosTime, true);
+    view.setUint16(12, dosDate, true);
+    view.setUint32(14, crc, true);
+    view.setUint32(18, size, true);
+    view.setUint32(22, size, true);
+    view.setUint16(26, filenameBytes.length, true);
+    view.setUint16(28, 0, true);
+    
+    localHeader.set(filenameBytes, 30);
+    localHeaders.push(localHeader);
+    fileDatas.push(contentBytes);
+    
+    const centralHeader = new Uint8Array(46 + filenameBytes.length);
+    const cView = new DataView(centralHeader.buffer);
+    
+    cView.setUint32(0, 0x02014b50, true);
+    cView.setUint16(4, 20, true);
+    cView.setUint16(6, 10, true);
+    cView.setUint16(8, 0, true);
+    cView.setUint16(10, 0, true);
+    cView.setUint16(12, dosTime, true);
+    cView.setUint16(14, dosDate, true);
+    cView.setUint32(16, crc, true);
+    cView.setUint32(20, size, true);
+    cView.setUint32(24, size, true);
+    cView.setUint16(28, filenameBytes.length, true);
+    cView.setUint16(30, 0, true);
+    cView.setUint16(32, 0, true);
+    cView.setUint16(34, 0, true);
+    cView.setUint16(36, 0, true);
+    cView.setUint32(38, 0, true);
+    cView.setUint32(42, offset, true);
+    
+    centralHeader.set(filenameBytes, 46);
+    centralHeaders.push(centralHeader);
+    
+    offset += 30 + filenameBytes.length + size;
+  });
+  
+  const totalLocalHeadersSize = localHeaders.reduce((acc, h) => acc + h.length, 0);
+  const totalFileDatasSize = fileDatas.reduce((acc, d) => acc + d.length, 0);
+  const totalCentralHeadersSize = centralHeaders.reduce((acc, h) => acc + h.length, 0);
+  
+  const eocd = new Uint8Array(22);
+  const eView = new DataView(eocd.buffer);
+  
+  eView.setUint32(0, 0x06054b50, true);
+  eView.setUint16(4, 0, true);
+  eView.setUint16(6, 0, true);
+  eView.setUint16(8, files.length, true);
+  eView.setUint16(10, files.length, true);
+  eView.setUint32(12, totalCentralHeadersSize, true);
+  eView.setUint32(16, totalLocalHeadersSize + totalFileDatasSize, true);
+  eView.setUint16(20, 0, true);
+  
+  const blobs = [];
+  files.forEach((_, idx) => {
+    blobs.push(localHeaders[idx]);
+    blobs.push(fileDatas[idx]);
+  });
+  centralHeaders.forEach(h => blobs.push(h));
+  blobs.push(eocd);
+  
+  return new Blob(blobs, { type: 'application/zip' });
+}
+
 export function renderLibrary(onNavigate, initialFilter = 'all') {
   const rawCategories = Array.from(new Set(COMPONENTS_DATABASE.map(c => c.category)));
   let activeFilter = (initialFilter === 'all' || !initialFilter || !rawCategories.includes(initialFilter)) ? rawCategories[0] : initialFilter;
@@ -131,6 +240,7 @@ ${comp.html}
 
     const isTS = scriptType === 'ts';
     const isTailwind = styleType === 'tailwind';
+    const isModules = styleType === 'modules';
     
     const rawHtml = comp.html || '';
     const rawCss = comp.css || '';
@@ -138,10 +248,11 @@ ${comp.html}
     const rawScript = isTS ? (comp.ts || comp.js || '') : (comp.js || '');
 
     // Helper: Convert CSS class to className for JSX
-    function toJSX(htmlStr) {
+    function toJSX(htmlStr, useModules = false) {
       let jsx = htmlStr;
-      // Replace class="..." with className="..."
-      jsx = jsx.replace(/\bclass="/g, 'className="');
+      
+      // Close self-closing tags like img, input, br, hr
+      jsx = jsx.replace(/<(img|input|br|hr|meta|link)([^>]*)(?<!\/)>/gi, '<$1$2 />');
       
       // Replace inline styles style="display: flex; cursor: pointer;" with style={{ display: 'flex', cursor: 'pointer' }}
       jsx = jsx.replace(/style="([^"]*)"/g, (match, styleStr) => {
@@ -156,8 +267,26 @@ ${comp.html}
         return `style={{ ${reactRules.join(', ')} }}`;
       });
 
-      // Close self-closing tags like img, input, br, hr
-      jsx = jsx.replace(/<(img|input|br|hr|meta|link)([^>]*)(?<!\/)>/gi, '<$1$2 />');
+      if (useModules) {
+        // Replace class="..." with className={styles.camelCase}
+        jsx = jsx.replace(/class="([^"]+)"/g, (match, classStr) => {
+          const classes = classStr.split(/\s+/).filter(Boolean);
+          if (classes.length === 0) return 'className=""';
+          if (classes.length === 1) {
+            const camel = classes[0].replace(/-([a-z])/g, (m, c) => c.toUpperCase());
+            return `className={styles.${camel}}`;
+          } else {
+            const mapping = classes.map(c => {
+              const camel = c.replace(/-([a-z])/g, (m, c) => c.toUpperCase());
+              return `\${styles.${camel}}`;
+            }).join(' ');
+            return `className={\`${mapping}\`}`;
+          }
+        });
+      } else {
+        // Replace class="..." with className="..."
+        jsx = jsx.replace(/\bclass="/g, 'className="');
+      }
 
       return jsx;
     }
@@ -166,11 +295,8 @@ ${comp.html}
     function scopeScript(scriptStr) {
       if (!scriptStr) return '';
       let scoped = scriptStr;
-      // Replace document.querySelector with select
       scoped = scoped.replace(/document\.querySelector/g, 'select');
-      // Replace document.querySelectorAll with selectAll
       scoped = scoped.replace(/document\.querySelectorAll/g, 'selectAll');
-      // Replace document.getElementById(id) with select('#' + id)
       scoped = scoped.replace(/document\.getElementById\((['"`])([^'"`]+)\1\)/g, "select('#$2')");
       return scoped;
     }
@@ -179,13 +305,13 @@ ${comp.html}
     const scopedScript = scopeScript(rawScript);
 
     if (framework === 'react') {
-      const jsxContent = toJSX(rawHtml);
+      const jsxContent = toJSX(rawHtml, isModules);
       const hasScript = scopedScript && scopedScript.trim();
       const useEffectImport = hasScript ? ', useEffect' : '';
+      const styleImport = isTailwind ? '' : (isModules ? `import styles from './${comp.id}.module.css';\n` : `import './${comp.id}.css';\n`);
       
       const reactCode = `import React${useEffectImport}, { useRef } from 'react';
-${isTailwind ? '' : "import './" + comp.id + ".css';\n"}
-export default function ${camelCaseName}() {
+${styleImport}export default function ${camelCaseName}() {
   const containerRef = useRef${isTS ? '<HTMLDivElement>' : ''}(null);
 ${hasScript ? `
   useEffect(() => {
@@ -212,11 +338,12 @@ ${hasScript ? `
     }
 
     if (framework === 'solid') {
-      const jsxContent = toJSX(rawHtml);
+      const jsxContent = toJSX(rawHtml, isModules);
       const hasScript = scopedScript && scopedScript.trim();
       const onMountImport = hasScript ? "import { onMount } from 'solid-js';\n" : '';
+      const styleImport = isTailwind ? '' : (isModules ? `import styles from './${comp.id}.module.css';\n` : `import './${comp.id}.css';\n`);
       
-      const solidCode = `${onMountImport}${isTailwind ? '' : "import './" + comp.id + ".css';\n"}
+      const solidCode = `${onMountImport}${styleImport}
 export default function ${camelCaseName}() {
   let containerRef${isTS ? ': HTMLDivElement | undefined' : ''};
 ${hasScript ? `
@@ -247,7 +374,7 @@ ${hasScript ? `
       const hasScript = scopedScript && scopedScript.trim();
       const onMountedImport = hasScript ? ', onMounted' : '';
       
-      const styleBlock = isTailwind ? '' : `\n\n<style scoped>\n${rawCss}\n</style>`;
+      const styleBlock = isTailwind ? '' : (isModules ? `\n\n<style module>\n${rawCss}\n</style>` : `\n\n<style scoped>\n${rawCss}\n</style>`);
       const scriptSetup = hasScript ? `<script setup${isTS ? ' lang="ts"' : ''}>
 import { ref${onMountedImport} } from 'vue';
 
@@ -578,12 +705,18 @@ onMounted(() => {
     <!-- Overlay 2: Frosted Slide-out Drawer with Custom Capsule Dropdown Selectors -->
     <div class="code-modal-backdrop" id="code-drawer-backdrop">
       <div class="code-drawer">
-        <div class="drawer-header">
-          <div class="drawer-title">
+        <div class="drawer-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.15);">
+          <div class="drawer-title" style="display: flex; flex-direction: column; gap: 2px;">
             <h3 id="drawer-comp-name">${t('lib_drawer_title')}</h3>
             <p style="font-size: 13px; color: var(--text-secondary);">${t('lib_drawer_subtitle')}</p>
           </div>
-          <button class="drawer-close-btn" id="drawer-close" aria-label="Close panel">✕</button>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button class="btn-drawer-download-zip" id="btn-download-bundle" title="Download Framework Bundle (.zip)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              <span>Bundle ZIP</span>
+            </button>
+            <button class="drawer-close-btn" id="drawer-close" aria-label="Close panel" style="position: static; font-size: 20px;">✕</button>
+          </div>
         </div>
 
         <!-- Sidebar / Drawer Tabs navigation -->
@@ -802,6 +935,9 @@ onMounted(() => {
                   </button>
                   <button class="custom-dropdown-option" data-value="tailwind">
                     <span class="dropdown-badge-prefix tailwind">TW</span> Tailwind
+                  </button>
+                  <button class="custom-dropdown-option" data-value="modules">
+                    <span class="dropdown-badge-prefix modules">mod</span> CSS Modules
                   </button>
                 </div>
               </div>
@@ -1311,7 +1447,9 @@ onMounted(() => {
       const frameworkName = selectedFramework === 'react' ? 'React' : 'SolidJS';
       const componentLabel = t('lib_drawer_component_label');
       if (titleHtml) titleHtml.textContent = `${frameworkName} ${componentLabel} (${fileExt})`;
-      if (titleStyle) titleStyle.textContent = t('lib_drawer_style_title');
+      if (titleStyle) {
+        titleStyle.textContent = selectedStyle === 'modules' ? `${activeDetailComponent.id}.module.css` : t('lib_drawer_style_title');
+      }
 
       if (htmlBox) htmlBox.textContent = compiled.markup;
       if (styleBox) styleBox.textContent = compiled.style;
@@ -1785,17 +1923,23 @@ onMounted(() => {
             badge.className = 'dropdown-badge-prefix css';
             badge.textContent = 'css';
             label.textContent = 'CSS';
-          } else {
+          } else if (val === 'tailwind') {
             badge.className = 'dropdown-badge-prefix tailwind';
             badge.textContent = 'TW';
             label.textContent = 'Tailwind';
+          } else if (val === 'modules') {
+            badge.className = 'dropdown-badge-prefix modules';
+            badge.textContent = 'mod';
+            label.textContent = 'CSS Modules';
           }
 
           // Close menu & update boxes
           btnStyle.classList.remove('active');
           menuStyle.classList.remove('active');
           updateCodeBoxes(container);
-          triggerToast(`Switched Style to ${val === 'css' ? 'CSS Variables' : 'Tailwind CSS'}!`);
+          
+          let displayVal = val === 'css' ? 'CSS Variables' : val === 'tailwind' ? 'Tailwind CSS' : 'CSS Modules';
+          triggerToast(`Switched Style to ${displayVal}!`);
         });
       });
 
@@ -1826,6 +1970,46 @@ onMounted(() => {
         const cmdBox = container.querySelector('#cli-command-box');
         if (cmdBox && activeDetailComponent) {
           copyTextToClipboard(cmdBox.textContent, `Copied CLI installation command successfully!`);
+        }
+      });
+
+      // 10e. Download Zip Bundle Action
+      container.querySelector('#btn-download-bundle')?.addEventListener('click', () => {
+        if (!activeDetailComponent) return;
+        const comp = activeDetailComponent;
+        const camelName = comp.name.replace(/[^a-zA-Z0-9]/g, '');
+
+        const files = [
+          { name: `${comp.id}/${comp.id}.html`, content: compileComponent(comp, 'html', 'js', 'css').markup },
+          { name: `${comp.id}/${comp.id}.css`, content: compileComponent(comp, 'html', 'js', 'css').style },
+          { name: `${comp.id}/${comp.id}.js`, content: compileComponent(comp, 'html', 'js', 'css').script },
+          
+          { name: `${comp.id}/react/${camelName}.tsx`, content: compileComponent(comp, 'react', 'ts', 'css').markup },
+          { name: `${comp.id}/react/${camelName}.jsx`, content: compileComponent(comp, 'react', 'js', 'css').markup },
+          { name: `${comp.id}/react/${comp.id}.css`, content: compileComponent(comp, 'react', 'ts', 'css').style },
+          
+          { name: `${comp.id}/vue/${camelName}.vue`, content: compileComponent(comp, 'vue', 'js', 'css').markup },
+          { name: `${comp.id}/svelte/${camelName}.svelte`, content: compileComponent(comp, 'svelte', 'js', 'css').markup },
+          { name: `${comp.id}/solid/${camelName}.tsx`, content: compileComponent(comp, 'solid', 'ts', 'css').markup },
+          
+          {
+            name: `${comp.id}/README.md`,
+            content: `# SnippetUI Component: ${comp.name}\n\nThank you for downloading this premium component from SnippetUI!\n\n## Structure of the Bundle\n\n- \`/${comp.id}.html\`, \`/${comp.id}.css\`, \`/${comp.id}.js\`: Clean Vanilla HTML5, CSS Variables, and scoped JavaScript.\n- \`/react/${camelName}.tsx\`: TypeScript React component wrapper.\n- \`/react/${camelName}.jsx\`: JavaScript React component wrapper.\n- \`/vue/${camelName}.vue\`: Vue 3 Single File Component (SFC) with Script Setup.\n- \`/svelte/${camelName}.svelte\`: Svelte component wrapping.\n- \`/solid/${camelName}.tsx\`: SolidJS component wrapping.\n\n## Usage Guide\n\n1. Choose your preferred framework folder.\n2. Integrate the code blocks into your project workspace.\n3. Keep styling variables synchronized in your global tokens sheet.\n\n---\nBuilt with love by SnippetUI (https://github.com/NavishKumar1/Snippetui)\n`
+          }
+        ];
+
+        try {
+          const zipBlob = generateZip(files);
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(zipBlob);
+          link.download = `snippetui-${comp.id}-bundle.zip`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          triggerToast(`Downloaded ${comp.name} ZIP bundle!`);
+        } catch (err) {
+          console.error('ZIP generation failed: ', err);
+          triggerToast('Error: Failed to compile ZIP bundle.');
         }
       });
 
