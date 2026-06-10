@@ -159,6 +159,8 @@ const TRANSLATIONS = {
     faq_a9: 'Yes, we absolutely welcome community contributions! SnippetUI is built by the community, for the community. If you have designed a beautiful glassmorphic loader, magnetic button, or hover effect, you can open a Pull Request on our GitHub repository. Once reviewed for quality and style alignment, we\'ll feature it on the landing page.',
     faq_q10: 'Will the VS Code Extension support framework file auto-detection?',
     faq_a10: 'Yes. When released, the VS Code Extension will automatically detect your active file type (such as .jsx, .vue, .svelte, or .html) and inject the appropriate syntax format. It will also expose auto-complete IntelliSense triggers for SnippetUI utility variables directly inside your stylesheets.',
+    faq_q11: 'Does SnippetUI support one-click framework bundles and CSS Modules?',
+    faq_a11: 'Yes! Every component page includes a Style Selector to toggle outputs between Vanilla CSS, Tailwind CSS, and CSS Modules (which generates scoping and camelCased selectors like className={styles.myClass}). Furthermore, the \'Bundle ZIP\' button compiles and packages the component for all supported frameworks (HTML, React JSX/TSX, Vue SFC, Svelte, and SolidJS) into a single, ready-to-use ZIP archive containing a custom integration README guide.',
 
     // Peel Banner
     peel_title: 'Start Building Breathtaking<br/>Interfaces with SnippetUI',
@@ -457,6 +459,8 @@ const TRANSLATIONS = {
     faq_a9: '¡Sí, damos la bienvenida a las contribuciones de la comunidad! SnippetUI está construido por y para la comunidad. Si ha diseñado un cargador, botón magnético o efecto de hover atractivo, puede abrir un Pull Request en nuestro repositorio de GitHub.',
     faq_q10: '¿La extensión de VS Code admitirá la detección automática del archivo del framework?',
     faq_a10: 'Sí. Cuando se lance, la extensión detectará automáticamente su tipo de archivo activo (como .jsx, .vue, .svelte o .html) e inyectará el formato de sintaxis adecuado. También expondrá disparadores de autocompletado para variables de SnippetUI en sus hojas de estilo.',
+    faq_q11: '¿Admite SnippetUI paquetes de frameworks en un solo clic y CSS Modules?',
+    faq_a11: '¡Sí! Cada página de componente incluye un Selector de Estilo para cambiar las salidas entre Vanilla CSS, Tailwind CSS y CSS Modules (que genera selectores de ámbito y en formato camelCase como className={styles.miClase}). Además, el botón \'Bundle ZIP\' compila y empaqueta el componente para todos los frameworks compatibles (HTML, React JSX/TSX, Vue SFC, Svelte y SolidJS) en un único archivo ZIP listo para usar que incluye una guía de integración README personalizada.',
 
     // Peel Banner
     peel_title: 'Comienza a crear interfaces<br/>sorprendentes con SnippetUI',
@@ -755,6 +759,8 @@ const TRANSLATIONS = {
     faq_a9: 'Oui, nous accueillons chaleureusement les contributions ! SnippetUI est créé par la communauté pour la communauté. Si vous avez conçu une belle animation ou un bouton interactif, soumettez une Pull Request sur notre GitHub.',
     faq_q10: 'L\'extension VS Code détectera-t-elle le format du framework automatiquement?',
     faq_a10: 'Oui. Lors de sa sortie, l\'extension détectera le type de fichier actif (.jsx, .vue, .svelte, .html) pour injecter directement le bon code. Elle fournira aussi l\'auto-complétion IntelliSense pour nos variables de style.',
+    faq_q11: 'Est-ce que SnippetUI prend en charge les bundles de frameworks en un clic et les modules CSS?',
+    faq_a11: 'Oui ! Chaque page de composant comprend un sélecteur de style pour basculer les sorties entre Vanilla CSS, Tailwind CSS et CSS Modules (qui génère des sélecteurs scopés et camelCase comme className={styles.maClasse}). De plus, le bouton \'Bundle ZIP\' compile et package le composant pour tous les frameworks pris en charge (HTML, React JSX/TSX, Vue SFC, Svelte et SolidJS) dans une archive ZIP unique et prête à l\'emploi contenant un guide d\'intégration README personnalisé.',
 
     // Peel Banner
     peel_title: 'Commencez à créer de superbes<br/>interfaces avec SnippetUI',
@@ -1053,6 +1059,8 @@ const TRANSLATIONS = {
     faq_a9: 'Ja, wir freuen uns über Beiträge aus der Community! Wenn du eine schöne Milchglas-Animation oder einen interaktiven Button entworfen hast, erstelle gerne einen Pull Request in unserem GitHub-Repository.',
     faq_q10: 'Wird die VS Code Erweiterung das Framework-Dateiformat automatisch erkennen?',
     faq_a10: 'Ja. Nach der Veröffentlichung erkennt die Erweiterung die aktive Datei (.jsx, .vue, .svelte, .html) und fügt die passende Syntax ein. Sie bietet auch Autovervollständigung (IntelliSense) für unsere CSS-Variablen.',
+    faq_q11: 'Unterstützt SnippetUI 1-Klick-Framework-Bundles und CSS-Module?',
+    faq_a11: 'Ja! Jede Komponentenseite enthält einen Stil-Auswähler, um die Ausgabe zwischen Vanilla CSS, Tailwind CSS und CSS-Modulen (die Scoping und camelCase-Selektoren wie className={styles.meineKlasse} erzeugen) umzuschalten. Darüber hinaus kompiliert und verpackt die Schaltfläche \'Bundle ZIP\' die Komponente für alle unterstützten Frameworks (HTML, React JSX/TSX, Vue SFC, Svelte und SolidJS) in ein einziges, einsatzbereites ZIP-Archiv, das eine benutzerdefinierte README-Integrationsanleitung enthält.',
 
     // Peel Banner
     peel_title: 'Erstelle atemberaubende Interfaces<br/>mit SnippetUI',
@@ -1351,6 +1359,8 @@ const TRANSLATIONS = {
     faq_a9: 'はい、大歓迎です！SnippetUIはオープンに開発されています。素敵なエフェクトが完成したら、GitHubリポジトリにPull Requestをお送りください。',
     faq_q10: '拡張機能はフレームワークの拡張子を自動判定しますか？',
     faq_a10: 'はい。拡張機能はアクティブなファイル（.jsx、.vue、.svelte、.htmlなど）を検知し、最適な記法にコンパイルして出力します。CSSのインテリセンス機能もサポートします。',
+    faq_q11: 'SnippetUIは、1クリックでのフレームワーク・バンドルやCSSモジュールをサポートしていますか？',
+    faq_a11: 'はい！すべてのコンポーネントページにはスタイルセレクターがあり、バニラCSS、Tailwind CSS、CSSモジュール（styles.myClassのようなスコープ付きキャメルケースセレクターを生成します）に出力を切り替えることができます。さらに、「Bundle ZIP」ボタンをクリックすると、サポートされているすべてのフレームワーク（HTML、React JSX/TSX、Vue SFC、Svelte、SolidJS）向けのコンポーネントが、カスタム統合READMEガイドを含むすぐに使用可能な1つのZIPアーカイブにコンパイルされパッケージ化されます。',
 
     // Peel Banner
     peel_title: 'SnippetUIで、息をのむような<br/>UI構築を始めましょう',
@@ -1649,6 +1659,8 @@ const TRANSLATIONS = {
     faq_a9: '非常欢迎！SnippetUI 的生命力来自活跃的社区。如果您设计了精美的毛玻璃发光徽章、磁吸按钮或创意特效，请在我们的 GitHub 仓库中开启 Pull Request。一旦核对风格一致后，我们会在首页进行推送展示。',
     faq_q10: 'VS Code 插件会支持自动检测我的技术栈文件吗？',
     faq_a10: '会的。发布后，插件会自动识别您当前正在编写的文件类型（如 .jsx、.vue、.svelte 或 .html），并对应输出符合对应语法标准的标记语言。同时提供 CSS 变量的自动联想功能。',
+    faq_q11: 'SnippetUI 是否支持一键导出多框架打包和 CSS Modules？',
+    faq_a11: '是的！每个组件页面都提供了一个样式选择器，允许您在 Vanilla CSS、Tailwind CSS 和 CSS Modules（生成作用域限制和驼峰命名选择器，例如 className={styles.myClass}）之间自由切换输出。此外，“Bundle ZIP”按钮可将组件一键编译并打包至所有支持的框架（HTML、React JSX/TSX、Vue SFC、Svelte 和 SolidJS），输出为一个即装即用的 ZIP 压缩包，其中还包含一份详尽的定制集成 README 指南。',
 
     // Peel Banner
     peel_title: '即刻开始使用 SnippetUI<br/>设计出令人惊叹的网页界面',

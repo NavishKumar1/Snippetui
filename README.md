@@ -41,9 +41,9 @@ We use the **Lenis smooth scrolling engine** to optimize interactive scroll pipe
 
 ### 4. Dynamic Multi-Framework Transpilation Engine
 SnippetUI features a robust client-side transpiler that translates core component definitions into custom wrappers:
-* **React & SolidJS Output:** Converts classes to `className`/`class` attributes, parses inline style properties to JSX object structures, closes self-closing elements, and binds JavaScript logic inside lifecycle hooks (`useEffect`/`onMount`) using container-scoped query scopes to avoid global collision.
+* **React & SolidJS Output:** Converts classes to `className`/`class` attributes, parses inline style properties to JSX object structures, closes self-closing elements, and binds JavaScript logic inside lifecycle hooks (`useEffect`/`onMount`) using container-scoped query scopes to avoid global collision. Supports class-to-scoping mappings for **CSS Modules** compilation.
 * **Vue 3 & Svelte Output:** Packages scripts, markup, and scoped stylesheets into Single File Components (`.vue` / `.svelte`).
-* **Format Flexibility:** Instantly switches between JavaScript and TypeScript syntax, as well as Vanilla CSS and Tailwind CSS layouts.
+* **Format Flexibility:** Instantly switches between JavaScript and TypeScript syntax, as well as Vanilla CSS, Tailwind CSS, and CSS Modules layouts.
 
 ### 5. Client-Side Fuzzy Search & Dynamic Performance Tagging
 SnippetUI incorporates a lightning-fast client-side fuzzy search engine (powered by a subsequence letter matching algorithm) coupled with automated performance classification tags:
@@ -58,6 +58,11 @@ Built from scratch to optimize SEO indexing and localization across the globe:
 * **Supported Languages:** English (`en`), Spanish (`es`), French (`fr`), German (`de`), Japanese (`ja`), and Chinese (`zh`) (excluding Hindi).
 * **Session Persistence:** Selections are saved cross-session in local browser cache.
 * **Native Select Controls:** Custom glassmorphic dropdowns in the navbar and library headers feature native name options (`English`, `Español`, `Français`, `Deutsch`, `日本語`, `简体中文`) to enable smooth, localized navigations.
+
+### 7. Multi-Framework Micro-Bundles (1-Click ZIP Downloader)
+To minimize developer friction to zero seconds, SnippetUI compiles components across all supported frameworks and packages them into a ZIP archive entirely in the browser:
+* **Pure Client-Side Bundling:** Uses a custom uncompressed Store ZIP encoder written in pure JS (utilizing custom CRC-32 hashing and DOS timestamp parsing) to bypass heavy server operations and network delays.
+* **Cross-Framework Package:** Each bundle contains raw HTML/CSS/JS, React JSX, React TSX, Vue 3, Svelte, and SolidJS implementations, alongside a customized integration `README.md` guide.
 
 ---
 
@@ -269,13 +274,14 @@ pnpm dlx snippetui@latest add [component-id]
 ```
 *(Compatible with `npm exec`, `npx`, `yarn dlx`, and `bunx`)*
 
-### Method C: Manual Integration
+### Method C: Manual Integration & ZIP Micro-Bundles
 1. Browse the component inside the library interface.
-2. Open the **Code** tab inside the detail drawer.
-3. Select your target **Framework** (HTML, React, Vue, Svelte, or SolidJS).
-4. Select your preferred **Styling** layout (Vanilla CSS or Tailwind CSS).
-5. Choose your scripting targets (**JavaScript** or type-safe **TypeScript**).
-6. Copy the compiled component code blocks directly into your workspace.
+2. Tap the **Bundle ZIP** button in the header of the detail drawer to download a fully packaged multi-framework bundle ZIP archive containing clean, ready-to-use directories for HTML, React JSX/TSX, Vue, Svelte, and SolidJS.
+3. Alternatively, open the **Code** tab inside the detail drawer.
+4. Select your target **Framework** (HTML, React, Vue, Svelte, or SolidJS).
+5. Select your preferred **Styling** layout (Vanilla CSS, Tailwind CSS, or scoped CSS Modules).
+6. Choose your scripting targets (**JavaScript** or type-safe **TypeScript**).
+7. Copy the compiled component code blocks directly into your workspace.
 
 ---
 
