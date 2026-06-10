@@ -1159,6 +1159,13 @@ onMounted(() => {
       // 4. Observe only the newly added cards
       observeCards(container, newItems);
     }
+
+    // Recalculate Lenis scroll dimensions after content changes
+    if (mainLenis) {
+      requestAnimationFrame(() => {
+        mainLenis.resize();
+      });
+    }
   }
 
   // Toast Trigger Helper
@@ -1551,6 +1558,10 @@ onMounted(() => {
             if (mainLenis) mainLenis.resize();
           });
           mainResizeObserver.observe(main);
+          const grid = container.querySelector('#components-grid');
+          if (grid) {
+            mainResizeObserver.observe(grid);
+          }
         }
       }
 
