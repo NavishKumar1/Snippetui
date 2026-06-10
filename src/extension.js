@@ -2,6 +2,7 @@
  * SnippetUI - VS Code Extension Showcase Page
  * Design-focused promotional and instruction page for the extension
  */
+import { t } from './i18n.js';
 
 export function renderExtensionShowcase(onNavigate) {
   const htmlContent = `
@@ -13,7 +14,7 @@ export function renderExtensionShowcase(onNavigate) {
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
-        Back to Home
+        ${t('lib_back_home')}
       </button>
       
       <!-- Ambient Grid Background -->
@@ -21,11 +22,10 @@ export function renderExtensionShowcase(onNavigate) {
 
       <!-- Hero Section -->
       <section class="showcase-hero">
-        <div class="tech-badge animate-fade-in">VS Code Extension</div>
-        <h1 class="showcase-title">Access Snippets Instantly<br/>Directly Inside Your Editor</h1>
+        <div class="tech-badge animate-fade-in">${t('ext_badge')}</div>
+        <h1 class="showcase-title">${t('ext_showcase_title')}</h1>
         <p class="showcase-subtitle">
-          Bring the entire SnippetUI library of premium glassmorphic components, text animations, 
-          and dynamic triggers directly into your development workflow. No copy-pasting required.
+          ${t('ext_showcase_subtitle')}
         </p>
 
         <!-- Coming Soon Status Badge -->
@@ -34,7 +34,7 @@ export function renderExtensionShowcase(onNavigate) {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="badge-icon">
               <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
             </svg>
-            <span>Direct VS Code Marketplace Release — Coming Soon</span>
+            <span>${t('ext_showcase_coming_soon')}</span>
           </div>
         </div>
       </section>
@@ -49,7 +49,7 @@ export function renderExtensionShowcase(onNavigate) {
               <span class="dot-control dot-minimize"></span>
               <span class="dot-control dot-maximize"></span>
             </div>
-            <div class="titlebar-filename">SnippetUI - Visual Sandbox</div>
+            <div class="titlebar-filename">${t('ext_showcase_sandbox_title')}</div>
             <div class="titlebar-placeholder"></div>
           </div>
 
@@ -58,11 +58,11 @@ export function renderExtensionShowcase(onNavigate) {
             <!-- Left Sidebar (SnippetUI Explorer Webview Panel) -->
             <aside class="mock-vscode-sidebar">
               <div class="sidebar-header">
-                <h3>SnippetUI Explorer</h3>
+                <h3>${t('ext_showcase_explorer_title')}</h3>
                 <span class="sidebar-badge">v1.0.0</span>
               </div>
               <ul class="mock-sidebar-categories">
-                <li class="cat-header">Text Animations</li>
+                <li class="cat-header">${t('cat_text')}</li>
                 <li class="sidebar-item active">
                   <span class="item-icon">⚡</span>
                   <span>neon-glow-text</span>
@@ -75,7 +75,7 @@ export function renderExtensionShowcase(onNavigate) {
                   <span class="item-icon">⚡</span>
                   <span>typing-terminal</span>
                 </li>
-                <li class="cat-header">Dynamic Buttons</li>
+                <li class="cat-header">${t('cat_buttons')}</li>
                 <li class="sidebar-item">
                   <span class="item-icon">⚙️</span>
                   <span>magnetic-gravity</span>
@@ -92,16 +92,16 @@ export function renderExtensionShowcase(onNavigate) {
               <div class="editor-tabs">
                 <div class="tab-item">index.html</div>
                 <div class="tab-item">style.css</div>
-                <div class="tab-item active">SnippetUI Sandbox</div>
+                <div class="tab-item active">${t('ext_showcase_sandbox_title')}</div>
               </div>
               <div class="editor-container">
                 <div class="sandbox-split-left">
-                  <div class="editor-header-label">HTML Markup</div>
+                  <div class="editor-header-label">${t('ext_showcase_html_markup')}</div>
                   <pre class="code-editor-block"><code class="language-html"><span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"neon-glow-card"</span><span class="tag">&gt;</span>
   <span class="tag">&lt;h1</span> <span class="attr">class</span>=<span class="val">"glow-text"</span><span class="tag">&gt;</span>SnippetUI<span class="tag">&lt;/h1&gt;</span>
 <span class="tag">&lt;/div&gt;</span></code></pre>
                   
-                  <div class="editor-header-label" style="margin-top: 16px;">CSS Variables (Configurable)</div>
+                  <div class="editor-header-label" style="margin-top: 16px;">${t('ext_showcase_css_vars')}</div>
                   <pre class="code-editor-block"><code class="language-css"><span class="selector">:root</span> {
   <span class="property">--glow-color</span>: <span class="val">#00f2fe</span>;
   <span class="property">--card-blur</span>: <span class="val">20px</span>;
@@ -111,12 +111,12 @@ export function renderExtensionShowcase(onNavigate) {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 6px;">
                       <polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline>
                     </svg>
-                    Inject Component into Active File
+                    ${t('ext_showcase_inject_btn')}
                   </button>
                 </div>
                 
                 <div class="sandbox-split-right">
-                  <div class="editor-header-label">Visual Preview</div>
+                  <div class="editor-header-label">${t('play_preview')}</div>
                   <div class="mock-preview-viewport">
                     <div class="mock-preview-glowing-circle">
                       <span class="mock-preview-text">SnippetUI</span>
@@ -132,48 +132,44 @@ export function renderExtensionShowcase(onNavigate) {
       <!-- How to Use: 4 Step Premium Process -->
       <section class="showcase-steps-section">
         <div class="section-header">
-          <h2 class="steps-title">Get Started in 4 Simple Steps</h2>
-          <p class="steps-subtitle">Start styling and coding with premium animations in under 60 seconds.</p>
+          <h2 class="steps-title">${t('ext_showcase_steps_title')}</h2>
+          <p class="steps-subtitle">${t('ext_showcase_steps_subtitle')}</p>
         </div>
 
         <div class="steps-grid">
           <!-- Step 1 -->
           <div class="step-card">
             <div class="step-num">01</div>
-            <h3 class="step-card-title">Install the Extension</h3>
+            <h3 class="step-card-title">${t('ext_showcase_step1_title')}</h3>
             <p class="step-card-desc">
-              Download the <strong>VSIX package</strong> above, open VS Code, open Extensions, select 
-              <strong>"Install from VSIX..."</strong> and choose the file. Or run the terminal command.
+              ${t('ext_showcase_step1_desc')}
             </p>
           </div>
 
           <!-- Step 2 -->
           <div class="step-card">
             <div class="step-num">02</div>
-            <h3 class="step-card-title">Initialize Your Project</h3>
+            <h3 class="step-card-title">${t('ext_showcase_step2_title')}</h3>
             <p class="step-card-desc">
-              Open the command palette (<code>Ctrl+Shift+P</code>) and run <strong>"SnippetUI: Initialize Project"</strong>. 
-              This creates the global design token configurations.
+              ${t('ext_showcase_step2_desc')}
             </p>
           </div>
 
           <!-- Step 3 -->
           <div class="step-card">
             <div class="step-num">03</div>
-            <h3 class="step-card-title">Browse and Search</h3>
+            <h3 class="step-card-title">${t('ext_showcase_step3_title')}</h3>
             <p class="step-card-desc">
-              Run <strong>"SnippetUI: Insert Component"</strong> or open the Visual Explorer tab. 
-              Search dynamically for loaders, buttons, text layouts, or page sections.
+              ${t('ext_showcase_step3_desc')}
             </p>
           </div>
 
           <!-- Step 4 -->
           <div class="step-card">
             <div class="step-num">04</div>
-            <h3 class="step-card-title">Inject and Style</h3>
+            <h3 class="step-card-title">${t('ext_showcase_step4_title')}</h3>
             <p class="step-card-desc">
-              Choose your framework output (Tailwind, React TSX, Vue SFC, or Vanilla HTML/CSS). 
-              Click insert, and the clean source code will be injected right into your cursor position!
+              ${t('ext_showcase_step4_desc')}
             </p>
           </div>
         </div>
@@ -182,20 +178,18 @@ export function renderExtensionShowcase(onNavigate) {
       <!-- Bento Capabilities Box Grid -->
       <section class="showcase-bento-section">
         <div class="section-header">
-          <h2 class="steps-title">Engineered with "God Mode" Capabilities</h2>
-          <p class="steps-subtitle">Designed to automate UI styling workflows directly inside the editor environment.</p>
+          <h2 class="steps-title">${t('ext_showcase_bento_title')}</h2>
+          <p class="steps-subtitle">${t('ext_showcase_bento_subtitle')}</p>
         </div>
 
         <div class="bento-grid">
           <!-- Bento Item 1: Copilot Integration -->
           <div class="bento-card bento-wide">
             <div class="bento-card-content">
-              <div class="bento-badge">VS Code Copilot Chat</div>
-              <h3>AI Chat Assistant (@snippetui)</h3>
+              <div class="bento-badge">${t('ext_showcase_bento1_badge')}</div>
+              <h3>${t('ext_showcase_bento1_title')}</h3>
               <p>
-                Prompt the extension directly inside your VS Code Chat panel. Query things like 
-                <code>@snippetui cosmic glow button</code>, and it will search our registries and write 
-                the complete code block directly in the chat panel.
+                ${t('ext_showcase_bento1_desc')}
               </p>
             </div>
             <div class="bento-card-visual mock-chat-box">
@@ -210,11 +204,10 @@ export function renderExtensionShowcase(onNavigate) {
           <!-- Bento Item 2: Figma Integration -->
           <div class="bento-card">
             <div class="bento-card-content">
-              <div class="bento-badge">Figma API</div>
-              <h3>Figma Token Sync</h3>
+              <div class="bento-badge">${t('ext_showcase_bento2_badge')}</div>
+              <h3>${t('ext_showcase_bento2_title')}</h3>
               <p>
-                Sync variables directly. Pull color tokens, spacing indexes, and border shapes from 
-                your design teams' Figma files directly into your local globals sheet.
+                ${t('ext_showcase_bento2_desc')}
               </p>
             </div>
             <div class="bento-card-visual mock-figma-badge">
@@ -228,27 +221,24 @@ export function renderExtensionShowcase(onNavigate) {
           <!-- Bento Item 3: Local Caching -->
           <div class="bento-card">
             <div class="bento-card-content">
-              <div class="bento-badge">Performance</div>
-              <h3>Registry Cache & Update</h3>
+              <div class="bento-badge">${t('ext_showcase_bento3_badge')}</div>
+              <h3>${t('ext_showcase_bento3_title')}</h3>
               <p>
-                Full local offline support. The extension caches the registry database for rapid access, 
-                and syncs with the remote repository only when updates are found.
+                ${t('ext_showcase_bento3_desc')}
               </p>
             </div>
             <div class="bento-card-visual mock-cache-ring">
-              <div class="cache-badge-icon">100% Offline</div>
+              <div class="cache-badge-icon">${t('ext_showcase_offline')}</div>
             </div>
           </div>
 
           <!-- Bento Item 4: Global Framework Compilation -->
           <div class="bento-card bento-wide">
             <div class="bento-card-content">
-              <div class="bento-badge">Multi-framework Compiler</div>
-              <h3>Clean Compilation Modules</h3>
+              <div class="bento-badge">${t('ext_showcase_bento4_badge')}</div>
+              <h3>${t('ext_showcase_bento4_title')}</h3>
               <p>
-                Our code injection engine automatically wraps HTML, CSS, and JS components based on your 
-                needs: standard HTML snippets, Tailwind-configured tags, React functional components 
-                (JSX/TSX), or Vue Single File Components (SFC).
+                ${t('ext_showcase_bento4_desc')}
               </p>
             </div>
             <div class="bento-card-visual mock-frameworks-row">
@@ -263,19 +253,19 @@ export function renderExtensionShowcase(onNavigate) {
 
       <!-- Bottom Call to Action Section -->
       <section class="showcase-footer-cta">
-        <h2 class="showcase-cta-title">Upgrade Your Development Experience</h2>
+        <h2 class="showcase-cta-title">${t('ext_showcase_footer_title')}</h2>
         <p class="showcase-cta-subtitle">
-          Say goodbye to manual component hunting. Browse our premium design components library or look out for our official VS Code Marketplace launch.
+          ${t('ext_showcase_footer_subtitle')}
         </p>
         <div class="showcase-footer-buttons">
           <button class="btn-showcase-primary large" id="btn-showcase-to-library">
-            Browse Components Library
+            ${t('ext_showcase_browse_btn')}
           </button>
           <div class="marketplace-coming-soon-badge secondary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 8px;">
               <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
             </svg>
-            <span>Coming Soon to VS Code Marketplace</span>
+            <span>${t('ext_showcase_coming_soon_marketplace')}</span>
           </div>
         </div>
       </section>
