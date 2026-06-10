@@ -181,6 +181,15 @@ export function renderLanding(onNavigate) {
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-left: 6px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </a>
           </div>
+          
+          <div class="hero-cli-trigger">
+            <span class="cli-icon">💻</span>
+            <span class="cli-cmd-text">npx snippetui init</span>
+            <a href="#cli-guide" class="btn-hero-cli-link" id="hero-btn-cli">
+              ${t('hero_btn_cli')}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left: 4px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          </div>
         </div>
 
         <!-- Right Column: Visual Showcase -->
@@ -1394,6 +1403,10 @@ export function renderLanding(onNavigate) {
       document.getElementById('hero-btn-browse')?.addEventListener('click', (e) => {
         e.preventDefault();
         onNavigate('library');
+      });
+      document.getElementById('hero-btn-cli')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        onNavigate('cli-guide');
       });
       document.getElementById('btn-peel-browse')?.addEventListener('click', (e) => {
         e.preventDefault();

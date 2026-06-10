@@ -9,6 +9,7 @@ import { renderExtensionShowcase } from './extension.js';
 import { renderPrivacy } from './privacy.js';
 import { renderTerms } from './terms.js';
 import { render404 } from './error404.js';
+import { renderCliGuide } from './cliguide.js';
 import Lenis from 'lenis';
 import { t, getCurrentLanguage, setLanguage } from './i18n.js';
 
@@ -180,6 +181,24 @@ function navigate(target) {
     page = render404(navigate);
     window.location.hash = '404';
     title = t('err_title') + ' | SnippetUI';
+  } else if (target === 'cli-guide') {
+    navbar.style.display = 'block';
+    appContainer.classList.remove('no-nav');
+    appContainer.classList.add('with-nav');
+    document.body.classList.remove('library-page-active');
+
+    if (!globalLenis) {
+      globalLenis = new Lenis({
+        autoRaf: true,
+        lerp: 0.09,
+        duration: 1.2
+      });
+    }
+    globalLenis.start();
+
+    page = renderCliGuide(navigate);
+    window.location.hash = 'cli-guide';
+    title = t('cli_title') + ' | SnippetUI';
   } else {
     navbar.style.display = 'block';
     appContainer.classList.remove('no-nav');
@@ -376,6 +395,8 @@ function handleHashRoute() {
     navigate('terms');
   } else if (hash === '#404') {
     navigate('404');
+  } else if (hash === '#cli-guide') {
+    navigate('cli-guide');
   } else if (hash === '' || hash === '#landing') {
     navigate('landing');
   } else {
@@ -400,3 +421,16 @@ window.addEventListener('languagechanged', (e) => {
 // Window load and hashchange hooks
 window.addEventListener('DOMContentLoaded', handleHashRoute);
 window.addEventListener('hashchange', handleHashRoute);
+
+// Register Service Worker for offline capabilities
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => {
+        console.log('[SnippetUI] Service Worker registered successfully with scope:', reg.scope);
+      })
+      .catch(err => {
+        console.error('[SnippetUI] Service Worker registration failed:', err);
+      });
+  });
+}
