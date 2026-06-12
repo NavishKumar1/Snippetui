@@ -4,6 +4,7 @@
 import { COMPONENTS_DATABASE } from './library/index.js';
 import { t } from './i18n.js';
 import { loadMonaco, createMonacoEditor } from './editor/monaco-helper.js';
+import { loadPrettier, formatCode } from './editor/formatter.js';
 
 // CRC-32 Lookup Table & Helper for uncompressed ZIP writing
 const crcTable = [];
@@ -212,7 +213,8 @@ export function renderEditor(onNavigate, compId) {
               <span class="editor-page-lang-badge html">/ HTML</span>
               <span class="editor-page-editor-title">index.html</span>
             </div>
-            <div class="editor-page-editor-header-right">
+            <div class="editor-page-editor-header-right" style="display: flex; align-items: center; gap: 8px;">
+              <button class="editor-page-editor-btn-format" data-lang="html" title="Format HTML code" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-secondary); font-family: var(--font-body); font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Format</button>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </div>
           </div>
@@ -232,7 +234,8 @@ export function renderEditor(onNavigate, compId) {
               <span class="editor-page-lang-badge css">* CSS</span>
               <span class="editor-page-editor-title">style.css</span>
             </div>
-            <div class="editor-page-editor-header-right">
+            <div class="editor-page-editor-header-right" style="display: flex; align-items: center; gap: 8px;">
+              <button class="editor-page-editor-btn-format" data-lang="css" title="Format CSS code" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-secondary); font-family: var(--font-body); font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Format</button>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </div>
           </div>
@@ -252,7 +255,8 @@ export function renderEditor(onNavigate, compId) {
               <span class="editor-page-lang-badge js">() JS</span>
               <span class="editor-page-editor-title">index.js</span>
             </div>
-            <div class="editor-page-editor-header-right">
+            <div class="editor-page-editor-header-right" style="display: flex; align-items: center; gap: 8px;">
+              <button class="editor-page-editor-btn-format" data-lang="js" title="Format JS code" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-secondary); font-family: var(--font-body); font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Format</button>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </div>
           </div>
