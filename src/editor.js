@@ -5,6 +5,7 @@ import { COMPONENTS_DATABASE } from './library/index.js';
 import { t } from './i18n.js';
 import { loadMonaco, createMonacoEditor } from './editor/monaco-helper.js';
 import { loadPrettier, formatCode } from './editor/formatter.js';
+import { generateReact, generateVue, generateSvelte } from './editor/codegen.js';
 
 // CRC-32 Lookup Table & Helper for uncompressed ZIP writing
 const crcTable = [];
@@ -285,6 +286,9 @@ export function renderEditor(onNavigate, compId) {
               <span id="editor-console-badge-logs" style="display: none; background: rgba(0, 242, 254, 0.2); color: var(--accent-cyan); font-size: 9px; padding: 1px 4px; border-radius: 10px; margin-left: 2px;">0</span>
               <span id="editor-console-badge-errors" style="display: none; background: rgba(239, 68, 68, 0.2); color: #ef4444; font-size: 9px; padding: 1px 4px; border-radius: 10px; margin-left: 2px;">0</span>
             </button>
+            <button class="editor-page-preview-btn" id="editor-page-btn-export" style="position: relative; display: flex; align-items: center; gap: 4px;">
+              📦 Export Code
+            </button>
             <button class="editor-page-preview-btn" id="editor-page-btn-reload">
               🔄 Reload Canvas
             </button>
@@ -297,16 +301,46 @@ export function renderEditor(onNavigate, compId) {
         <div class="editor-page-preview-body" style="flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden;">
           <div class="editor-page-sandbox-viewport" id="editor-page-sandbox-viewport"></div>
           
-          <!-- Collapsible Premium Developer Console -->
-          <div class="editor-console-drawer collapsed" id="editor-console-drawer" style="position: absolute; bottom: 0; left: 0; right: 0; height: 180px; background: #08080d; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); z-index: 10;">
-            <div class="editor-console-header" style="height: 32px; min-height: 32px; background: #0c0c14; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between; padding: 0 16px;">
-              <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Console Output</span>
-              <button id="editor-console-btn-clear" style="background: none; border: none; color: var(--text-muted); font-size: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-                🗑️ Clear
-              </button>
+          <!-- Collapsible Premium Developer Console & Framework Exporter Drawer -->
+          <div class="editor-console-drawer collapsed" id="editor-console-drawer" style="position: absolute; bottom: 0; left: 0; right: 0; height: 220px; background: #08080d; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); z-index: 10;">
+            <!-- Tab Headers -->
+            <div class="editor-drawer-tabs-header" style="height: 36px; min-height: 36px; background: #0c0c14; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; user-select: none;">
+              <div class="editor-drawer-tab-triggers" style="display: flex; gap: 16px; height: 100%;">
+                <button class="editor-drawer-tab-btn active" data-tab="console" style="background: none; border: none; color: #ffffff; font-size: 10px; font-weight: 700; cursor: pointer; border-bottom: 2px solid var(--accent-cyan); padding: 0 4px; height: 100%;">CONSOLE LOGS</button>
+                <button class="editor-drawer-tab-btn" data-tab="export" style="background: none; border: none; color: var(--text-muted); font-size: 10px; font-weight: 700; cursor: pointer; border-bottom: 2px solid transparent; padding: 0 4px; height: 100%;">EXPORT FRAMEWORKS</button>
+              </div>
+              
+              <!-- Action group for Console Tab -->
+              <div class="editor-drawer-actions" id="drawer-actions-console" style="display: flex; align-items: center; gap: 12px;">
+                <button id="editor-console-btn-clear" style="background: none; border: none; color: var(--text-muted); font-size: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                  🗑️ Clear
+                </button>
+              </div>
+              
+              <!-- Action group for Export Tab -->
+              <div class="editor-drawer-actions" id="drawer-actions-export" style="display: none; align-items: center; gap: 12px;">
+                <button id="editor-export-btn-copy" style="background: var(--primary-gradient); border: none; color: #08080c; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 4px; cursor: pointer;">
+                  📋 Copy Code
+                </button>
+              </div>
             </div>
-            <div class="editor-console-logs" id="editor-console-logs" style="flex: 1; overflow-y: auto; padding: 12px 16px; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.6; display: flex; flex-direction: column; gap: 4px;">
+
+            <!-- Content Area 1: Console -->
+            <div class="editor-drawer-tab-content" id="drawer-content-console" style="flex: 1; overflow-y: auto; padding: 12px 16px; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.6; display: flex; flex-direction: column; gap: 4px;">
               <div class="console-line system" style="color: var(--text-muted); font-style: italic;">[System] Console initialized. Ready for output...</div>
+            </div>
+
+            <!-- Content Area 2: Export Codegen -->
+            <div class="editor-drawer-tab-content" id="drawer-content-export" style="display: none; flex: 1; flex-direction: column; background: #06060a; overflow: hidden;">
+              <!-- Subtabs (React, Vue, Svelte) -->
+              <div class="editor-export-subtabs" style="height: 32px; background: rgba(0,0,0,0.15); display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.02); padding: 0 16px; gap: 12px; border-top: 1px solid rgba(255,255,255,0.02);">
+                <button class="editor-export-subtab-btn active" data-subtab="react" style="background: none; border: none; color: var(--accent-cyan); font-family: var(--font-body); font-size: 10px; font-weight: 700; cursor: pointer; transition: color 0.15s;">React (TSX)</button>
+                <button class="editor-export-subtab-btn" data-subtab="vue" style="background: none; border: none; color: var(--text-muted); font-family: var(--font-body); font-size: 10px; font-weight: 700; cursor: pointer; transition: color 0.15s;">Vue 3 SFC</button>
+                <button class="editor-export-subtab-btn" data-subtab="svelte" style="background: none; border: none; color: var(--text-muted); font-family: var(--font-body); font-size: 10px; font-weight: 700; cursor: pointer; transition: color 0.15s;">Svelte Component</button>
+              </div>
+              <div style="flex: 1; overflow: hidden; position: relative;">
+                <textarea id="editor-export-textarea" readonly style="width: 100%; height: 100%; background: transparent; border: none; outline: none; padding: 16px; color: #a5b4fc; font-family: var(--font-mono); font-size: 11.5px; resize: none; overflow: auto; line-height: 1.6;" spellcheck="false"></textarea>
+              </div>
             </div>
           </div>
         </div>
@@ -614,22 +648,141 @@ export function renderEditor(onNavigate, compId) {
         consoleLogs.scrollTop = consoleLogs.scrollHeight;
       }
 
-      // Toggle Console Drawer open/close
+      let activeExportTab = 'react'; // 'react', 'vue', or 'svelte'
+
+      function updateCodegenOutput() {
+        const textarea = container.querySelector('#editor-export-textarea');
+        if (!textarea) return;
+
+        let compiled = '';
+        const html = editorHtml ? editorHtml.getValue() : workbenchHtml;
+        const css = editorCss ? editorCss.getValue() : workbenchCss;
+        const js = editorJs ? editorJs.getValue() : workbenchJs;
+
+        try {
+          if (activeExportTab === 'react') {
+            compiled = generateReact(html, css, js, false); // false for isTailwindActive initially
+          } else if (activeExportTab === 'vue') {
+            compiled = generateVue(html, css, js);
+          } else if (activeExportTab === 'svelte') {
+            compiled = generateSvelte(html, css, js);
+          }
+        } catch (e) {
+          compiled = `/* Codegen Error: ${e.message} */`;
+        }
+
+        textarea.value = compiled;
+      }
+
+      // Switch active tab in the bottom drawer
+      function switchDrawerTab(tabName) {
+        if (!consoleDrawer) return;
+
+        // Ensure drawer is open
+        consoleDrawer.classList.add('active');
+        consoleDrawer.style.transform = 'translateY(0)';
+        consoleBtn?.classList.add('active');
+
+        // Toggle active states on tab trigger buttons
+        container.querySelectorAll('.editor-drawer-tab-btn').forEach(btn => {
+          if (btn.getAttribute('data-tab') === tabName) {
+            btn.classList.add('active');
+            btn.style.color = '#ffffff';
+            btn.style.borderBottomColor = 'var(--accent-cyan)';
+          } else {
+            btn.classList.remove('active');
+            btn.style.color = 'var(--text-muted)';
+            btn.style.borderBottomColor = 'transparent';
+          }
+        });
+
+        // Toggle visibility of content divs and actions group
+        const contentConsole = container.querySelector('#drawer-content-console');
+        const contentExport = container.querySelector('#drawer-content-export');
+        const actionsConsole = container.querySelector('#drawer-actions-console');
+        const actionsExport = container.querySelector('#drawer-actions-export');
+
+        if (tabName === 'console') {
+          if (contentConsole) contentConsole.style.display = 'flex';
+          if (contentExport) contentExport.style.display = 'none';
+          if (actionsConsole) actionsConsole.style.display = 'flex';
+          if (actionsExport) actionsExport.style.display = 'none';
+        } else {
+          if (contentConsole) contentConsole.style.display = 'none';
+          if (contentExport) contentExport.style.display = 'flex';
+          if (actionsConsole) actionsConsole.style.display = 'none';
+          if (actionsExport) actionsExport.style.display = 'flex';
+          updateCodegenOutput();
+        }
+      }
+
+      // Toggle Console Tab
       consoleBtn?.addEventListener('click', () => {
         if (consoleDrawer) {
-          const isActive = consoleDrawer.classList.contains('active');
-          if (isActive) {
+          const isDrawerOpen = consoleDrawer.classList.contains('active');
+          const isConsoleTabActive = container.querySelector('.editor-drawer-tab-btn[data-tab="console"]')?.classList.contains('active');
+          
+          if (isDrawerOpen && isConsoleTabActive) {
+            // Close drawer
             consoleDrawer.classList.remove('active');
             consoleDrawer.style.transform = 'translateY(100%)';
             consoleBtn.classList.remove('active');
           } else {
-            consoleDrawer.classList.add('active');
-            consoleDrawer.style.transform = 'translateY(0)';
-            consoleBtn.classList.add('active');
+            switchDrawerTab('console');
           }
         }
       });
 
+      // Toggle Export Tab
+      const exportBtn = container.querySelector('#editor-page-btn-export');
+      exportBtn?.addEventListener('click', () => {
+        if (consoleDrawer) {
+          const isDrawerOpen = consoleDrawer.classList.contains('active');
+          const isExportTabActive = container.querySelector('.editor-drawer-tab-btn[data-tab="export"]')?.classList.contains('active');
+
+          if (isDrawerOpen && isExportTabActive) {
+            // Close drawer
+            consoleDrawer.classList.remove('active');
+            consoleDrawer.style.transform = 'translateY(100%)';
+            exportBtn.classList.remove('active');
+          } else {
+            switchDrawerTab('export');
+            exportBtn.classList.add('active');
+          }
+        }
+      });
+
+      // Wire up tab buttons inside the drawer header
+      container.querySelectorAll('.editor-drawer-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.getAttribute('data-tab');
+          switchDrawerTab(tab);
+        });
+      });
+
+      // Wire up export subtabs (React, Vue, Svelte)
+      container.querySelectorAll('.editor-export-subtab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          container.querySelectorAll('.editor-export-subtab-btn').forEach(b => {
+            b.classList.remove('active');
+            b.style.color = 'var(--text-muted)';
+          });
+          btn.classList.add('active');
+          btn.style.color = 'var(--accent-cyan)';
+          activeExportTab = btn.getAttribute('data-subtab');
+          updateCodegenOutput();
+        });
+      });
+
+      // Wire up copy button inside export tab
+      container.querySelector('#editor-export-btn-copy')?.addEventListener('click', () => {
+        const text = container.querySelector('#editor-export-textarea')?.value;
+        if (text) {
+          copyTextToClipboard(text, `Copied ${activeExportTab.toUpperCase()} template!`);
+        }
+      });
+
+      // Toggle Console Drawer open/close
       // Run live sandbox compiler initially
       runSandbox(container);
 
@@ -654,6 +807,7 @@ export function renderEditor(onNavigate, compId) {
 
         debounceTimeout = setTimeout(() => {
           runSandbox(container);
+          updateCodegenOutput(); // Refresh exports
           if (indicator) {
             indicator.style.background = '#10b981';
             indicator.style.boxShadow = '0 0 8px #10b981';
