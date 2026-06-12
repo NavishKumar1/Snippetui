@@ -141,7 +141,11 @@ export function renderEditor(onNavigate, compId) {
   let workbenchCss = '';
   let workbenchJs = '';
   let debounceTimeout = null;
-  let workbenchSandboxCleanup = null;
+  let messageListener = null;
+
+  // Console Counters & Log Entries
+  let logCount = 0;
+  let errorCount = 0;
 
   // Restore edits from localStorage if available
   const savedWorkspace = localStorage.getItem(`snippetui_custom_${comp.id}`);
@@ -261,6 +265,12 @@ export function renderEditor(onNavigate, compId) {
             <span>Live Interactive Preview</span>
           </div>
           <div class="editor-page-preview-actions">
+            <!-- Console Trigger button -->
+            <button class="editor-page-preview-btn" id="editor-page-btn-console" style="position: relative; display: flex; align-items: center; gap: 4px;">
+              💻 Console
+              <span id="editor-console-badge-logs" style="display: none; background: rgba(0, 242, 254, 0.2); color: var(--accent-cyan); font-size: 9px; padding: 1px 4px; border-radius: 10px; margin-left: 2px;">0</span>
+              <span id="editor-console-badge-errors" style="display: none; background: rgba(239, 68, 68, 0.2); color: #ef4444; font-size: 9px; padding: 1px 4px; border-radius: 10px; margin-left: 2px;">0</span>
+            </button>
             <button class="editor-page-preview-btn" id="editor-page-btn-reload">
               🔄 Reload Canvas
             </button>
@@ -269,7 +279,23 @@ export function renderEditor(onNavigate, compId) {
             </button>
           </div>
         </div>
-        <div class="editor-page-sandbox-viewport" id="editor-page-sandbox-viewport"></div>
+        
+        <div class="editor-page-preview-body" style="flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden;">
+          <div class="editor-page-sandbox-viewport" id="editor-page-sandbox-viewport"></div>
+          
+          <!-- Collapsible Premium Developer Console -->
+          <div class="editor-console-drawer collapsed" id="editor-console-drawer" style="position: absolute; bottom: 0; left: 0; right: 0; height: 180px; background: #08080d; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); z-index: 10;">
+            <div class="editor-console-header" style="height: 32px; min-height: 32px; background: #0c0c14; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between; padding: 0 16px;">
+              <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Console Output</span>
+              <button id="editor-console-btn-clear" style="background: none; border: none; color: var(--text-muted); font-size: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                🗑️ Clear
+              </button>
+            </div>
+            <div class="editor-console-logs" id="editor-console-logs" style="flex: 1; overflow-y: auto; padding: 12px 16px; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.6; display: flex; flex-direction: column; gap: 4px;">
+              <div class="console-line system" style="color: var(--text-muted); font-style: italic;">[System] Console initialized. Ready for output...</div>
+            </div>
+          </div>
+        </div>
       </div>
       
     </div>
@@ -396,6 +422,25 @@ export function renderEditor(onNavigate, compId) {
 </html>
     `;
 
+    // Reset counts for the new run
+    logCount = 0;
+    errorCount = 0;
+    const badgeLogs = container.querySelector('#editor-console-badge-logs');
+    const badgeErrors = container.querySelector('#editor-console-badge-errors');
+    const consoleLogs = container.querySelector('#editor-console-logs');
+
+    if (badgeLogs) {
+      badgeLogs.textContent = '0';
+      badgeLogs.style.display = 'none';
+    }
+    if (badgeErrors) {
+      badgeErrors.textContent = '0';
+      badgeErrors.style.display = 'none';
+    }
+    if (consoleLogs) {
+      consoleLogs.innerHTML = '<div class="console-line system" style="color: var(--text-muted); font-style: italic;">[System] Reloading preview compiler...</div>';
+    }
+
     // Load content window
     try {
       const doc = iframe.contentWindow.document;
@@ -418,6 +463,13 @@ export function renderEditor(onNavigate, compId) {
       const numCss = container.querySelector('#editor-page-line-numbers-css');
       const numJs = container.querySelector('#editor-page-line-numbers-js');
 
+      // Console UI references
+      const consoleBtn = container.querySelector('#editor-page-btn-console');
+      const consoleDrawer = container.querySelector('#editor-console-drawer');
+      const consoleLogs = container.querySelector('#editor-console-logs');
+      const badgeLogs = container.querySelector('#editor-console-badge-logs');
+      const badgeErrors = container.querySelector('#editor-console-badge-errors');
+
       // Assign initial values
       if (txtHtml) txtHtml.value = workbenchHtml;
       if (txtCss) txtCss.value = workbenchCss;
@@ -428,7 +480,104 @@ export function renderEditor(onNavigate, compId) {
       updateLineNumbers(txtCss, numCss);
       updateLineNumbers(txtJs, numJs);
 
-      // Run live sandbox compiler
+      // Listen for runtime logs and errors from sandbox iframe
+      messageListener = (event) => {
+        const iframe = container.querySelector('#editor-page-sandbox-iframe');
+        if (!iframe || event.source !== iframe.contentWindow) return;
+
+        if (event.data && event.data.type === 'iframe-log') {
+          appendConsoleLog(event.data.content, 'log');
+        } else if (event.data && event.data.type === 'iframe-error') {
+          appendConsoleLog(event.data.message, 'error');
+        }
+      };
+      window.addEventListener('message', messageListener);
+
+      function clearLogs() {
+        if (consoleLogs) {
+          consoleLogs.innerHTML = '<div class="console-line system" style="color: var(--text-muted); font-style: italic;">[System] Console cleared.</div>';
+        }
+        logCount = 0;
+        errorCount = 0;
+        if (badgeLogs) {
+          badgeLogs.textContent = '0';
+          badgeLogs.style.display = 'none';
+        }
+        if (badgeErrors) {
+          badgeErrors.textContent = '0';
+          badgeErrors.style.display = 'none';
+        }
+      }
+
+      container.querySelector('#editor-console-btn-clear')?.addEventListener('click', clearLogs);
+
+      function appendConsoleLog(message, type) {
+        if (!consoleLogs) return;
+
+        // Strip previous reload placeholder if any exists
+        const reloadingMsg = consoleLogs.querySelector('.console-line.system');
+        if (reloadingMsg && reloadingMsg.textContent.includes('Reloading')) {
+          reloadingMsg.remove();
+        }
+
+        const line = document.createElement('div');
+        line.className = `console-line ${type}`;
+        
+        let prefix = '[Log] ';
+        let color = '#e2e8f0';
+        let background = 'transparent';
+        let borderLeft = 'none';
+
+        if (type === 'error') {
+          prefix = '⚠️ [Error] ';
+          color = '#f87171';
+          background = 'rgba(239, 68, 68, 0.05)';
+          borderLeft = '3px solid #ef4444';
+          errorCount++;
+          if (badgeErrors) {
+            badgeErrors.textContent = errorCount;
+            badgeErrors.style.display = 'inline-block';
+          }
+        } else if (type === 'log') {
+          prefix = '💬 ';
+          color = '#00f2fe';
+          logCount++;
+          if (badgeLogs) {
+            badgeLogs.textContent = logCount;
+            badgeLogs.style.display = 'inline-block';
+          }
+        }
+
+        line.style.color = color;
+        line.style.background = background;
+        line.style.borderLeft = borderLeft;
+        line.style.padding = '4px 8px';
+        line.style.borderRadius = '4px';
+        line.style.whiteSpace = 'pre-wrap';
+        line.style.wordBreak = 'break-all';
+        line.textContent = prefix + message;
+
+        consoleLogs.appendChild(line);
+        consoleLogs.scrollTop = consoleLogs.scrollHeight;
+      }
+
+      // Toggle Console Drawer open/close
+      consoleBtn?.addEventListener('click', () => {
+        if (consoleDrawer) {
+          const isActive = consoleDrawer.classList.contains('active');
+          if (isActive) {
+            consoleDrawer.classList.remove('active');
+            consoleDrawer.style.transform = 'translateY(100%)';
+            consoleBtn.classList.remove('active');
+          } else {
+            consoleDrawer.classList.add('active');
+            consoleDrawer.style.transform = 'translateY(0)';
+            consoleBtn.classList.add('active');
+          }
+        }
+      });
+
+      // Run live sandbox compiler initially
       runSandbox(container);
 
       // Back navigation
@@ -514,6 +663,7 @@ export function renderEditor(onNavigate, compId) {
         updateLineNumbers(txtCss, numCss);
         updateLineNumbers(txtJs, numJs);
 
+        clearLogs();
         runSandbox(container);
         triggerToast('Reset component code workspace!');
       });
@@ -557,6 +707,10 @@ export function renderEditor(onNavigate, compId) {
       });
     },
     destroy: () => {
+      if (messageListener) {
+        window.removeEventListener('message', messageListener);
+        messageListener = null;
+      }
       if (debounceTimeout) {
         clearTimeout(debounceTimeout);
         debounceTimeout = null;
