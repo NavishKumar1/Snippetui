@@ -386,6 +386,10 @@ export function renderEditor(onNavigate, compId) {
       background: transparent;
       color: #ffffff;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
     }
   </style>
   <style id="_comp_css">${workbenchCss}</style>
