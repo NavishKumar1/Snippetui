@@ -2,14 +2,14 @@
  * SnippetUI - Premium Embed Widget Generator Modal
  */
 
-export function showEmbedModal(compId, compressedCode, triggerToast, copyTextToClipboard) {
+export function showEmbedModal(compId, compressedCode, triggerToast, copyTextToClipboard, isTailwind = false) {
   // Remove existing modal if any
   const existing = document.getElementById('snippetui-embed-modal');
   if (existing) {
     existing.remove();
   }
 
-  const embedUrl = `${window.location.origin}/#embed?component=${compId}&code=${compressedCode}`;
+  const embedUrl = `${window.location.origin}/#embed?component=${compId}&code=${compressedCode}${isTailwind ? '&tailwind=true' : ''}`;
 
   const modalHtml = `
     <div class="embed-modal-backdrop" id="snippetui-embed-modal">

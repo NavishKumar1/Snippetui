@@ -47,6 +47,9 @@ self.addEventListener('fetch', (event) => {
   const isLocalRequest = requestUrl.origin === location.origin;
   const isCdnRequest = requestUrl.hostname === 'fonts.googleapis.com' ||
                        requestUrl.hostname === 'fonts.gstatic.com' ||
+                       requestUrl.hostname === 'cdnjs.cloudflare.com' ||
+                       requestUrl.hostname === 'unpkg.com' ||
+                       requestUrl.hostname === 'cdn.tailwindcss.com' ||
                        requestUrl.hostname === 'www.googletagmanager.com' ||
                        requestUrl.hostname === 'googletagmanager.com' ||
                        requestUrl.hostname === 'images.unsplash.com' ||

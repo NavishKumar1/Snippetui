@@ -148,6 +148,13 @@ export function renderEditor(onNavigate, compId) {
   let workbenchJs = '';
   let debounceTimeout = null;
   let messageListener = null;
+  let isTailwindActive = false;
+
+  const initialHashParts = window.location.hash.split('?');
+  const initialHashParams = new URLSearchParams(initialHashParts[1] || '');
+  if (initialHashParams.get('tailwind') === 'true') {
+    isTailwindActive = true;
+  }
 
   // Console Counters & Log Entries
   let logCount = 0;
@@ -310,6 +317,9 @@ export function renderEditor(onNavigate, compId) {
             </button>
             <button class="editor-page-preview-btn" id="editor-page-btn-export" style="position: relative; display: flex; align-items: center; gap: 4px;">
               📦 Export Code
+            </button>
+            <button class="editor-page-preview-btn" id="editor-page-btn-tailwind" style="position: relative; display: flex; align-items: center; gap: 4px; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px 8px; background: transparent; cursor: pointer; font-size: 11px; transition: all 0.2s;">
+              🎨 Tailwind Sandbox: OFF
             </button>
             <button class="editor-page-preview-btn" id="editor-page-btn-reload">
               🔄 Reload Canvas
@@ -728,7 +738,7 @@ export function renderEditor(onNavigate, compId) {
 
         try {
           if (activeExportTab === 'react') {
-            compiled = generateReact(html, css, js, false); // false for isTailwindActive initially
+            compiled = generateReact(html, css, js, isTailwindActive);
           } else if (activeExportTab === 'vue') {
             compiled = generateVue(html, css, js);
           } else if (activeExportTab === 'svelte') {
@@ -903,7 +913,7 @@ export function renderEditor(onNavigate, compId) {
         const jsVal = editorJs ? editorJs.getValue() : workbenchJs;
         try {
           const compCode = await compressState(htmlVal, cssVal, jsVal);
-          const shareUrl = `${window.location.origin}/#editor?component=${comp.id}&code=${compCode}`;
+          const shareUrl = `${window.location.origin}/#editor?component=${comp.id}&code=${compCode}${isTailwindActive ? '&tailwind=true' : ''}`;
           copyTextToClipboard(shareUrl, 'Share link copied to clipboard!');
         } catch (e) {
           triggerToast('Failed to generate share link.');
@@ -918,11 +928,54 @@ export function renderEditor(onNavigate, compId) {
         const jsVal = editorJs ? editorJs.getValue() : workbenchJs;
         try {
           const compCode = await compressState(htmlVal, cssVal, jsVal);
-          showEmbedModal(comp.id, compCode, triggerToast, copyTextToClipboard);
+          showEmbedModal(comp.id, compCode, triggerToast, copyTextToClipboard, isTailwindActive);
         } catch (e) {
           triggerToast('Failed to generate embed code.');
           console.error(e);
         }
+      });
+
+      // Tailwind Sandbox Action
+      const tailwindBtn = container.querySelector('#editor-page-btn-tailwind');
+      const updateTailwindBtnState = () => {
+        if (tailwindBtn) {
+          if (isTailwindActive) {
+            tailwindBtn.textContent = '🎨 Tailwind Sandbox: ON';
+            tailwindBtn.style.color = 'var(--accent-cyan)';
+            tailwindBtn.style.borderColor = 'var(--accent-cyan)';
+            tailwindBtn.style.background = 'rgba(0, 242, 254, 0.05)';
+          } else {
+            tailwindBtn.textContent = '🎨 Tailwind Sandbox: OFF';
+            tailwindBtn.style.color = 'var(--text-muted)';
+            tailwindBtn.style.borderColor = 'var(--border-color)';
+            tailwindBtn.style.background = 'transparent';
+          }
+        }
+      };
+
+      // Set initial button state
+      updateTailwindBtnState();
+
+      tailwindBtn?.addEventListener('click', () => {
+        isTailwindActive = !isTailwindActive;
+        updateTailwindBtnState();
+        
+        // Refresh hash URL query parameter for tailwind sandbox state
+        const hashParts = window.location.hash.split('?');
+        const params = new URLSearchParams(hashParts[1] || '');
+        if (isTailwindActive) {
+          params.set('tailwind', 'true');
+        } else {
+          params.delete('tailwind');
+        }
+        const newHash = `${hashParts[0]}${params.toString() ? `?${params.toString()}` : ''}`;
+        
+        // Push state silently without triggering router reloading
+        history.replaceState(null, '', newHash);
+
+        runSandbox(container);
+        updateCodegenOutput(); // Refresh exports
+        triggerToast(isTailwindActive ? 'Tailwind Sandbox Mode Enabled!' : 'Tailwind Sandbox Mode Disabled!');
       });
 
       // Reset action
