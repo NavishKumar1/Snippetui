@@ -10,6 +10,7 @@ import { renderPrivacy } from './privacy.js';
 import { renderTerms } from './terms.js';
 import { render404 } from './error404.js';
 import { renderCliGuide } from './cliguide.js';
+import { renderEditor } from './editor.js';
 import Lenis from 'lenis';
 import { t, getCurrentLanguage, setLanguage } from './i18n.js';
 
@@ -62,6 +63,9 @@ function navigate(target) {
   // Clear any existing active mobile menu states
   closeMobileMenu();
 
+  // Reset page-specific body classes by default
+  document.body.classList.remove('editor-page-active');
+
   // Prevent redundant renders
   if (currentView === target) return;
 
@@ -84,7 +88,24 @@ function navigate(target) {
   // Render view & Navbar visibility coordination
   let page;
   let title = 'SnippetUI | ' + t('lib_subtitle');
-  if (target.startsWith('library')) {
+  if (target.startsWith('editor')) {
+    navbar.style.display = 'none';
+    appContainer.classList.remove('with-nav');
+    appContainer.classList.add('no-nav');
+    document.body.classList.remove('library-page-active');
+    document.body.classList.add('editor-page-active');
+
+    if (globalLenis) {
+      globalLenis.destroy();
+      globalLenis = null;
+    }
+
+    const parts = target.split('?');
+    const compId = parts[1]?.split('=')[1] || '';
+    page = renderEditor(navigate, compId);
+    window.location.hash = target;
+    title = 'Editor | SnippetUI';
+  } else if (target.startsWith('library')) {
     navbar.style.display = 'none';
     appContainer.classList.remove('with-nav');
     appContainer.classList.add('no-nav');
@@ -383,7 +404,11 @@ function handleHashRoute() {
   updateNavbarTranslations();
 
   const hash = window.location.hash;
-  if (hash.startsWith('#library')) {
+  if (hash.startsWith('#editor')) {
+    const parts = hash.substring(1).split('?');
+    const compId = parts[1]?.split('=')[1] || '';
+    navigate(`editor?component=${compId}`);
+  } else if (hash.startsWith('#library')) {
     const parts = hash.substring(1).split('?');
     const category = parts[1]?.split('=')[1] || 'all';
     navigate(`library?category=${category}`);
