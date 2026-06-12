@@ -588,6 +588,20 @@ export function renderEditor(onNavigate, compId) {
     localStorage.setItem(`snippetui_custom_${comp.id}`, JSON.stringify({
       files: workspaceFiles
     }));
+
+    // Sync to URL parameters asynchronously
+    compressState(workspaceFiles).then(compCode => {
+      const hashParts = window.location.hash.split('?');
+      const params = new URLSearchParams(hashParts[1] || '');
+      params.set('code', compCode);
+      if (isTailwindActive) {
+        params.set('tailwind', 'true');
+      } else {
+        params.delete('tailwind');
+      }
+      const newHash = `${hashParts[0]}?${params.toString()}`;
+      history.replaceState(null, '', newHash);
+    }).catch(e => {});
   }
 
   return {
@@ -1035,11 +1049,14 @@ export function renderEditor(onNavigate, compId) {
 
       // Share Action
       container.querySelector('#editor-page-btn-share')?.addEventListener('click', async () => {
-        const htmlVal = editorHtml ? editorHtml.getValue() : workbenchHtml;
-        const cssVal = editorCss ? editorCss.getValue() : workbenchCss;
-        const jsVal = editorJs ? editorJs.getValue() : workbenchJs;
+        // Sync Monaco model values back to workspaceFiles map
+        Object.keys(editorModels).forEach(name => {
+          if (editorModels[name]) {
+            workspaceFiles[name].content = editorModels[name].getValue();
+          }
+        });
         try {
-          const compCode = await compressState(htmlVal, cssVal, jsVal);
+          const compCode = await compressState(workspaceFiles);
           const shareUrl = `${window.location.origin}/#editor?component=${comp.id}&code=${compCode}${isTailwindActive ? '&tailwind=true' : ''}`;
           copyTextToClipboard(shareUrl, 'Share link copied to clipboard!');
         } catch (e) {
@@ -1050,11 +1067,14 @@ export function renderEditor(onNavigate, compId) {
 
       // Embed Action
       container.querySelector('#editor-page-btn-embed')?.addEventListener('click', async () => {
-        const htmlVal = editorHtml ? editorHtml.getValue() : workbenchHtml;
-        const cssVal = editorCss ? editorCss.getValue() : workbenchCss;
-        const jsVal = editorJs ? editorJs.getValue() : workbenchJs;
+        // Sync Monaco model values back to workspaceFiles map
+        Object.keys(editorModels).forEach(name => {
+          if (editorModels[name]) {
+            workspaceFiles[name].content = editorModels[name].getValue();
+          }
+        });
         try {
-          const compCode = await compressState(htmlVal, cssVal, jsVal);
+          const compCode = await compressState(workspaceFiles);
           showEmbedModal(comp.id, compCode, triggerToast, copyTextToClipboard, isTailwindActive);
         } catch (e) {
           triggerToast('Failed to generate embed code.');

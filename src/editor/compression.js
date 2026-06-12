@@ -30,16 +30,22 @@ export function loadLZString() {
 }
 
 /**
- * Compresses HTML, CSS, and JS values into a URI-safe string.
+ * Compresses workspace state (or legacy HTML, CSS, JS values) into a URI-safe string.
  */
-export async function compressState(html, css, js) {
+export async function compressState(filesOrHtml, css, js) {
   const lz = await loadLZString();
-  const state = JSON.stringify({ html, css, js });
+  let stateObj;
+  if (typeof filesOrHtml === 'object' && filesOrHtml !== null) {
+    stateObj = { files: filesOrHtml };
+  } else {
+    stateObj = { html: filesOrHtml, css, js };
+  }
+  const state = JSON.stringify(stateObj);
   return lz.compressToEncodedURIComponent(state);
 }
 
 /**
- * Decompresses a URI-safe string back into HTML, CSS, and JS.
+ * Decompresses a URI-safe string back into files map or legacy values.
  */
 export async function decompressState(compressed) {
   if (!compressed) return null;
@@ -47,7 +53,17 @@ export async function decompressState(compressed) {
   try {
     const decompressed = lz.decompressFromEncodedURIComponent(compressed);
     if (!decompressed) return null;
-    return JSON.parse(decompressed);
+    const parsed = JSON.parse(decompressed);
+    
+    // Normalization / Legacy translation
+    if (parsed && !parsed.files && (parsed.html !== undefined || parsed.css !== undefined || parsed.js !== undefined)) {
+      parsed.files = {
+        'index.html': { content: parsed.html || '', language: 'html' },
+        'style.css': { content: parsed.css || '', language: 'css' },
+        'index.js': { content: parsed.js || '', language: 'javascript' }
+      };
+    }
+    return parsed;
   } catch (err) {
     console.error('[Compression Error]', err);
     return null;
