@@ -61,10 +61,13 @@ export function updateCssVariableInCode(cssText, varName, newVal) {
   return cssText.replace(regex, `$1${newVal}$3`);
 }
 
-export function updateMonacoCssVariable(editorCss, varName, newVal) {
-  if (!window.monaco || !editorCss) return;
+export function updateMonacoCssVariable(editorOrModel, varName, newVal) {
+  if (!window.monaco || !editorOrModel) return;
 
-  const model = editorCss.getModel();
+  const model = typeof editorOrModel.getModel === 'function' 
+    ? editorOrModel.getModel() 
+    : editorOrModel;
+
   const text = model.getValue();
   const escapedName = varName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
   const regex = new RegExp(`(${escapedName}\\s*:\\s*)([^;]+)(;)`);
@@ -77,11 +80,10 @@ export function updateMonacoCssVariable(editorCss, varName, newVal) {
     const startPos = model.getPositionAt(startIndex);
     const endPos = model.getPositionAt(endIndex);
     
-    editorCss.executeEdits('customizer', [{
+    model.pushEditOperations([], [{
       range: new window.monaco.Range(startPos.lineNumber, startPos.column, endPos.lineNumber, endPos.column),
-      text: newVal,
-      forceMoveMarkers: true
-    }]);
+      text: newVal
+    }], () => null);
   }
 }
 

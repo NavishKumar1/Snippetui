@@ -12,6 +12,7 @@ import { showEmbedModal } from './editor/embed.js';
 import { TEMPLATES } from './editor/templates.js';
 import { showCdnModal, getActiveCdns } from './editor/cdn-manager.js';
 import { toggleCustomizerPanel, renderCustomizerPanel } from './editor/customizer.js';
+import { renderFileList, getFileLanguage } from './editor/file-explorer.js';
 
 // CRC-32 Lookup Table & Helper for uncompressed ZIP writing
 const crcTable = [];
@@ -145,13 +146,22 @@ export function renderEditor(onNavigate, compId) {
     };
   }
 
-  // Active Sandbox States
+  // Active Sandbox States & Virtual Workspace Registry
+  let activeFile = 'index.html';
+  let workspaceFiles = {
+    'index.html': { content: '', language: 'html' },
+    'style.css': { content: '', language: 'css' },
+    'index.js': { content: '', language: 'javascript' }
+  };
+  
   let workbenchHtml = '';
   let workbenchCss = '';
   let workbenchJs = '';
   let debounceTimeout = null;
   let messageListener = null;
   let isTailwindActive = false;
+  let logCount = 0;
+  let errorCount = 0;
 
   const initialHashParts = window.location.hash.split('?');
   const initialHashParams = new URLSearchParams(initialHashParts[1] || '');
@@ -159,28 +169,38 @@ export function renderEditor(onNavigate, compId) {
     isTailwindActive = true;
   }
 
-  // Console Counters & Log Entries
-  let logCount = 0;
-  let errorCount = 0;
-
   // Restore edits from localStorage if available
   const savedWorkspace = localStorage.getItem(`snippetui_custom_${comp.id}`);
   if (savedWorkspace) {
     try {
       const parsed = JSON.parse(savedWorkspace);
-      workbenchHtml = parsed.html !== undefined ? parsed.html : (comp.html || '');
-      workbenchCss = parsed.css !== undefined ? parsed.css : (comp.css || '');
-      workbenchJs = parsed.js !== undefined ? parsed.js : (comp.js || '');
+      if (parsed.files) {
+        workspaceFiles = parsed.files;
+      } else {
+        // Backwards compatibility with legacy keys
+        workspaceFiles['index.html'].content = parsed.html !== undefined ? parsed.html : (comp.html || '');
+        workspaceFiles['style.css'].content = parsed.css !== undefined ? parsed.css : (comp.css || '');
+        workspaceFiles['index.js'].content = parsed.js !== undefined ? parsed.js : (comp.js || '');
+      }
     } catch (e) {
-      workbenchHtml = comp.html || '';
-      workbenchCss = comp.css || '';
-      workbenchJs = comp.js || '';
+      workspaceFiles['index.html'].content = comp.html || '';
+      workspaceFiles['style.css'].content = comp.css || '';
+      workspaceFiles['index.js'].content = comp.js || '';
     }
   } else {
-    workbenchHtml = comp.html || '';
-    workbenchCss = comp.css || '';
-    workbenchJs = comp.js || '';
+    workspaceFiles['index.html'].content = comp.html || '';
+    workspaceFiles['style.css'].content = comp.css || '';
+    workspaceFiles['index.js'].content = comp.js || '';
   }
+
+  function syncLegacyState() {
+    workbenchHtml = workspaceFiles['index.html'] ? workspaceFiles['index.html'].content : '';
+    workbenchCss = workspaceFiles['style.css'] ? workspaceFiles['style.css'].content : '';
+    workbenchJs = workspaceFiles['index.js'] ? workspaceFiles['index.js'].content : '';
+  }
+
+  // Sync state initially
+  syncLegacyState();
 
   const htmlContent = `
     <div class="editor-page-root" id="editor-page-root-container">
@@ -234,76 +254,31 @@ export function renderEditor(onNavigate, compId) {
             ZIP Bundle
           </button>
         </div>
-      </header>
-
-      <!-- Editors Row (HTML, CSS, JS side-by-side) -->
-      <div class="editor-page-editors-row" id="editor-editors-container">
+      </header>      <!-- Editors Row (File Explorer Sidebar & Active Editor) -->
+      <div class="editor-page-editors-row" id="editor-editors-container" style="display: flex; height: 100%; overflow: hidden;">
         
-        <!-- HTML Editor -->
-        <div class="editor-page-editor-col" id="col-editor-html">
-          <div class="editor-page-editor-header">
-            <div class="editor-page-editor-header-left">
-              <span class="editor-page-lang-badge html">/ HTML</span>
-              <span class="editor-page-editor-title">index.html</span>
-            </div>
-            <div class="editor-page-editor-header-right" style="display: flex; align-items: center; gap: 8px;">
-              <button class="editor-page-editor-btn-format" data-lang="html" title="Format HTML code" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-secondary); font-family: var(--font-body); font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Format</button>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            </div>
+        <!-- Left File Explorer Sidebar -->
+        <div class="editor-sidebar-explorer" id="editor-sidebar-explorer" style="width: 180px; min-width: 180px; background: #08080c; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; height: 100%; flex-shrink: 0;">
+          <div style="height: 36px; min-height: 36px; background: #0c0c14; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between; padding: 0 12px; user-select: none;">
+            <span style="font-size: 10px; font-weight: 700; color: #ffffff; text-transform: uppercase;">Workspace Files</span>
+            <button id="explorer-btn-add-file" style="background: none; border: none; color: var(--accent-cyan); font-size: 14px; cursor: pointer; padding: 0;" title="Create new file">+</button>
           </div>
-          <div class="editor-page-editor-body" id="editor-page-container-html" style="flex: 1; height: 100%; position: relative;">
+          <div id="explorer-file-list" style="flex: 1; overflow-y: auto; padding: 8px 0;"></div>
+        </div>
+
+        <!-- Main Editor Pane -->
+        <div class="editor-main-pane" style="flex: 1; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative;">
+          <div class="editor-main-pane-header" style="height: 36px; min-height: 36px; background: #0c0c14; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; padding: 0 16px; user-select: none;">
+            <span id="editor-active-file-title" style="font-size: 11px; font-weight: 700; color: var(--text-secondary); font-family: var(--font-body);">index.html</span>
+            <span id="editor-active-file-lang" style="font-size: 9px; opacity: 0.6; text-transform: uppercase; padding: 2px 6px; background: rgba(255,255,255,0.05); border-radius: 4px; margin-left: 8px; font-weight: bold; color: var(--accent-cyan);">html</span>
+            
+            <button class="editor-page-editor-btn-format" id="editor-btn-format-active" title="Format active file" style="margin-left: auto; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-secondary); font-family: var(--font-body); font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Format</button>
+          </div>
+          <div class="editor-page-editor-body" id="editor-page-container-main" style="flex: 1; height: 100%; position: relative;">
             <div class="editor-page-editor-skeleton">
               <div class="skeleton-line" style="width: 80%;"></div>
               <div class="skeleton-line" style="width: 60%;"></div>
               <div class="skeleton-line" style="width: 70%;"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Vertical Splitter 1 -->
-        <div class="editor-resizer-col" id="resizer-html-css"></div>
-
-        <!-- CSS Editor -->
-        <div class="editor-page-editor-col" id="col-editor-css">
-          <div class="editor-page-editor-header">
-            <div class="editor-page-editor-header-left">
-              <span class="editor-page-lang-badge css">* CSS</span>
-              <span class="editor-page-editor-title">style.css</span>
-            </div>
-            <div class="editor-page-editor-header-right" style="display: flex; align-items: center; gap: 8px;">
-              <button class="editor-page-editor-btn-format" data-lang="css" title="Format CSS code" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-secondary); font-family: var(--font-body); font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Format</button>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            </div>
-          </div>
-          <div class="editor-page-editor-body" id="editor-page-container-css" style="flex: 1; height: 100%; position: relative;">
-            <div class="editor-page-editor-skeleton">
-              <div class="skeleton-line" style="width: 75%;"></div>
-              <div class="skeleton-line" style="width: 85%;"></div>
-              <div class="skeleton-line" style="width: 50%;"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Vertical Splitter 2 -->
-        <div class="editor-resizer-col" id="resizer-css-js"></div>
-
-        <!-- JS Editor -->
-        <div class="editor-page-editor-col" id="col-editor-js">
-          <div class="editor-page-editor-header">
-            <div class="editor-page-editor-header-left">
-              <span class="editor-page-lang-badge js">() JS</span>
-              <span class="editor-page-editor-title">index.js</span>
-            </div>
-            <div class="editor-page-editor-header-right" style="display: flex; align-items: center; gap: 8px;">
-              <button class="editor-page-editor-btn-format" data-lang="js" title="Format JS code" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-secondary); font-family: var(--font-body); font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Format</button>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            </div>
-          </div>
-          <div class="editor-page-editor-body" id="editor-page-container-js" style="flex: 1; height: 100%; position: relative;">
-            <div class="editor-page-editor-skeleton">
-              <div class="skeleton-line" style="width: 90%;"></div>
-              <div class="skeleton-line" style="width: 40%;"></div>
-              <div class="skeleton-line" style="width: 65%;"></div>
             </div>
           </div>
         </div>
@@ -567,6 +542,10 @@ export function renderEditor(onNavigate, compId) {
   }
 
   // Monaco editor references
+  let editor = null;
+  let editorModels = {};
+
+  // Keep legacy references for backwards compatibility checks
   let editorHtml = null;
   let editorCss = null;
   let editorJs = null;
@@ -574,9 +553,7 @@ export function renderEditor(onNavigate, compId) {
   // Helper to save workspace changes
   function saveWorkspace() {
     localStorage.setItem(`snippetui_custom_${comp.id}`, JSON.stringify({
-      html: workbenchHtml,
-      css: workbenchCss,
-      js: workbenchJs
+      files: workspaceFiles
     }));
   }
 
@@ -600,9 +577,14 @@ export function renderEditor(onNavigate, compId) {
           try {
             const state = await decompressState(urlCompressedCode);
             if (state) {
-              workbenchHtml = state.html !== undefined ? state.html : workbenchHtml;
-              workbenchCss = state.css !== undefined ? state.css : workbenchCss;
-              workbenchJs = state.js !== undefined ? state.js : workbenchJs;
+              if (state.files) {
+                workspaceFiles = state.files;
+              } else {
+                workspaceFiles['index.html'].content = state.html !== undefined ? state.html : workspaceFiles['index.html'].content;
+                workspaceFiles['style.css'].content = state.css !== undefined ? state.css : workspaceFiles['style.css'].content;
+                workspaceFiles['index.js'].content = state.js !== undefined ? state.js : workspaceFiles['index.js'].content;
+              }
+              syncLegacyState();
             }
           } catch (e) {
             console.error('[SnippetUI] Failed to decompress state', e);
@@ -612,35 +594,123 @@ export function renderEditor(onNavigate, compId) {
         // Remove skeleton loaders
         container.querySelectorAll('.editor-page-editor-skeleton').forEach(el => el.remove());
 
-        // Create HTML Editor
-        const htmlContainer = container.querySelector('#editor-page-container-html');
-        if (htmlContainer) {
-          editorHtml = createMonacoEditor(htmlContainer, 'html', workbenchHtml, (val) => {
-            workbenchHtml = val;
+        // Create Monaco Models for all files
+        editorModels = {};
+        Object.keys(workspaceFiles).forEach(name => {
+          const file = workspaceFiles[name];
+          const lang = getFileLanguage(name);
+          const model = window.monaco.editor.createModel(file.content, lang);
+          model.onDidChangeContent(() => {
+            const currentVal = model.getValue();
+            if (workspaceFiles[name]) {
+              workspaceFiles[name].content = currentVal;
+            }
+            syncLegacyState();
             triggerSandboxCompile();
             saveWorkspace();
+          });
+          editorModels[name] = model;
+        });
+
+        // Initialize single main Monaco Editor
+        const mainContainer = container.querySelector('#editor-page-container-main');
+        if (mainContainer) {
+          editor = window.monaco.editor.create(mainContainer, {
+            model: editorModels[activeFile],
+            theme: 'obsidian-dark',
+            automaticLayout: true,
+            minimap: { enabled: false },
+            wordWrap: 'on',
+            fontSize: 12,
+            fontFamily: "'Fira Code', ui-monospace, SFMono-Regular, monospace",
+            lineHeight: 18,
+            scrollbar: {
+              vertical: 'auto',
+              horizontal: 'auto',
+              verticalScrollbarSize: 8,
+              horizontalScrollbarSize: 8
+            },
+            roundedSelection: true,
+            cursorBlinking: 'smooth',
+            cursorSmoothCaretAnimation: 'on',
+            padding: { top: 12, bottom: 12 }
           });
         }
 
-        // Create CSS Editor
-        const cssContainer = container.querySelector('#editor-page-container-css');
-        if (cssContainer) {
-          editorCss = createMonacoEditor(cssContainer, 'css', workbenchCss, (val) => {
-            workbenchCss = val;
-            triggerSandboxCompile();
-            saveWorkspace();
-          });
+        // Setup file tree selection hooks
+        function selectFile(name) {
+          activeFile = name;
+          if (editor && editorModels[name]) {
+            editor.setModel(editorModels[name]);
+          }
+
+          // Update header details
+          const activeTitle = container.querySelector('#editor-active-file-title');
+          const activeLang = container.querySelector('#editor-active-file-lang');
+          if (activeTitle) activeTitle.textContent = name;
+          if (activeLang) {
+            const lang = getFileLanguage(name);
+            activeLang.textContent = lang;
+          }
+
+          // Sync legacy pointers for backward compatibility
+          editorHtml = activeFile === 'index.html' ? editor : null;
+          editorCss = activeFile === 'style.css' ? editor : null;
+          editorJs = activeFile === 'index.js' ? editor : null;
+
+          // Rerender explorer list
+          renderFileList(container, workspaceFiles, activeFile, selectFile, deleteFile);
         }
 
-        // Create JS Editor
-        const jsContainer = container.querySelector('#editor-page-container-js');
-        if (jsContainer) {
-          editorJs = createMonacoEditor(jsContainer, 'javascript', workbenchJs, (val) => {
-            workbenchJs = val;
-            triggerSandboxCompile();
-            saveWorkspace();
-          });
+        function deleteFile(name) {
+          if (name === 'index.html' || name === 'style.css' || name === 'index.js') {
+            return;
+          }
+
+          if (editorModels[name]) {
+            editorModels[name].dispose();
+            delete editorModels[name];
+          }
+
+          delete workspaceFiles[name];
+
+          if (activeFile === name) {
+            selectFile('index.html');
+          } else {
+            selectFile(activeFile);
+          }
+
+          syncLegacyState();
+          triggerSandboxCompile();
+          saveWorkspace();
         }
+
+        // Bind Add File button click
+        container.querySelector('#explorer-btn-add-file')?.addEventListener('click', () => {
+          const filename = prompt('Enter new filename (e.g. utils.js, theme.json):');
+          if (!filename) return;
+
+          const cleanName = filename.trim();
+          if (workspaceFiles[cleanName]) {
+            alert('A file with this name already exists.');
+            return;
+          }
+
+          const lang = getFileLanguage(cleanName);
+          workspaceFiles[cleanName] = { content: '', language: lang };
+
+          if (window.monaco) {
+            editorModels[cleanName] = window.monaco.editor.createModel('', lang);
+          }
+
+          selectFile(cleanName);
+          syncLegacyState();
+          triggerSandboxCompile();
+          saveWorkspace();
+        });
+
+        // Initialize active file UI state
+        selectFile(activeFile);
 
         // Lazy-load Prettier engine in background
         loadPrettier().catch(err => console.warn('[SnippetUI Prettier Load Warning]', err));
@@ -648,26 +718,23 @@ export function renderEditor(onNavigate, compId) {
         // Initialize split-pane resizers
         initResizers(container);
 
-        // Hook up Format buttons
-        container.querySelectorAll('.editor-page-editor-btn-format').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const lang = btn.getAttribute('data-lang');
-            let editor = null;
-            if (lang === 'html') editor = editorHtml;
-            else if (lang === 'css') editor = editorCss;
-            else if (lang === 'js') editor = editorJs;
-
-            if (editor) {
-              const unformatted = editor.getValue();
+        // Hook up active formatter button
+        container.querySelector('#editor-btn-format-active')?.addEventListener('click', () => {
+          if (editor) {
+            const val = editor.getValue();
+            const lang = getFileLanguage(activeFile);
+            if (lang === 'html' || lang === 'css' || lang === 'javascript') {
               try {
-                const formatted = formatCode(unformatted, lang);
+                const formatted = formatCode(val, lang);
                 editor.setValue(formatted);
-                triggerToast(`Formatted ${lang.toUpperCase()}!`);
+                triggerToast(`Formatted ${activeFile}!`);
               } catch (e) {
                 triggerToast(`Formatting error: ${e.message || e}`);
               }
+            } else {
+              triggerToast(`Auto-formatting not supported for: ${activeFile}`);
             }
-          });
+          }
         });
       }).catch(err => {
         console.error('[SnippetUI Monaco Load Error]', err);
@@ -924,16 +991,13 @@ export function renderEditor(onNavigate, compId) {
 
       // Copy Buttons
       container.querySelector('#editor-page-btn-copy-html')?.addEventListener('click', () => {
-        const val = editorHtml ? editorHtml.getValue() : workbenchHtml;
-        copyTextToClipboard(val, 'Copied HTML code!');
+        copyTextToClipboard(workspaceFiles['index.html']?.content || '', 'Copied HTML code!');
       });
       container.querySelector('#editor-page-btn-copy-css')?.addEventListener('click', () => {
-        const val = editorCss ? editorCss.getValue() : workbenchCss;
-        copyTextToClipboard(val, 'Copied CSS code!');
+        copyTextToClipboard(workspaceFiles['style.css']?.content || '', 'Copied CSS code!');
       });
       container.querySelector('#editor-page-btn-copy-js')?.addEventListener('click', () => {
-        const val = editorJs ? editorJs.getValue() : workbenchJs;
-        copyTextToClipboard(val, 'Copied JavaScript code!');
+        copyTextToClipboard(workspaceFiles['index.js']?.content || '', 'Copied JavaScript code!');
       });
 
       // Share Action
@@ -1022,13 +1086,19 @@ export function renderEditor(onNavigate, compId) {
         if (viewportContainer) {
           toggleCustomizerPanel(
             viewportContainer,
-            editorCss,
-            () => editorCss ? editorCss.getValue() : workbenchCss,
+            editorModels['style.css'],
+            () => editorModels['style.css'] ? editorModels['style.css'].getValue() : workbenchCss,
             (val) => {
-              workbenchCss = val;
-              if (editorCss) editorCss.setValue(val);
-              triggerSandboxCompile();
-              saveWorkspace();
+              if (editorModels['style.css']) {
+                editorModels['style.css'].setValue(val);
+              } else {
+                if (workspaceFiles['style.css']) {
+                  workspaceFiles['style.css'].content = val;
+                }
+                syncLegacyState();
+                triggerSandboxCompile();
+                saveWorkspace();
+              }
             }
           );
         }
@@ -1074,27 +1144,63 @@ export function renderEditor(onNavigate, compId) {
 
       // Reset action
       container.querySelector('#editor-page-btn-reset')?.addEventListener('click', () => {
-        localStorage.removeItem(`snippetui_custom_${comp.id}`);
-        workbenchHtml = comp.html || '';
-        workbenchCss = comp.css || '';
-        workbenchJs = comp.js || '';
+        if (confirm('Are you sure you want to reset all changes? This will clear all custom files.')) {
+          localStorage.removeItem(`snippetui_custom_${comp.id}`);
+          
+          // Clear current models
+          Object.keys(editorModels).forEach(name => {
+            if (editorModels[name]) {
+              editorModels[name].dispose();
+            }
+          });
+          editorModels = {};
 
-        if (editorHtml) editorHtml.setValue(workbenchHtml);
-        if (editorCss) editorCss.setValue(workbenchCss);
-        if (editorJs) editorJs.setValue(workbenchJs);
+          // Reset workspaceFiles
+          workspaceFiles = {
+            'index.html': { content: comp.html || '', language: 'html' },
+            'style.css': { content: comp.css || '', language: 'css' },
+            'index.js': { content: comp.js || '', language: 'javascript' }
+          };
+          syncLegacyState();
 
-        clearLogs();
-        runSandbox(container);
-        triggerToast('Reset component code workspace!');
+          // Re-create default models
+          Object.keys(workspaceFiles).forEach(name => {
+            const file = workspaceFiles[name];
+            const lang = getFileLanguage(name);
+            const model = window.monaco.editor.createModel(file.content, lang);
+            model.onDidChangeContent(() => {
+              const currentVal = model.getValue();
+              if (workspaceFiles[name]) {
+                workspaceFiles[name].content = currentVal;
+              }
+              syncLegacyState();
+              triggerSandboxCompile();
+              saveWorkspace();
+            });
+            editorModels[name] = model;
+          });
+
+          // Select index.html
+          selectFile('index.html');
+          
+          clearLogs();
+          runSandbox(container);
+          triggerToast('Reset component code workspace!');
+        }
       });
 
       // ZIP Downloader Action
       container.querySelector('#editor-page-btn-download')?.addEventListener('click', () => {
-        const zipFiles = [
-          { name: 'index.html', content: editorHtml ? editorHtml.getValue() : workbenchHtml },
-          { name: 'style.css', content: editorCss ? editorCss.getValue() : workbenchCss },
-          { name: 'index.js', content: editorJs ? editorJs.getValue() : workbenchJs }
-        ];
+        // Sync Monaco model values back to workspaceFiles map before zipping
+        Object.keys(editorModels).forEach(name => {
+          if (editorModels[name]) {
+            workspaceFiles[name].content = editorModels[name].getValue();
+          }
+        });
+        const zipFiles = Object.keys(workspaceFiles).map(name => ({
+          name,
+          content: workspaceFiles[name].content
+        }));
         try {
           const zipBlob = generateZip(zipFiles);
           const link = document.createElement('a');
@@ -1127,10 +1233,21 @@ export function renderEditor(onNavigate, compId) {
       });
     },
     destroy: () => {
-      // Dispose Monaco Editors to prevent memory leaks
-      if (editorHtml) { editorHtml.dispose(); editorHtml = null; }
-      if (editorCss) { editorCss.dispose(); editorCss = null; }
-      if (editorJs) { editorJs.dispose(); editorJs = null; }
+      // Dispose Monaco Editor and all virtual models to prevent memory leaks
+      if (editor) {
+        editor.dispose();
+        editor = null;
+      }
+      Object.keys(editorModels).forEach(name => {
+        if (editorModels[name]) {
+          editorModels[name].dispose();
+        }
+      });
+      editorModels = {};
+
+      editorHtml = null;
+      editorCss = null;
+      editorJs = null;
 
       if (messageListener) {
         window.removeEventListener('message', messageListener);
