@@ -3,6 +3,7 @@
  */
 import { COMPONENTS_DATABASE } from './library/index.js';
 import { t } from './i18n.js';
+import { loadMonaco, createMonacoEditor } from './editor/monaco-helper.js';
 
 // CRC-32 Lookup Table & Helper for uncompressed ZIP writing
 const crcTable = [];
@@ -215,9 +216,12 @@ export function renderEditor(onNavigate, compId) {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </div>
           </div>
-          <div class="editor-page-editor-body">
-            <div class="editor-page-line-numbers" id="editor-page-line-numbers-html"></div>
-            <textarea class="editor-page-textarea" id="editor-page-textarea-html" spellcheck="false" placeholder="<!-- HTML content here -->"></textarea>
+          <div class="editor-page-editor-body" id="editor-page-container-html" style="flex: 1; height: 100%; position: relative;">
+            <div class="editor-page-editor-skeleton">
+              <div class="skeleton-line" style="width: 80%;"></div>
+              <div class="skeleton-line" style="width: 60%;"></div>
+              <div class="skeleton-line" style="width: 70%;"></div>
+            </div>
           </div>
         </div>
 
@@ -232,9 +236,12 @@ export function renderEditor(onNavigate, compId) {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </div>
           </div>
-          <div class="editor-page-editor-body">
-            <div class="editor-page-line-numbers" id="editor-page-line-numbers-css"></div>
-            <textarea class="editor-page-textarea" id="editor-page-textarea-css" spellcheck="false" placeholder="/* CSS styles here */"></textarea>
+          <div class="editor-page-editor-body" id="editor-page-container-css" style="flex: 1; height: 100%; position: relative;">
+            <div class="editor-page-editor-skeleton">
+              <div class="skeleton-line" style="width: 75%;"></div>
+              <div class="skeleton-line" style="width: 85%;"></div>
+              <div class="skeleton-line" style="width: 50%;"></div>
+            </div>
           </div>
         </div>
 
@@ -249,9 +256,12 @@ export function renderEditor(onNavigate, compId) {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </div>
           </div>
-          <div class="editor-page-editor-body">
-            <div class="editor-page-line-numbers" id="editor-page-line-numbers-js"></div>
-            <textarea class="editor-page-textarea" id="editor-page-textarea-js" spellcheck="false" placeholder="// JavaScript logic here"></textarea>
+          <div class="editor-page-editor-body" id="editor-page-container-js" style="flex: 1; height: 100%; position: relative;">
+            <div class="editor-page-editor-skeleton">
+              <div class="skeleton-line" style="width: 90%;"></div>
+              <div class="skeleton-line" style="width: 40%;"></div>
+              <div class="skeleton-line" style="width: 65%;"></div>
+            </div>
           </div>
         </div>
 
@@ -456,17 +466,23 @@ export function renderEditor(onNavigate, compId) {
     }
   }
 
+  // Monaco editor references
+  let editorHtml = null;
+  let editorCss = null;
+  let editorJs = null;
+
+  // Helper to save workspace changes
+  function saveWorkspace() {
+    localStorage.setItem(`snippetui_custom_${comp.id}`, JSON.stringify({
+      html: workbenchHtml,
+      css: workbenchCss,
+      js: workbenchJs
+    }));
+  }
+
   return {
     html: htmlContent,
     init: (container) => {
-      const txtHtml = container.querySelector('#editor-page-textarea-html');
-      const txtCss = container.querySelector('#editor-page-textarea-css');
-      const txtJs = container.querySelector('#editor-page-textarea-js');
-      
-      const numHtml = container.querySelector('#editor-page-line-numbers-html');
-      const numCss = container.querySelector('#editor-page-line-numbers-css');
-      const numJs = container.querySelector('#editor-page-line-numbers-js');
-
       // Console UI references
       const consoleBtn = container.querySelector('#editor-page-btn-console');
       const consoleDrawer = container.querySelector('#editor-console-drawer');
@@ -474,15 +490,44 @@ export function renderEditor(onNavigate, compId) {
       const badgeLogs = container.querySelector('#editor-console-badge-logs');
       const badgeErrors = container.querySelector('#editor-console-badge-errors');
 
-      // Assign initial values
-      if (txtHtml) txtHtml.value = workbenchHtml;
-      if (txtCss) txtCss.value = workbenchCss;
-      if (txtJs) txtJs.value = workbenchJs;
+      // Lazy-load Monaco and initialize editors
+      loadMonaco().then(() => {
+        // Remove skeleton loaders
+        container.querySelectorAll('.editor-page-editor-skeleton').forEach(el => el.remove());
 
-      // Update initial numbers
-      updateLineNumbers(txtHtml, numHtml);
-      updateLineNumbers(txtCss, numCss);
-      updateLineNumbers(txtJs, numJs);
+        // Create HTML Editor
+        const htmlContainer = container.querySelector('#editor-page-container-html');
+        if (htmlContainer) {
+          editorHtml = createMonacoEditor(htmlContainer, 'html', workbenchHtml, (val) => {
+            workbenchHtml = val;
+            triggerSandboxCompile();
+            saveWorkspace();
+          });
+        }
+
+        // Create CSS Editor
+        const cssContainer = container.querySelector('#editor-page-container-css');
+        if (cssContainer) {
+          editorCss = createMonacoEditor(cssContainer, 'css', workbenchCss, (val) => {
+            workbenchCss = val;
+            triggerSandboxCompile();
+            saveWorkspace();
+          });
+        }
+
+        // Create JS Editor
+        const jsContainer = container.querySelector('#editor-page-container-js');
+        if (jsContainer) {
+          editorJs = createMonacoEditor(jsContainer, 'javascript', workbenchJs, (val) => {
+            workbenchJs = val;
+            triggerSandboxCompile();
+            saveWorkspace();
+          });
+        }
+      }).catch(err => {
+        console.error('[SnippetUI Monaco Load Error]', err);
+        triggerToast('Failed to load Monaco Editor. Using fallback text editor.');
+      });
 
       // Listen for runtime logs and errors from sandbox iframe
       messageListener = (event) => {
@@ -612,44 +657,18 @@ export function renderEditor(onNavigate, compId) {
         }, 300); // 300ms debouncing delay
       }
 
-      // Synchronize text inputs and scroll positions
-      const setupTextareaEvents = (txt, num, type) => {
-        if (!txt || !num) return;
-        txt.addEventListener('input', (e) => {
-          const val = e.target.value;
-          if (type === 'html') workbenchHtml = val;
-          else if (type === 'css') workbenchCss = val;
-          else if (type === 'js') workbenchJs = val;
-
-          updateLineNumbers(txt, num);
-          triggerSandboxCompile();
-
-          // Save workspace progress in localStorage
-          localStorage.setItem(`snippetui_custom_${comp.id}`, JSON.stringify({
-            html: workbenchHtml,
-            css: workbenchCss,
-            js: workbenchJs
-          }));
-        });
-
-        txt.addEventListener('scroll', (e) => {
-          num.scrollTop = e.target.scrollTop;
-        });
-      };
-
-      setupTextareaEvents(txtHtml, numHtml, 'html');
-      setupTextareaEvents(txtCss, numCss, 'css');
-      setupTextareaEvents(txtJs, numJs, 'js');
-
       // Copy Buttons
       container.querySelector('#editor-page-btn-copy-html')?.addEventListener('click', () => {
-        copyTextToClipboard(workbenchHtml, 'Copied HTML code!');
+        const val = editorHtml ? editorHtml.getValue() : workbenchHtml;
+        copyTextToClipboard(val, 'Copied HTML code!');
       });
       container.querySelector('#editor-page-btn-copy-css')?.addEventListener('click', () => {
-        copyTextToClipboard(workbenchCss, 'Copied CSS code!');
+        const val = editorCss ? editorCss.getValue() : workbenchCss;
+        copyTextToClipboard(val, 'Copied CSS code!');
       });
       container.querySelector('#editor-page-btn-copy-js')?.addEventListener('click', () => {
-        copyTextToClipboard(workbenchJs, 'Copied JavaScript code!');
+        const val = editorJs ? editorJs.getValue() : workbenchJs;
+        copyTextToClipboard(val, 'Copied JavaScript code!');
       });
 
       // Reset action
@@ -659,13 +678,9 @@ export function renderEditor(onNavigate, compId) {
         workbenchCss = comp.css || '';
         workbenchJs = comp.js || '';
 
-        if (txtHtml) txtHtml.value = workbenchHtml;
-        if (txtCss) txtCss.value = workbenchCss;
-        if (txtJs) txtJs.value = workbenchJs;
-
-        updateLineNumbers(txtHtml, numHtml);
-        updateLineNumbers(txtCss, numCss);
-        updateLineNumbers(txtJs, numJs);
+        if (editorHtml) editorHtml.setValue(workbenchHtml);
+        if (editorCss) editorCss.setValue(workbenchCss);
+        if (editorJs) editorJs.setValue(workbenchJs);
 
         clearLogs();
         runSandbox(container);
@@ -675,9 +690,9 @@ export function renderEditor(onNavigate, compId) {
       // ZIP Downloader Action
       container.querySelector('#editor-page-btn-download')?.addEventListener('click', () => {
         const zipFiles = [
-          { name: 'index.html', content: workbenchHtml },
-          { name: 'style.css', content: workbenchCss },
-          { name: 'index.js', content: workbenchJs }
+          { name: 'index.html', content: editorHtml ? editorHtml.getValue() : workbenchHtml },
+          { name: 'style.css', content: editorCss ? editorCss.getValue() : workbenchCss },
+          { name: 'index.js', content: editorJs ? editorJs.getValue() : workbenchJs }
         ];
         try {
           const zipBlob = generateZip(zipFiles);
@@ -711,6 +726,11 @@ export function renderEditor(onNavigate, compId) {
       });
     },
     destroy: () => {
+      // Dispose Monaco Editors to prevent memory leaks
+      if (editorHtml) { editorHtml.dispose(); editorHtml = null; }
+      if (editorCss) { editorCss.dispose(); editorCss = null; }
+      if (editorJs) { editorJs.dispose(); editorJs = null; }
+
       if (messageListener) {
         window.removeEventListener('message', messageListener);
         messageListener = null;
