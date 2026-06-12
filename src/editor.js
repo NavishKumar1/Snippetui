@@ -11,6 +11,7 @@ import { compressState, decompressState } from './editor/compression.js';
 import { showEmbedModal } from './editor/embed.js';
 import { TEMPLATES } from './editor/templates.js';
 import { showCdnModal, getActiveCdns } from './editor/cdn-manager.js';
+import { toggleCustomizerPanel, renderCustomizerPanel } from './editor/customizer.js';
 
 // CRC-32 Lookup Table & Helper for uncompressed ZIP writing
 const crcTable = [];
@@ -334,6 +335,9 @@ export function renderEditor(onNavigate, compId) {
             </button>
             <button class="editor-page-preview-btn" id="editor-page-btn-cdn" style="position: relative; display: flex; align-items: center; gap: 4px; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px 8px; background: transparent; cursor: pointer; font-size: 11px; transition: all 0.2s;" title="Manage external scripts and stylesheets CDNs">
               📦 CDNs
+            </button>
+            <button class="editor-page-preview-btn" id="editor-page-btn-customizer" style="position: relative; display: flex; align-items: center; gap: 4px; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px 8px; background: transparent; cursor: pointer; font-size: 11px; transition: all 0.2s;" title="Open Visual CSS variables Customizer controls">
+              🎨 Visual Controls
             </button>
             <button class="editor-page-preview-btn" id="editor-page-btn-reload">
               🔄 Reload Canvas
@@ -1010,6 +1014,24 @@ export function renderEditor(onNavigate, compId) {
           runSandbox(container);
           triggerToast('CDN resources updated and sandbox reloaded!');
         });
+      });
+
+      // Visual Customizer Action
+      container.querySelector('#editor-page-btn-customizer')?.addEventListener('click', () => {
+        const viewportContainer = container.querySelector('#editor-page-sandbox-viewport');
+        if (viewportContainer) {
+          toggleCustomizerPanel(
+            viewportContainer,
+            editorCss,
+            () => editorCss ? editorCss.getValue() : workbenchCss,
+            (val) => {
+              workbenchCss = val;
+              if (editorCss) editorCss.setValue(val);
+              triggerSandboxCompile();
+              saveWorkspace();
+            }
+          );
+        }
       });
 
       // Template Picker Handler
