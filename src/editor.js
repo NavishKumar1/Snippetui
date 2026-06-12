@@ -6,6 +6,7 @@ import { t } from './i18n.js';
 import { loadMonaco, createMonacoEditor } from './editor/monaco-helper.js';
 import { loadPrettier, formatCode } from './editor/formatter.js';
 import { generateReact, generateVue, generateSvelte } from './editor/codegen.js';
+import { initResizers } from './editor/splitter.js';
 
 // CRC-32 Lookup Table & Helper for uncompressed ZIP writing
 const crcTable = [];
@@ -205,7 +206,7 @@ export function renderEditor(onNavigate, compId) {
       </header>
 
       <!-- Editors Row (HTML, CSS, JS side-by-side) -->
-      <div class="editor-page-editors-row">
+      <div class="editor-page-editors-row" id="editor-editors-container">
         
         <!-- HTML Editor -->
         <div class="editor-page-editor-col" id="col-editor-html">
@@ -228,6 +229,9 @@ export function renderEditor(onNavigate, compId) {
           </div>
         </div>
 
+        <!-- Vertical Splitter 1 -->
+        <div class="editor-resizer-col" id="resizer-html-css"></div>
+
         <!-- CSS Editor -->
         <div class="editor-page-editor-col" id="col-editor-css">
           <div class="editor-page-editor-header">
@@ -248,6 +252,9 @@ export function renderEditor(onNavigate, compId) {
             </div>
           </div>
         </div>
+
+        <!-- Vertical Splitter 2 -->
+        <div class="editor-resizer-col" id="resizer-css-js"></div>
 
         <!-- JS Editor -->
         <div class="editor-page-editor-col" id="col-editor-js">
@@ -271,6 +278,9 @@ export function renderEditor(onNavigate, compId) {
         </div>
 
       </div>
+
+      <!-- Horizontal Resizer (Editors vs Preview) -->
+      <div class="editor-resizer-row" id="resizer-editors-preview"></div>
 
       <!-- Bottom Half Preview -->
       <div class="editor-page-preview-row" id="editor-page-preview-section">
@@ -562,6 +572,14 @@ export function renderEditor(onNavigate, compId) {
             saveWorkspace();
           });
         }
+
+        // Lazy-load Prettier engine in background
+        loadPrettier().catch(err => console.warn('[SnippetUI Prettier Load Warning]', err));
+
+        // Initialize split-pane resizers
+        initResizers(container);
+
+        // Hook up Format buttons
       }).catch(err => {
         console.error('[SnippetUI Monaco Load Error]', err);
         triggerToast('Failed to load Monaco Editor. Using fallback text editor.');

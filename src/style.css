@@ -11027,3 +11027,61 @@ body.editor-page-active {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* Resizer Splitter Handles */
+.editor-resizer-col {
+  width: 8px;
+  background: #040408;
+  cursor: col-resize;
+  position: relative;
+  z-index: 10;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.editor-resizer-col:hover,
+.editor-resizer-col:active {
+  background: var(--accent-cyan);
+}
+
+.editor-resizer-col::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.editor-resizer-row {
+  height: 8px;
+  background: #040408;
+  cursor: row-resize;
+  position: relative;
+  z-index: 10;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.editor-resizer-row:hover,
+.editor-resizer-row:active {
+  background: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+}
+
+.editor-resizer-row::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
