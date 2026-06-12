@@ -9,17 +9,8 @@ export const component = {
   category: 'text-animation',
   tag: 'Animated',
   html: `<div class="text-shimmer-effect">SHIMMER EFFECT</div>`,
-  js: `// Vanilla JavaScript Implementation
-const textElement = document.querySelector('.text-shimmer-effect');
-// Optional: Dynamically update the text
-if (textElement) {
-  textElement.textContent = 'SHIMMER EFFECT';
-}`,
-  ts: `// TypeScript Implementation
-const textElement = document.querySelector<HTMLDivElement>('.text-shimmer-effect');
-if (textElement) {
-  textElement.textContent = 'SHIMMER EFFECT';
-}`,
+  js: `// Pure CSS Component - No Javascript required`,
+  ts: `// Pure CSS Component - No TypeScript required`,
   css: `/* Pure CSS Styles */
 .text-shimmer-effect {
   font-family: 'Outfit', sans-serif;
