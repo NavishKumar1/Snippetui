@@ -456,6 +456,7 @@ async function runAdd(componentId) {
   // 2. Scoped framework wrappers compilers
   function toJSX(htmlStr) {
     let jsx = htmlStr || '';
+    jsx = jsx.replace(/<!--[\s\S]*?-->/g, '');
     jsx = jsx.replace(/\bclass="/g, 'className="');
     jsx = jsx.replace(/for="/g, 'htmlFor=');
     jsx = jsx.replace(/style="([^"]*)"/g, (match, styleStr) => {

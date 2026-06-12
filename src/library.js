@@ -249,7 +249,8 @@ ${comp.html}
 
     // Helper: Convert CSS class to className for JSX
     function toJSX(htmlStr, useModules = false) {
-      let jsx = htmlStr;
+      let jsx = htmlStr || '';
+      jsx = jsx.replace(/<!--[\s\S]*?-->/g, '');
       
       // Close self-closing tags like img, input, br, hr
       jsx = jsx.replace(/<(img|input|br|hr|meta|link)([^>]*)(?<!\/)>/gi, '<$1$2 />');
