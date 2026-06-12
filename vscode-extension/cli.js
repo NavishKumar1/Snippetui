@@ -453,10 +453,24 @@ async function runAdd(componentId) {
     process.exit(1);
   }
 
-  // 2. Scoped framework wrappers compilers
   function toJSX(htmlStr) {
-    let jsx = htmlStr || '';
-    jsx = jsx.replace(/<!--[\s\S]*?-->/g, '');
+    const rawText = htmlStr || '';
+    let cleanJsx = '';
+    let i = 0;
+    while (i < rawText.length) {
+      const startIdx = rawText.indexOf('<!--', i);
+      if (startIdx === -1) {
+        cleanJsx += rawText.substring(i);
+        break;
+      }
+      cleanJsx += rawText.substring(i, startIdx);
+      const endIdx = rawText.indexOf('-->', startIdx + 4);
+      if (endIdx === -1) {
+        break;
+      }
+      i = endIdx + 3;
+    }
+    let jsx = cleanJsx;
     jsx = jsx.replace(/\bclass="/g, 'className="');
     jsx = jsx.replace(/for="/g, 'htmlFor=');
     jsx = jsx.replace(/style="([^"]*)"/g, (match, styleStr) => {

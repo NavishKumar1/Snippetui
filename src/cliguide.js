@@ -547,7 +547,8 @@ export function renderCliGuide(onNavigate) {
           // Empty entry, do nothing
         }
         else {
-          await writeTerminalLine(`snippetui: command not found: <span class="term-red">${command}</span>. Type <span class="term-highlight">snippetui --help</span> for options.`, 'output', 50);
+          const escapedCmd = escapeHtml(command);
+          await writeTerminalLine(`snippetui: command not found: <span class="term-red">${escapedCmd}</span>. Type <span class="term-highlight">snippetui --help</span> for options.`, 'output', 50);
         }
         
         terminalScreen.scrollTop = terminalScreen.scrollHeight;

@@ -249,8 +249,23 @@ ${comp.html}
 
     // Helper: Convert CSS class to className for JSX
     function toJSX(htmlStr, useModules = false) {
-      let jsx = htmlStr || '';
-      jsx = jsx.replace(/<!--[\s\S]*?-->/g, '');
+      const rawText = htmlStr || '';
+      let cleanJsx = '';
+      let i = 0;
+      while (i < rawText.length) {
+        const startIdx = rawText.indexOf('<!--', i);
+        if (startIdx === -1) {
+          cleanJsx += rawText.substring(i);
+          break;
+        }
+        cleanJsx += rawText.substring(i, startIdx);
+        const endIdx = rawText.indexOf('-->', startIdx + 4);
+        if (endIdx === -1) {
+          break;
+        }
+        i = endIdx + 3;
+      }
+      let jsx = cleanJsx;
       
       // Close self-closing tags like img, input, br, hr
       jsx = jsx.replace(/<(img|input|br|hr|meta|link)([^>]*)(?<!\/)>/gi, '<$1$2 />');
