@@ -329,102 +329,80 @@ export function renderEditor(onNavigate, compId) {
   }
 
   function runSandbox(container) {
-    if (workbenchSandboxCleanup) {
-      workbenchSandboxCleanup();
-      workbenchSandboxCleanup = null;
-    }
     const sandboxViewport = container.querySelector('#editor-page-sandbox-viewport');
     if (!sandboxViewport) return;
-    
+
+    // Reset iframe to guarantee fresh state and cancel previous execution
     sandboxViewport.innerHTML = '';
+    
+    const iframe = document.createElement('iframe');
+    iframe.id = 'editor-page-sandbox-iframe';
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.border = 'none';
+    iframe.style.background = 'transparent';
+    sandboxViewport.appendChild(iframe);
 
-    let styleTag = document.getElementById('editor-page-sandbox-styles');
-    if (!styleTag) {
-      styleTag = document.createElement('style');
-      styleTag.id = 'editor-page-sandbox-styles';
-      document.head.appendChild(styleTag);
+    // Build the iframe source doc with sandbox console proxies
+    const docContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Premium Reset Styles inside component preview */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      background: transparent;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-    styleTag.innerHTML = workbenchCss;
-    sandboxViewport.innerHTML = workbenchHtml;
+  </style>
+  <style id="_comp_css">${workbenchCss}</style>
+</head>
+<body>
+  ${workbenchHtml}
+  <script>
+    // Capture runtime and uncaught script errors
+    window.onerror = function(message, source, lineno, colno, error) {
+      window.parent.postMessage({ type: 'iframe-error', message: message + " (Line " + lineno + ")" }, '*');
+      return true;
+    };
+    
+    // Catch standard console messages
+    const _log = console.log;
+    const _error = console.error;
+    console.log = function(...args) {
+      _log(...args);
+      window.parent.postMessage({ type: 'iframe-log', content: args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ') }, '*');
+    };
+    console.error = function(...args) {
+      _error(...args);
+      window.parent.postMessage({ type: 'iframe-error', message: args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ') }, '*');
+    };
+  </script>
+  <script>
+    try {
+      ${workbenchJs}
+    } catch(err) {
+      window.parent.postMessage({ type: 'iframe-error', message: err.message }, '*');
+    }
+  </script>
+</body>
+</html>
+    `;
 
-    if (workbenchJs && workbenchJs.trim()) {
-      try {
-        const localListeners = [];
-        const localIntervals = [];
-        const localTimeouts = [];
-        const localFrames = [];
-        const originalError = window.onerror;
-
-        const sandboxConsole = {
-          log: (...args) => console.log('[Editor]', ...args),
-          error: (...args) => console.error('[Editor]', ...args)
-        };
-
-        const shadowDoc = {
-          querySelector: (sel) => sandboxViewport.querySelector(sel),
-          querySelectorAll: (sel) => sandboxViewport.querySelectorAll(sel),
-          getElementById: (id) => sandboxViewport.querySelector('#' + id) || document.getElementById(id),
-          getElementsByClassName: (cls) => sandboxViewport.getElementsByClassName(cls),
-          getElementsByTagName: (tag) => sandboxViewport.getElementsByTagName(tag),
-          createElement: (tagName) => document.createElement(tagName),
-          addEventListener: (type, cb, opts) => {
-            const isLocal = ['mousemove', 'mouseleave', 'mouseenter', 'click', 'mousedown', 'mouseup', 'mouseover', 'mouseout'].includes(type);
-            if (isLocal) {
-              sandboxViewport.addEventListener(type, cb, opts);
-              localListeners.push({ target: sandboxViewport, type, cb, opts });
-            } else {
-              window.addEventListener(type, cb, opts);
-              localListeners.push({ target: window, type, cb, opts });
-            }
-          },
-          removeEventListener: (type, cb, opts) => {
-            const isLocal = ['mousemove', 'mouseleave', 'mouseenter', 'click', 'mousedown', 'mouseup', 'mouseover', 'mouseout'].includes(type);
-            if (isLocal) {
-              sandboxViewport.removeEventListener(type, cb, opts);
-            } else {
-              window.removeEventListener(type, cb, opts);
-            }
-          }
-        };
-
-        const customSetInterval = (cb, delay) => {
-          const id = setInterval(cb, delay);
-          localIntervals.push(id);
-          return id;
-        };
-        const customSetTimeout = (cb, delay) => {
-          const id = setTimeout(cb, delay);
-          localTimeouts.push(id);
-          return id;
-        };
-        const customRequestAnimationFrame = (cb) => {
-          const id = requestAnimationFrame(cb);
-          localFrames.push(id);
-          return id;
-        };
-
-        window.onerror = function(message, source, lineno, colno, error) {
-          sandboxConsole.error(`${message} (Line ${lineno})`);
-          return true;
-        };
-
-        const initFn = new Function('document', 'setInterval', 'setTimeout', 'requestAnimationFrame', 'console', workbenchJs);
-        initFn(shadowDoc, customSetInterval, customSetTimeout, customRequestAnimationFrame, sandboxConsole);
-
-        workbenchSandboxCleanup = () => {
-          window.onerror = originalError;
-          localListeners.forEach(({ target, type, cb, opts }) => {
-            try {
-              target.removeEventListener(type, cb, opts);
-            } catch (e) {}
-          });
-          localIntervals.forEach(id => clearInterval(id));
-          localTimeouts.forEach(id => clearTimeout(id));
-          localFrames.forEach(id => cancelAnimationFrame(id));
-        };
-      } catch (err) {
-        console.error('[Editor Compiler Error]', err);
-      }
+    // Load content window
+    try {
+      const doc = iframe.contentWindow.document;
+      doc.open();
+      doc.write(docContent);
+      doc.close();
+    } catch (e) {
+      console.error('[Editor sandbox compile error]', e);
     }
   }
 
