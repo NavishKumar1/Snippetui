@@ -10,6 +10,7 @@ import { initResizers } from './editor/splitter.js';
 import { compressState, decompressState } from './editor/compression.js';
 import { showEmbedModal } from './editor/embed.js';
 import { TEMPLATES } from './editor/templates.js';
+import { showCdnModal, getActiveCdns } from './editor/cdn-manager.js';
 
 // CRC-32 Lookup Table & Helper for uncompressed ZIP writing
 const crcTable = [];
@@ -331,6 +332,9 @@ export function renderEditor(onNavigate, compId) {
             <button class="editor-page-preview-btn" id="editor-page-btn-tailwind" style="position: relative; display: flex; align-items: center; gap: 4px; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px 8px; background: transparent; cursor: pointer; font-size: 11px; transition: all 0.2s;">
               🎨 Tailwind Sandbox: OFF
             </button>
+            <button class="editor-page-preview-btn" id="editor-page-btn-cdn" style="position: relative; display: flex; align-items: center; gap: 4px; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px 8px; background: transparent; cursor: pointer; font-size: 11px; transition: all 0.2s;" title="Manage external scripts and stylesheets CDNs">
+              📦 CDNs
+            </button>
             <button class="editor-page-preview-btn" id="editor-page-btn-reload">
               🔄 Reload Canvas
             </button>
@@ -460,6 +464,17 @@ export function renderEditor(onNavigate, compId) {
     iframe.style.background = 'transparent';
     sandboxViewport.appendChild(iframe);
 
+    // Retrieve active CDNs
+    const activeCdns = getActiveCdns(comp.id);
+    const cdnTags = activeCdns.map(cdn => {
+      if (cdn.type === 'css') {
+        return `<link rel="stylesheet" href="${cdn.url}">`;
+      } else if (cdn.type === 'js') {
+        return `<script src="${cdn.url}"></script>`;
+      }
+      return '';
+    }).join('\n');
+
     // Build the iframe source doc with sandbox console proxies
     const docContent = `
 <!DOCTYPE html>
@@ -482,6 +497,7 @@ export function renderEditor(onNavigate, compId) {
       flex-direction: column;
     }
   </style>
+  ${cdnTags}
   <style id="_comp_css">${workbenchCss}</style>
 </head>
 <body>
@@ -986,6 +1002,14 @@ export function renderEditor(onNavigate, compId) {
         runSandbox(container);
         updateCodegenOutput(); // Refresh exports
         triggerToast(isTailwindActive ? 'Tailwind Sandbox Mode Enabled!' : 'Tailwind Sandbox Mode Disabled!');
+      });
+
+      // CDN Manager Action
+      container.querySelector('#editor-page-btn-cdn')?.addEventListener('click', () => {
+        showCdnModal(comp.id, () => {
+          runSandbox(container);
+          triggerToast('CDN resources updated and sandbox reloaded!');
+        });
       });
 
       // Template Picker Handler
