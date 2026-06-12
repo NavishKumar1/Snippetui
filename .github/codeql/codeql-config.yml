@@ -1,0 +1,8 @@
+name: "SnippetUI CodeQL Config"
+
+paths-ignore:
+  - 'vscode-extension/components.json'
+  - 'dist/**'
+  - 'node_modules/**'
+  - 'vscode-extension/node_modules/**'
+  - 'vscode-extension/out/**'
