@@ -256,7 +256,7 @@ export function renderEditor(onNavigate, compId) {
           </button>
         </div>
       </header>      <!-- Editors Row (File Explorer Sidebar & Active Editor) -->
-      <div class="editor-page-editors-row" id="editor-editors-container" style="display: flex; height: 100%; overflow: hidden;">
+      <div class="editor-page-editors-row" id="editor-editors-container" style="display: flex; height: 50%; overflow: hidden;">
         
         <!-- Left File Explorer Sidebar -->
         <div class="editor-sidebar-explorer" id="editor-sidebar-explorer" style="width: 180px; min-width: 180px; background: #08080c; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; height: 100%; flex-shrink: 0;">
