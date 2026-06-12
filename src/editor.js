@@ -153,6 +153,7 @@ export function renderEditor(onNavigate, compId) {
     'style.css': { content: '', language: 'css' },
     'index.js': { content: '', language: 'javascript' }
   };
+  let activeBlobUrls = [];
   
   let workbenchHtml = '';
   let workbenchCss = '';
@@ -432,6 +433,10 @@ export function renderEditor(onNavigate, compId) {
     const sandboxViewport = container.querySelector('#editor-page-sandbox-viewport');
     if (!sandboxViewport) return;
 
+    // Revoke previous Blobs to prevent memory leaks
+    activeBlobUrls.forEach(url => URL.revokeObjectURL(url));
+    activeBlobUrls = [];
+
     // Reset iframe to guarantee fresh state and cancel previous execution
     sandboxViewport.innerHTML = '';
     
@@ -453,6 +458,27 @@ export function renderEditor(onNavigate, compId) {
       }
       return '';
     }).join('\n');
+
+    // Build Import Map for virtual files
+    const imports = {};
+    Object.keys(workspaceFiles).forEach(name => {
+      const file = workspaceFiles[name];
+      let mimeType = 'text/plain';
+      if (name.endsWith('.js')) mimeType = 'application/javascript';
+      else if (name.endsWith('.json')) mimeType = 'application/json';
+      else if (name.endsWith('.css')) mimeType = 'text/css';
+      else if (name.endsWith('.html')) mimeType = 'text/html';
+
+      const blob = new Blob([file.content], { type: mimeType });
+      const blobUrl = URL.createObjectURL(blob);
+      activeBlobUrls.push(blobUrl);
+
+      imports[`./${name}`] = blobUrl;
+      if (name.endsWith('.js')) {
+        const withoutExt = name.slice(0, -3);
+        imports[`./${withoutExt}`] = blobUrl;
+      }
+    });
 
     // Build the iframe source doc with sandbox console proxies
     const docContent = `
@@ -478,6 +504,10 @@ export function renderEditor(onNavigate, compId) {
   </style>
   ${cdnTags}
   <style id="_comp_css">${workbenchCss}</style>
+  
+  <script type="importmap">
+    ${JSON.stringify({ imports }, null, 2)}
+  <\/script>
 </head>
 <body>
   ${workbenchHtml}
@@ -487,6 +517,11 @@ export function renderEditor(onNavigate, compId) {
       window.parent.postMessage({ type: 'iframe-error', message: message + " (Line " + lineno + ")" }, '*');
       return true;
     };
+
+    window.addEventListener('unhandledrejection', function(event) {
+      const reason = event.reason;
+      window.parent.postMessage({ type: 'iframe-error', message: "Unhandled Promise Rejection: " + (reason ? (reason.message || reason) : reason) }, '*');
+    });
     
     // Catch standard console messages
     const _log = console.log;
@@ -500,12 +535,10 @@ export function renderEditor(onNavigate, compId) {
       window.parent.postMessage({ type: 'iframe-error', message: args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ') }, '*');
     };
   </script>
-  <script>
-    try {
-      ${workbenchJs}
-    } catch(err) {
-      window.parent.postMessage({ type: 'iframe-error', message: err.message }, '*');
-    }
+  <script type="module">
+    import('./index.js').catch(err => {
+      window.parent.postMessage({ type: 'iframe-error', message: "Module Load Error: " + (err.message || err.toString()) }, '*');
+    });
   </script>
 </body>
 </html>
