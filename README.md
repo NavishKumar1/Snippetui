@@ -64,6 +64,12 @@ To minimize developer friction to zero seconds, SnippetUI compiles components ac
 * **Pure Client-Side Bundling:** Uses a custom uncompressed Store ZIP encoder written in pure JS (utilizing custom CRC-32 hashing and DOS timestamp parsing) to bypass heavy server operations and network delays.
 * **Cross-Framework Package:** Each bundle contains raw HTML/CSS/JS, React JSX, React TSX, Vue 3, Svelte, and SolidJS implementations, alongside a customized integration `README.md` guide.
 
+### 8. Production-Grade CodeQL Security Hardening
+SnippetUI adheres to strict enterprise-grade security and vulnerability standards. The repository is audited and hardened:
+* **XSS Prevention:** Zero usage of unescaped user inputs in dynamic contexts. All terminal simulations and DOM updates employ strict character escaping pipelines.
+* **Safe Template Parsing:** Replaced all regex comment-stripping patterns with iterative substring scanners to prevent RegExp Denial of Service (ReDoS) and parser bypasses during code compilation.
+* **Clean CodeQL Scans:** Maintains a 100% clean check status in GitHub Actions CodeQL security and quality scans.
+
 ---
 
 ## 📐 Application Architecture & Routing Pipeline
@@ -267,11 +273,25 @@ Access SnippetUI components directly from your workspace:
 3. Select your component and styling format (Vanilla CSS vs Tailwind CSS).
 4. The extension automatically maps the markup directly to your active cursor position.
 
-### Method B: CLI Package Manager
-Run the npx engine to pull files directly into your workspace:
+### Method B: CLI Toolkit (Developer Command Line Interface)
+Initialize workspace configurations, list available components, query parameters details, and inject target compiled wrappers directly from your terminal using our zero-dependency CLI.
+
+To start, run the environment setup wizard:
 ```bash
-pnpm dlx snippetui@latest add [component-id]
+npx snippetui@latest init
 ```
+
+#### Supported CLI Commands:
+| Command | Description | Example |
+|---|---|---|
+| **`init`** | Setup your workspace configurations (`snippetui.config.json`) interactively, choosing styling layouts (Vanilla, Tailwind), scripting target (JS/TS), and framework wrapper outputs. | `npx snippetui@latest init` |
+| **`list`** | View all category structures and component indices available in the global registry. | `npx snippetui@latest list` |
+| **`info <id>`** | Inspect metadata details for a component, including categories, tags, description, and list of configurable CSS custom variables. | `npx snippetui@latest info mercury-ripple-btn` |
+| **`add <id>`** | Inject a component into your local workspace. Automatically compiles target wrappers (React, Vue, Svelte, Solid), downloads asset files, and patches local `tailwind.config.*` keyframes/animations. | `npx snippetui@latest add mercury-ripple-btn` |
+| **`doctor`** | Run diagnostic integrity audits on configurations, destination folders, dependencies, and Tailwind setups. | `npx snippetui@latest doctor` |
+| **`update`** | Synchronize local components database index with the remote registry repository files. | `npx snippetui@latest update` |
+| **`login`** | Authenticate locally using the secure auth token handshake protocol. | `npx snippetui@latest login` |
+
 *(Compatible with `npm exec`, `npx`, `yarn dlx`, and `bunx`)*
 
 ### Method C: Manual Integration & ZIP Micro-Bundles
