@@ -137,6 +137,14 @@ export function renderLibrary(onNavigate, initialFilter = 'all') {
   let selectedManualStyle = 'css';
   let renderedLimit = 24;
   let loadMoreObserver = null;
+  
+  // Workbench Active Sandbox & Editor States
+  let workbenchHtml = '';
+  let workbenchCss = '';
+  let workbenchJs = '';
+  let workbenchActiveTab = 'html'; // 'html', 'css', 'js', 'markup', 'style'
+  let workbenchSandboxCleanup = null;
+  let workbenchConsoleCollapsed = true;
 
   // Generate highly descriptive custom integration templates for each component
   function getComponentUsage(comp) {
@@ -886,119 +894,146 @@ onMounted(() => {
             </div>
           </div>
 
-          <!-- Pane 3: Code (Existing content) -->
+          <!-- Pane 3: Code (New Workbench content) -->
           <div class="drawer-pane" data-pane="code" style="display: none; flex-direction: column; overflow: hidden; height: 100%;">
-            <!-- Code Selectors Row: Triple custom dropdown capsule filters -->
-            <div class="code-selectors-row" style="padding: 16px 24px; display: flex; gap: 10px; flex-wrap: wrap;">
-              <!-- Dropdown 0: Framework Selector -->
-              <div class="custom-dropdown-container" id="dropdown-framework-container">
-                <button class="custom-dropdown-btn" id="btn-framework-selector">
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <span class="dropdown-badge-prefix html" id="framework-badge">HTML</span>
-                    <span id="framework-label" style="font-size: 13px;">HTML / JS</span>
+            <div class="workbench-container">
+              <!-- Left Column: Code Workspace -->
+              <div class="workbench-left">
+                <!-- Dropdown Selectors Row -->
+                <div class="code-selectors-row" style="padding: 12px 16px; display: flex; gap: 10px; flex-wrap: wrap; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.15);">
+                  <!-- Framework Selector -->
+                  <div class="custom-dropdown-container" id="dropdown-framework-container">
+                    <button class="custom-dropdown-btn compact" id="btn-framework-selector">
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="dropdown-badge-prefix html" id="framework-badge">HTML</span>
+                        <span id="framework-label" style="font-size: 12px;">HTML / JS</span>
+                      </div>
+                      <span class="dropdown-chevron"></span>
+                    </button>
+                    <div class="custom-dropdown-menu" id="menu-framework">
+                      <button class="custom-dropdown-option selected" data-value="html">
+                        <span class="dropdown-badge-prefix html">HTML</span> HTML / JS
+                      </button>
+                      <button class="custom-dropdown-option" data-value="react">
+                        <span class="dropdown-badge-prefix react">JSX</span> React
+                      </button>
+                      <button class="custom-dropdown-option" data-value="vue">
+                        <span class="dropdown-badge-prefix vue">VUE</span> Vue
+                      </button>
+                      <button class="custom-dropdown-option" data-value="svelte">
+                        <span class="dropdown-badge-prefix svelte">SVT</span> Svelte
+                      </button>
+                      <button class="custom-dropdown-option" data-value="solid">
+                        <span class="dropdown-badge-prefix solid">SLD</span> SolidJS
+                      </button>
+                    </div>
                   </div>
-                  <span class="dropdown-chevron"></span>
-                </button>
-                <div class="custom-dropdown-menu" id="menu-framework">
-                  <button class="custom-dropdown-option selected" data-value="html">
-                    <span class="dropdown-badge-prefix html">HTML</span> HTML / JS
-                  </button>
-                  <button class="custom-dropdown-option" data-value="react">
-                    <span class="dropdown-badge-prefix react">JSX</span> React
-                  </button>
-                  <button class="custom-dropdown-option" data-value="vue">
-                    <span class="dropdown-badge-prefix vue">VUE</span> Vue
-                  </button>
-                  <button class="custom-dropdown-option" data-value="svelte">
-                    <span class="dropdown-badge-prefix svelte">SVT</span> Svelte
-                  </button>
-                  <button class="custom-dropdown-option" data-value="solid">
-                    <span class="dropdown-badge-prefix solid">SLD</span> SolidJS
+
+                  <!-- Script Selector -->
+                  <div class="custom-dropdown-container" id="dropdown-script-container">
+                    <button class="custom-dropdown-btn compact" id="btn-script-selector">
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="dropdown-badge-prefix" id="script-badge">JS</span>
+                        <span id="script-label" style="font-size: 12px;">JavaScript</span>
+                      </div>
+                      <span class="dropdown-chevron"></span>
+                    </button>
+                    <div class="custom-dropdown-menu" id="menu-script">
+                      <button class="custom-dropdown-option selected" data-value="js">
+                        <span class="dropdown-badge-prefix">JS</span> JavaScript
+                      </button>
+                      <button class="custom-dropdown-option" data-value="ts">
+                        <span class="dropdown-badge-prefix ts">TS</span> TypeScript
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Style Selector -->
+                  <div class="custom-dropdown-container" id="dropdown-style-container">
+                    <button class="custom-dropdown-btn compact" id="btn-style-selector">
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="dropdown-badge-prefix css" id="style-badge">css</span>
+                        <span id="style-label" style="font-size: 12px;">CSS</span>
+                      </div>
+                      <span class="dropdown-chevron"></span>
+                    </button>
+                    <div class="custom-dropdown-menu" id="menu-style">
+                      <button class="custom-dropdown-option selected" data-value="css">
+                        <span class="dropdown-badge-prefix css">css</span> CSS
+                      </button>
+                      <button class="custom-dropdown-option" data-value="tailwind">
+                        <span class="dropdown-badge-prefix tailwind">TW</span> Tailwind
+                      </button>
+                      <button class="custom-dropdown-option" data-value="modules">
+                        <span class="dropdown-badge-prefix modules">mod</span> CSS Modules
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Editor Sub-Tabs (HTML / CSS / JS) -->
+                <div class="editor-tab-bar" id="workbench-editor-tabs">
+                  <button class="editor-tab active" data-editor-tab="html">HTML</button>
+                  <button class="editor-tab" data-editor-tab="css">CSS</button>
+                  <button class="editor-tab" data-editor-tab="js">JavaScript</button>
+                </div>
+
+                <!-- Editor Workspace Area -->
+                <div class="editor-body">
+                  <div class="editor-lines" id="editor-line-numbers"></div>
+                  <textarea class="editor-textarea" id="workbench-editor-textarea" spellcheck="false" placeholder="Write code here..."></textarea>
+                </div>
+
+                <!-- Left Column Action Toolbar -->
+                <div class="workbench-actions-bar">
+                  <div style="display: flex; gap: 8px;">
+                    <button class="workbench-tool-btn" id="workbench-btn-format" title="Auto-Format Active Tab Code">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 6h16M4 12h10M4 18h14"/></svg>
+                      <span>Format</span>
+                    </button>
+                    <button class="workbench-tool-btn" id="workbench-btn-reset-original" title="Reset to Original Code">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2.5 2v6h6M21.5 22v-6h-6M22 11.5A10 10 0 0 0 3.2 7.2L2.5 8M2 12.5a10 10 0 0 0 18.8 4.3l.7-.8"/></svg>
+                      <span>Reset</span>
+                    </button>
+                  </div>
+                  <button class="workbench-tool-btn accent" id="workbench-btn-copy" title="Copy Current Editor Code">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <span>Copy Code</span>
                   </button>
                 </div>
               </div>
 
-              <!-- Dropdown 1: Script Selector -->
-              <div class="custom-dropdown-container" id="dropdown-script-container">
-                <button class="custom-dropdown-btn" id="btn-script-selector">
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <span class="dropdown-badge-prefix" id="script-badge">JS</span>
-                    <span id="script-label" style="font-size: 13px;">JavaScript</span>
-                  </div>
-                  <span class="dropdown-chevron"></span>
-                </button>
-                <div class="custom-dropdown-menu" id="menu-script">
-                  <button class="custom-dropdown-option selected" data-value="js">
-                    <span class="dropdown-badge-prefix">JS</span> JavaScript
-                  </button>
-                  <button class="custom-dropdown-option" data-value="ts">
-                    <span class="dropdown-badge-prefix ts">TS</span> TypeScript
-                  </button>
+              <!-- Right Column: Sandbox & Variable Controller -->
+              <div class="workbench-right">
+                <!-- Live Preview Block -->
+                <div class="sandbox-title">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <span>Interactive Live Sandbox</span>
                 </div>
-              </div>
-              
-              <!-- Dropdown 2: Style Selector -->
-              <div class="custom-dropdown-container" id="dropdown-style-container">
-                <button class="custom-dropdown-btn" id="btn-style-selector">
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <span class="dropdown-badge-prefix css" id="style-badge">css</span>
-                    <span id="style-label" style="font-size: 13px;">CSS</span>
-                  </div>
-                  <span class="dropdown-chevron"></span>
-                </button>
-                <div class="custom-dropdown-menu" id="menu-style">
-                  <button class="custom-dropdown-option selected" data-value="css">
-                    <span class="dropdown-badge-prefix css">css</span> CSS
-                  </button>
-                  <button class="custom-dropdown-option" data-value="tailwind">
-                    <span class="dropdown-badge-prefix tailwind">TW</span> Tailwind
-                  </button>
-                  <button class="custom-dropdown-option" data-value="modules">
-                    <span class="dropdown-badge-prefix modules">mod</span> CSS Modules
-                  </button>
+                <div class="sandbox-viewport-card">
+                  <div id="workbench-sandbox-viewport" style="display: contents;"></div>
                 </div>
-              </div>
-            </div>
-            
-            <!-- Drawer Code Display Panel -->
-            <div class="drawer-code-body" style="display: flex; flex-direction: column; gap: 24px; padding: 24px; overflow-y: auto; flex-grow: 1;">
-              <!-- HTML Structure Card -->
-              <div class="code-card-wrapper" id="drawer-html-card" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; height: 240px; min-height: 240px;">
-                <div class="code-card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); height: 42px; min-height: 42px;">
-                  <span id="title-html-card" style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">${t('lib_tab_code')} (HTML)</span>
-                  <button class="btn-drawer-copy inline-copy" id="copy-html-btn">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    <span>${t('pipeline_copy_btn')}</span>
-                  </button>
-                </div>
-                <pre class="code-container active" id="drawer-html-box" style="flex-grow: 1; overflow-y: auto; padding: 16px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6; margin: 0; color: #c9d1d9; white-space: pre-wrap; word-break: break-all; display: block;"></pre>
-              </div>
 
-              <!-- Script Code Card -->
-              <div class="code-card-wrapper" id="drawer-script-card" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; height: 240px; min-height: 240px;">
-                <div class="code-card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); height: 42px; min-height: 42px;">
-                  <span style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">${t('lib_script')}</span>
-                  <button class="btn-drawer-copy inline-copy" id="copy-script-btn">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    <span>${t('pipeline_copy_btn')}</span>
-                  </button>
+                <!-- CSS Custom Variables GUI Controller Panel -->
+                <div class="customizer-title">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 7h-9m14-4H5m11 8H3m14 4H5m14 4h-9"/></svg>
+                  <span>GUI Visual Customizer (CSS Tokens)</span>
                 </div>
-                <pre class="code-container active" id="drawer-script-box" style="flex-grow: 1; overflow-y: auto; padding: 16px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6; margin: 0; color: #c9d1d9; white-space: pre-wrap; word-break: break-all; display: block;"></pre>
-              </div>
-              
-              <!-- Styling Code Card -->
-              <div class="code-card-wrapper" id="drawer-style-card" style="display: flex; flex-direction: column; background: #06060a; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; height: 240px; min-height: 240px;">
-                <div class="code-card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); height: 42px; min-height: 42px;">
-                  <span id="title-style-card" style="font-family: var(--font-body); font-size: 13px; font-weight: 700; color: #ffffff;">${t('lib_style')}</span>
-                  <button class="btn-drawer-copy inline-copy" id="copy-style-btn">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    <span>${t('pipeline_copy_btn')}</span>
-                  </button>
+                <div class="customizer-variables-grid" id="workbench-customizer-grid"></div>
+
+                <!-- Error Catching Log Panel -->
+                <div class="console-panel">
+                  <div class="console-header" id="workbench-console-header">
+                    <div class="console-title">
+                      <span class="console-indicator" id="workbench-console-indicator"></span>
+                      <span>Output Console logs</span>
+                    </div>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="workbench-console-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+                  </div>
+                  <div class="console-logs" id="workbench-console-logs"></div>
                 </div>
-                <pre class="code-container active" id="drawer-style-box" style="flex-grow: 1; overflow-y: auto; padding: 16px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6; margin: 0; color: #c9d1d9; white-space: pre-wrap; word-break: break-all; display: block;"></pre>
               </div>
             </div>
-          </div>
 
         </div>
       </div>
@@ -1287,6 +1322,21 @@ onMounted(() => {
   function openCodeDrawer(container) {
     if (!activeDetailComponent) return;
 
+    const drawer = container.querySelector('.code-drawer');
+    if (drawer) {
+      drawer.classList.remove('drawer-wide');
+    }
+    const consoleLogs = container.querySelector('#workbench-console-logs');
+    const consoleChevron = container.querySelector('#workbench-console-chevron');
+    if (consoleLogs) consoleLogs.style.display = 'none';
+    if (consoleChevron) consoleChevron.style.transform = 'rotate(0deg)';
+
+    workbenchHtml = activeDetailComponent.html || '';
+    workbenchCss = activeDetailComponent.css || '';
+    workbenchJs = activeDetailComponent.js || '';
+    workbenchActiveTab = 'html';
+    workbenchConsoleCollapsed = true;
+
     // Set drawer title
     container.querySelector('#drawer-comp-name').textContent = activeDetailComponent.name;
 
@@ -1434,61 +1484,360 @@ onMounted(() => {
     backdrop.classList.add('active');
   }
 
+  function updateEditorLineNumbers(container, codeText) {
+    const linesContainer = container.querySelector('#editor-line-numbers');
+    if (!linesContainer) return;
+    const linesCount = (codeText || '').split('\n').length || 1;
+    let numbersHtml = '';
+    for (let i = 1; i <= linesCount; i++) {
+      numbersHtml += `<div>${i}</div>`;
+    }
+    linesContainer.innerHTML = numbersHtml;
+  }
+
+  function formatCodeStr(codeText, lang) {
+    if (!codeText) return '';
+    const lines = codeText.split('\n');
+    let indent = 0;
+    return lines.map(line => {
+      const trimmed = line.trim();
+      if (!trimmed) return '';
+      if (trimmed.startsWith('}') || trimmed.startsWith('</') || trimmed.startsWith(']') || trimmed.startsWith(')')) {
+        indent = Math.max(0, indent - 1);
+      }
+      const formattedLine = '  '.repeat(indent) + trimmed;
+      if (trimmed.endsWith('{') || (trimmed.startsWith('<') && !trimmed.startsWith('</') && !trimmed.endsWith('/>') && !trimmed.endsWith('>')) || trimmed.endsWith('[') || trimmed.endsWith('(')) {
+        indent++;
+      } else if (trimmed.startsWith('<') && !trimmed.startsWith('</') && trimmed.endsWith('>') && !trimmed.endsWith('/>')) {
+        if (!trimmed.includes('</') && !trimmed.startsWith('<!--')) {
+          indent++;
+        }
+      }
+      return formattedLine;
+    }).join('\n');
+  }
+
+  function runWorkbenchSandbox(container) {
+    if (workbenchSandboxCleanup) {
+      workbenchSandboxCleanup();
+      workbenchSandboxCleanup = null;
+    }
+    const sandboxViewport = container.querySelector('#workbench-sandbox-viewport');
+    if (!sandboxViewport) return;
+    sandboxViewport.innerHTML = '';
+
+    const consoleLogs = container.querySelector('#workbench-console-logs');
+    const consoleIndicator = container.querySelector('#workbench-console-indicator');
+    if (consoleLogs) {
+      consoleLogs.innerHTML = '<div class="log-system">[System] Compiling custom templates...</div>';
+    }
+    if (consoleIndicator) {
+      consoleIndicator.className = 'console-indicator';
+    }
+
+    let styleTag = document.getElementById('workbench-sandbox-styles');
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = 'workbench-sandbox-styles';
+      document.head.appendChild(styleTag);
+    }
+    styleTag.innerHTML = workbenchCss;
+    sandboxViewport.innerHTML = workbenchHtml;
+
+    if (workbenchJs && workbenchJs.trim()) {
+      try {
+        const localListeners = [];
+        const localIntervals = [];
+        const localTimeouts = [];
+        const localFrames = [];
+        const originalError = window.onerror;
+
+        const sandboxConsole = {
+          log: (...args) => {
+            if (consoleLogs) {
+              const div = document.createElement('div');
+              div.className = 'log-system';
+              div.textContent = `[Log] ${args.join(' ')}`;
+              consoleLogs.appendChild(div);
+              consoleLogs.scrollTop = consoleLogs.scrollHeight;
+            }
+          },
+          error: (...args) => {
+            if (consoleLogs) {
+              const div = document.createElement('div');
+              div.className = 'log-error';
+              div.textContent = `[Error] ${args.join(' ')}`;
+              consoleLogs.appendChild(div);
+              consoleLogs.scrollTop = consoleLogs.scrollHeight;
+            }
+            if (consoleIndicator) consoleIndicator.className = 'console-indicator error';
+          }
+        };
+
+        const shadowDoc = {
+          querySelector: (sel) => sandboxViewport.querySelector(sel),
+          querySelectorAll: (sel) => sandboxViewport.querySelectorAll(sel),
+          getElementById: (id) => sandboxViewport.querySelector('#' + id) || document.getElementById(id),
+          getElementsByClassName: (cls) => sandboxViewport.getElementsByClassName(cls),
+          getElementsByTagName: (tag) => sandboxViewport.getElementsByTagName(tag),
+          createElement: (tagName) => document.createElement(tagName),
+          addEventListener: (type, cb, opts) => {
+            const isLocal = ['mousemove', 'mouseleave', 'mouseenter', 'click', 'mousedown', 'mouseup', 'mouseover', 'mouseout'].includes(type);
+            if (isLocal) {
+              sandboxViewport.addEventListener(type, cb, opts);
+              localListeners.push({ target: sandboxViewport, type, cb, opts });
+            } else {
+              window.addEventListener(type, cb, opts);
+              localListeners.push({ target: window, type, cb, opts });
+            }
+          },
+          removeEventListener: (type, cb, opts) => {
+            const isLocal = ['mousemove', 'mouseleave', 'mouseenter', 'click', 'mousedown', 'mouseup', 'mouseover', 'mouseout'].includes(type);
+            if (isLocal) {
+              sandboxViewport.removeEventListener(type, cb, opts);
+            } else {
+              window.removeEventListener(type, cb, opts);
+            }
+          }
+        };
+
+        const customSetInterval = (cb, delay) => {
+          const id = setInterval(cb, delay);
+          localIntervals.push(id);
+          return id;
+        };
+        const customSetTimeout = (cb, delay) => {
+          const id = setTimeout(cb, delay);
+          localTimeouts.push(id);
+          return id;
+        };
+        const customRequestAnimationFrame = (cb) => {
+          const id = requestAnimationFrame(cb);
+          localFrames.push(id);
+          return id;
+        };
+
+        window.onerror = function(message, source, lineno, colno, error) {
+          sandboxConsole.error(`${message} (Line ${lineno})`);
+          return true;
+        };
+
+        const initFn = new Function('document', 'setInterval', 'setTimeout', 'requestAnimationFrame', 'console', workbenchJs);
+        initFn(shadowDoc, customSetInterval, customSetTimeout, customRequestAnimationFrame, sandboxConsole);
+
+        if (consoleLogs) {
+          const div = document.createElement('div');
+          div.className = 'log-system';
+          div.textContent = '[System] Sandbox execution completed successfully. Zero compilation errors.';
+          consoleLogs.appendChild(div);
+          consoleLogs.scrollTop = consoleLogs.scrollHeight;
+        }
+        if (consoleIndicator) consoleIndicator.className = 'console-indicator success';
+
+        workbenchSandboxCleanup = () => {
+          window.onerror = originalError;
+          localListeners.forEach(({ target, type, cb, opts }) => {
+            try {
+              target.removeEventListener(type, cb, opts);
+            } catch (e) {}
+          });
+          localIntervals.forEach(id => clearInterval(id));
+          localTimeouts.forEach(id => clearTimeout(id));
+          localFrames.forEach(id => cancelAnimationFrame(id));
+        };
+      } catch (err) {
+        if (consoleLogs) {
+          const div = document.createElement('div');
+          div.className = 'log-error';
+          div.textContent = `[Runtime Error] ${err.message}`;
+          consoleLogs.appendChild(div);
+          consoleLogs.scrollTop = consoleLogs.scrollHeight;
+        }
+        if (consoleIndicator) consoleIndicator.className = 'console-indicator error';
+        workbenchSandboxCleanup = () => {};
+      }
+    } else {
+      if (consoleLogs) {
+        const div = document.createElement('div');
+        div.className = 'log-system';
+        div.textContent = '[System] Dynamic styles compilation successfully completed.';
+        consoleLogs.appendChild(div);
+        consoleLogs.scrollTop = consoleLogs.scrollHeight;
+      }
+      if (consoleIndicator) consoleIndicator.className = 'console-indicator success';
+      workbenchSandboxCleanup = () => {};
+    }
+  }
+
+  function updateCustomizerVariablesGrid(container) {
+    const customizerGrid = container.querySelector('#workbench-customizer-grid');
+    if (!customizerGrid) return;
+    customizerGrid.innerHTML = '';
+
+    const regex = /--([a-zA-Z0-9_-]+)\s*:\s*([^;]+);/g;
+    let match;
+    const variables = [];
+    regex.lastIndex = 0;
+    while ((match = regex.exec(workbenchCss)) !== null) {
+      variables.push({ name: match[1].trim(), val: match[2].trim() });
+    }
+
+    if (variables.length === 0) {
+      customizerGrid.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); font-style: italic;">No configurable CSS variables found in custom stylesheet.</div>';
+      return;
+    }
+
+    variables.forEach(v => {
+      const group = document.createElement('div');
+      group.className = 'customizer-control-group';
+      const header = document.createElement('div');
+      header.className = 'customizer-control-header';
+      const label = document.createElement('span');
+      label.className = 'customizer-control-label';
+      label.textContent = v.name.replace(/-/g, ' ');
+      const valDisplay = document.createElement('span');
+      valDisplay.className = 'customizer-control-value';
+      valDisplay.textContent = v.val;
+
+      header.appendChild(label);
+      header.appendChild(valDisplay);
+      group.appendChild(header);
+
+      let input;
+      const isColor = v.val.startsWith('#') || v.val.startsWith('rgb') || v.val.startsWith('hsl');
+      const numMatch = v.val.match(/^([0-9.]+)([a-zA-Z%]+)?$/);
+
+      if (isColor) {
+        input = document.createElement('input');
+        input.type = 'color';
+        input.className = 'customizer-input-color';
+        let hexColor = v.val;
+        if (hexColor.startsWith('#') && hexColor.length === 4) {
+          hexColor = '#' + hexColor[1] + hexColor[1] + hexColor[2] + hexColor[2] + hexColor[3] + hexColor[3];
+        }
+        input.value = (hexColor.startsWith('#') && hexColor.length === 7) ? hexColor : '#00f2fe';
+
+        input.addEventListener('input', (e) => {
+          valDisplay.textContent = e.target.value;
+          updateCssVariableValue(container, v.name, e.target.value);
+        });
+      } else if (numMatch) {
+        const valNum = parseFloat(numMatch[1]);
+        const unit = numMatch[2] || '';
+        input = document.createElement('input');
+        input.type = 'range';
+        input.className = 'customizer-input-range';
+        if (unit === 's') {
+          input.min = '0.1';
+          input.max = '3.0';
+          input.step = '0.1';
+        } else if (unit === 'px') {
+          input.min = '0';
+          input.max = '200';
+          input.step = '1';
+        } else if (unit === 'rem' || unit === 'em') {
+          input.min = '0.1';
+          input.max = '10.0';
+          input.step = '0.1';
+        } else {
+          input.min = '0';
+          input.max = '100';
+          input.step = '1';
+        }
+        input.value = valNum.toString();
+
+        input.addEventListener('input', (e) => {
+          const newVal = e.target.value + unit;
+          valDisplay.textContent = newVal;
+          updateCssVariableValue(container, v.name, newVal);
+        });
+      } else {
+        input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'customizer-input-text';
+        input.value = v.val;
+        input.addEventListener('input', (e) => {
+          valDisplay.textContent = e.target.value;
+          updateCssVariableValue(container, v.name, e.target.value);
+        });
+      }
+      group.appendChild(input);
+      customizerGrid.appendChild(group);
+    });
+  }
+
+  function updateCssVariableValue(container, varName, newVal) {
+    const escapedVarName = varName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const regex = new RegExp(`(--${escapedVarName}\\s*:\\s*)([^;]+)(;)`);
+    workbenchCss = workbenchCss.replace(regex, `$1${newVal}$3`);
+    if (workbenchActiveTab === 'css') {
+      const textarea = container.querySelector('#workbench-editor-textarea');
+      if (textarea) {
+        textarea.value = workbenchCss;
+        updateEditorLineNumbers(container, workbenchCss);
+      }
+    }
+    runWorkbenchSandbox(container);
+  }
+
   function updateCodeBoxes(container) {
     if (!activeDetailComponent) return;
-    
-    const htmlCard = container.querySelector('#drawer-html-card');
-    const scriptCard = container.querySelector('#drawer-script-card');
-    const styleCard = container.querySelector('#drawer-style-card');
 
-    const htmlBox = container.querySelector('#drawer-html-box');
-    const scriptBox = container.querySelector('#drawer-script-box');
-    const styleBox = container.querySelector('#drawer-style-box');
+    const dynamicComp = {
+      ...activeDetailComponent,
+      html: workbenchHtml,
+      css: workbenchCss,
+      js: workbenchJs
+    };
 
-    const titleHtml = container.querySelector('#title-html-card');
-    const titleStyle = container.querySelector('#title-style-card');
+    const compiled = compileComponent(dynamicComp, selectedFramework, selectedScript, selectedStyle);
+    const editorTabBar = container.querySelector('#workbench-editor-tabs');
+    const textarea = container.querySelector('#workbench-editor-textarea');
 
-    const compiled = compileComponent(activeDetailComponent, selectedFramework, selectedScript, selectedStyle);
+    if (!editorTabBar || !textarea) return;
 
-    // Setup toggling and label mappings based on selected framework
     if (selectedFramework === 'html') {
-      if (htmlCard) htmlCard.style.display = 'flex';
-      if (scriptCard) scriptCard.style.display = 'flex';
-      if (styleCard) styleCard.style.display = 'flex';
+      textarea.removeAttribute('readonly');
+      editorTabBar.innerHTML = `
+        <button class="editor-tab ${workbenchActiveTab === 'html' ? 'active' : ''}" data-editor-tab="html">HTML</button>
+        <button class="editor-tab ${workbenchActiveTab === 'css' ? 'active' : ''}" data-editor-tab="css">CSS</button>
+        <button class="editor-tab ${workbenchActiveTab === 'js' ? 'active' : ''}" data-editor-tab="js">JavaScript</button>
+      `;
 
-      if (titleHtml) titleHtml.textContent = t('lib_drawer_html_title');
-      if (titleStyle) titleStyle.textContent = t('lib_drawer_style_title');
+      if (workbenchActiveTab === 'html') {
+        textarea.value = workbenchHtml;
+      } else if (workbenchActiveTab === 'css') {
+        textarea.value = workbenchCss;
+      } else {
+        textarea.value = workbenchJs;
+      }
+    } else {
+      textarea.setAttribute('readonly', 'true');
+      const isTS = selectedScript === 'ts';
+      const fileExt = selectedFramework === 'react' || selectedFramework === 'solid' ? (isTS ? 'tsx' : 'jsx') : selectedFramework;
+      const camelName = dynamicComp.name.replace(/[^a-zA-Z0-9]/g, '');
+      const hasStyle = compiled.style && compiled.style.trim().length > 0;
 
-      if (htmlBox) htmlBox.textContent = compiled.markup;
-      if (scriptBox) scriptBox.textContent = compiled.script;
-      if (styleBox) styleBox.textContent = compiled.style;
-    } else if (selectedFramework === 'react' || selectedFramework === 'solid') {
-      if (htmlCard) htmlCard.style.display = 'flex';
-      if (scriptCard) scriptCard.style.display = 'none';
-      if (styleCard) styleCard.style.display = 'flex';
-
-      const fileExt = selectedScript === 'ts' ? 'tsx' : 'jsx';
-      const frameworkName = selectedFramework === 'react' ? 'React' : 'SolidJS';
-      const componentLabel = t('lib_drawer_component_label');
-      if (titleHtml) titleHtml.textContent = `${frameworkName} ${componentLabel} (${fileExt})`;
-      if (titleStyle) {
-        titleStyle.textContent = selectedStyle === 'modules' ? `${activeDetailComponent.id}.module.css` : t('lib_drawer_style_title');
+      if (workbenchActiveTab === 'js' || workbenchActiveTab === 'html') {
+        workbenchActiveTab = 'markup';
+      } else if (workbenchActiveTab === 'css') {
+        workbenchActiveTab = hasStyle ? 'style' : 'markup';
       }
 
-      if (htmlBox) htmlBox.textContent = compiled.markup;
-      if (styleBox) styleBox.textContent = compiled.style;
-    } else if (selectedFramework === 'vue' || selectedFramework === 'svelte') {
-      if (htmlCard) htmlCard.style.display = 'flex';
-      if (scriptCard) scriptCard.style.display = 'none';
-      if (styleCard) styleCard.style.display = 'none';
+      let tabsHtml = `<button class="editor-tab ${workbenchActiveTab === 'markup' ? 'active' : ''}" data-editor-tab="markup">${camelName}.${fileExt}</button>`;
+      if (hasStyle) {
+        const styleName = selectedStyle === 'modules' ? `${dynamicComp.id}.module.css` : `${dynamicComp.id}.css`;
+        tabsHtml += `<button class="editor-tab ${workbenchActiveTab === 'style' ? 'active' : ''}" data-editor-tab="style">${styleName}</button>`;
+      }
+      editorTabBar.innerHTML = tabsHtml;
 
-      const fileExt = selectedFramework;
-      const frameworkName = selectedFramework === 'vue' ? 'Vue 3' : 'Svelte';
-      const componentLabel = t('lib_drawer_component_label');
-      if (titleHtml) titleHtml.textContent = `${frameworkName} ${componentLabel} (.${fileExt})`;
-
-      if (htmlBox) htmlBox.textContent = compiled.markup;
+      if (workbenchActiveTab === 'markup') {
+        textarea.value = compiled.markup;
+      } else {
+        textarea.value = compiled.style || '';
+      }
     }
+    updateEditorLineNumbers(container, textarea.value);
   }
 
   function updateManualCodeBoxes(container) {
@@ -1521,6 +1870,11 @@ onMounted(() => {
   }
 
   function closeCodeDrawer(container) {
+    if (workbenchSandboxCleanup) {
+      workbenchSandboxCleanup();
+      workbenchSandboxCleanup = null;
+    }
+
     const backdrop = container.querySelector('#code-drawer-backdrop');
     if (backdrop) backdrop.classList.remove('active');
     activeDetailComponent = null;
@@ -2127,6 +2481,26 @@ onMounted(() => {
           btn.classList.add('active');
 
           const tab = btn.getAttribute('data-tab');
+          const drawer = container.querySelector('.code-drawer');
+
+          if (tab === 'code') {
+            if (drawer) {
+              drawer.classList.add('drawer-wide');
+            }
+            // Initialize code workbench
+            updateCodeBoxes(container);
+            updateCustomizerVariablesGrid(container);
+            runWorkbenchSandbox(container);
+          } else {
+            if (drawer) {
+              drawer.classList.remove('drawer-wide');
+            }
+            if (workbenchSandboxCleanup) {
+              workbenchSandboxCleanup();
+              workbenchSandboxCleanup = null;
+            }
+          }
+
           container.querySelectorAll('.drawer-pane').forEach(pane => {
             if (pane.getAttribute('data-pane') === tab) {
               pane.classList.add('active');
@@ -2174,6 +2548,112 @@ onMounted(() => {
             cmdBox.textContent = cmd;
           }
         });
+      });
+
+      // 14b. Code Editor tab switches listener
+      container.querySelector('#workbench-editor-tabs')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.editor-tab');
+        if (!btn) return;
+        workbenchActiveTab = btn.getAttribute('data-editor-tab');
+        updateCodeBoxes(container);
+      });
+
+      // 14c. Code Editor Textarea input change listener
+      const workbenchTextarea = container.querySelector('#workbench-editor-textarea');
+      workbenchTextarea?.addEventListener('input', (e) => {
+        const val = e.target.value;
+        if (selectedFramework === 'html') {
+          if (workbenchActiveTab === 'html') {
+            workbenchHtml = val;
+          } else if (workbenchActiveTab === 'css') {
+            workbenchCss = val;
+            updateCustomizerVariablesGrid(container);
+          } else if (workbenchActiveTab === 'js') {
+            workbenchJs = val;
+          }
+          updateEditorLineNumbers(container, val);
+          runWorkbenchSandbox(container);
+        }
+      });
+
+      // 14d. Code Editor scroll synchronization for line numbers
+      workbenchTextarea?.addEventListener('scroll', (e) => {
+        const lineNumbers = container.querySelector('#editor-line-numbers');
+        if (lineNumbers) {
+          lineNumbers.scrollTop = e.target.scrollTop;
+        }
+      });
+
+      // 14e. Code Format Button click
+      container.querySelector('#workbench-btn-format')?.addEventListener('click', () => {
+        if (selectedFramework !== 'html') return;
+        
+        let targetText = '';
+        if (workbenchActiveTab === 'html') {
+          targetText = formatCodeStr(workbenchHtml, 'html');
+          workbenchHtml = targetText;
+        } else if (workbenchActiveTab === 'css') {
+          targetText = formatCodeStr(workbenchCss, 'css');
+          workbenchCss = targetText;
+          updateCustomizerVariablesGrid(container);
+        } else if (workbenchActiveTab === 'js') {
+          targetText = formatCodeStr(workbenchJs, 'js');
+          workbenchJs = targetText;
+        }
+
+        if (workbenchTextarea) {
+          workbenchTextarea.value = targetText;
+          updateEditorLineNumbers(container, targetText);
+        }
+        runWorkbenchSandbox(container);
+        triggerToast('Code formatted successfully!');
+      });
+
+      // 14f. Code Reset Button click
+      container.querySelector('#workbench-btn-reset-original')?.addEventListener('click', () => {
+        if (!activeDetailComponent || selectedFramework !== 'html') return;
+
+        workbenchHtml = activeDetailComponent.html || '';
+        workbenchCss = activeDetailComponent.css || '';
+        workbenchJs = activeDetailComponent.js || '';
+
+        if (workbenchTextarea) {
+          if (workbenchActiveTab === 'html') workbenchTextarea.value = workbenchHtml;
+          else if (workbenchActiveTab === 'css') workbenchTextarea.value = workbenchCss;
+          else workbenchTextarea.value = workbenchJs;
+          
+          updateEditorLineNumbers(container, workbenchTextarea.value);
+        }
+
+        updateCustomizerVariablesGrid(container);
+        runWorkbenchSandbox(container);
+        triggerToast('Reset to original snippet values!');
+      });
+
+      // 14g. Code Copy Button click
+      container.querySelector('#workbench-btn-copy')?.addEventListener('click', () => {
+        if (workbenchTextarea) {
+          copyTextToClipboard(workbenchTextarea.value, 'Copied editor code to clipboard!');
+        }
+      });
+
+      // 14h. Collapsible Error Console log click toggle
+      const consoleHeader = container.querySelector('#workbench-console-header');
+      const consoleChevron = container.querySelector('#workbench-console-chevron');
+      const consoleLogs = container.querySelector('#workbench-console-logs');
+
+      consoleHeader?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        workbenchConsoleCollapsed = !workbenchConsoleCollapsed;
+        if (consoleLogs && consoleChevron) {
+          if (workbenchConsoleCollapsed) {
+            consoleLogs.style.display = 'none';
+            consoleChevron.style.transform = 'rotate(0deg)';
+          } else {
+            consoleLogs.style.display = 'block';
+            consoleChevron.style.transform = 'rotate(180deg)';
+          }
+        }
       });
 
       // 15. Close Drawer hooks

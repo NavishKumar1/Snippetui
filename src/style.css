@@ -3578,11 +3578,386 @@ a {
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.code-drawer.drawer-wide {
+  max-width: 1200px;
+}
+
+@media (max-width: 1280px) {
+  .code-drawer.drawer-wide {
+    max-width: 95vw;
+  }
+}
+@media (max-width: 768px) {
+  .code-drawer.drawer-wide {
+    max-width: 100%;
+  }
 }
 
 .code-modal-backdrop.active .code-drawer {
   transform: translateX(0);
+}
+
+/* Split workbench UI layout rules */
+.workbench-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.workbench-left {
+  flex: 1;
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  background: #06060a;
+}
+
+.workbench-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+  padding: 24px;
+  background: #08080d;
+}
+
+/* Tab bar inside editor panel */
+.editor-tab-bar {
+  display: flex;
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 16px 0 16px;
+  gap: 4px;
+}
+
+.editor-tab {
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: none;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.editor-tab:hover {
+  color: #ffffff;
+}
+
+.editor-tab.active {
+  background: #06060a;
+  border-color: var(--border-color);
+  color: var(--accent-cyan);
+}
+
+/* Editor workbench styling */
+.editor-body {
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+
+.editor-lines {
+  width: 48px;
+  background: rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 16px 12px 16px 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.15);
+  line-height: 1.6;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.editor-textarea {
+  flex-grow: 1;
+  background: transparent;
+  border: none;
+  color: #c9d1d9;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 16px;
+  resize: none;
+  outline: none;
+  overflow-y: auto;
+  white-space: pre;
+  tab-size: 2;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+
+/* Customizer variables GUI layout */
+.customizer-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.customizer-variables-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.customizer-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.customizer-control-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.customizer-control-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.customizer-control-value {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-cyan);
+}
+
+/* Beautiful custom input controls */
+.customizer-input-color {
+  width: 100%;
+  height: 38px;
+  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.customizer-input-range {
+  -webkit-appearance: none;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  height: 6px;
+  border-radius: 10px;
+  outline: none;
+}
+
+.customizer-input-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+  transition: transform 0.1s ease;
+}
+
+.customizer-input-range::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.customizer-input-text {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.customizer-input-text:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
+}
+
+/* Sandbox viewport container */
+.sandbox-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sandbox-viewport-card {
+  background: radial-gradient(circle at center, rgba(255,255,255,0.01) 0%, rgba(0,0,0,0.4) 100%), #0d0d14;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.sandbox-viewport-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 16px 16px;
+  pointer-events: none;
+}
+
+/* Sandbox Action Toolbar */
+.workbench-actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid var(--border-color);
+  height: 48px;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+
+.workbench-tool-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.workbench-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.workbench-tool-btn.accent {
+  background: var(--primary-gradient);
+  color: #08080c;
+  border: none;
+}
+
+.workbench-tool-btn.accent:hover {
+  opacity: 0.95;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+}
+
+/* Collapsible Console Log styles */
+.console-panel {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: #040407;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.console-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.01);
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  user-select: none;
+}
+
+.console-title {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.console-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.console-indicator.error {
+  background: var(--accent-magenta);
+  box-shadow: 0 0 8px var(--accent-magenta);
+}
+
+.console-indicator.success {
+  background: var(--accent-cyan);
+  box-shadow: 0 0 8px var(--accent-cyan);
+}
+
+.console-logs {
+  height: 100px;
+  overflow-y: auto;
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: #c9d1d9;
+  background: #020204;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.console-logs .log-error {
+  color: #ff7b72;
+}
+
+.console-logs .log-system {
+  color: #8b949e;
 }
 
 .drawer-header {
