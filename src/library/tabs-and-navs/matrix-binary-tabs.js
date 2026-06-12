@@ -306,4 +306,3 @@ if (container) {
 </div>`,
   prompt: 'Design a matrix digital rain selector bar navigation component with code dropping inside the active tabs.'
 };
-component.html = component.html.replace('class="matrix-tab-btn active"', 'class="matrix-tab-btn active"');

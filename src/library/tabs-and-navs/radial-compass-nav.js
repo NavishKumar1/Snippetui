@@ -189,4 +189,3 @@ if (container) {
 </div>`,
   prompt: 'Design a highly creative rotating mechanical compass radial dial tab bar navigator component.'
 };
-component.html = component.html.replace('class="compass-node active"', 'class="compass-node active"');

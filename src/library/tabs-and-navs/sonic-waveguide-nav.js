@@ -282,4 +282,3 @@ if (container) {
 </div>`,
   prompt: 'Design a high-frequency horizontal sound equalizer spectrum waveguide tab bar component.'
 };
-component.html = component.html.replace('class="sonic-tab-btn active"', 'class="sonic-tab-btn active"');

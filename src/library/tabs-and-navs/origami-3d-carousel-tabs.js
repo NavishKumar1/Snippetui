@@ -380,4 +380,3 @@ export const componentHtml = component.html;
 export const componentTailwind = component.tailwind;
 export const componentCss = component.css;
 export const componentJs = component.js;
-component.html = component.html.replace('class="origami-node active"', 'class="origami-node active"');

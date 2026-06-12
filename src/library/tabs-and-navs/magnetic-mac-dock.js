@@ -238,5 +238,4 @@ if (container) {
 </div>`,
   prompt: 'Design a macOS-themed bottom floating dock selector utilizing fisheye parabolic magnifying lens calculations.'
 };
-component.html = component.html.replace('class="dock-item active"', 'class="dock-item active"');
 component.tailwind = component.tailwind.replace('class="dock-icon text-[26px] flex items-center justify-center origin-bottom transition-transform duration-100 ease-out [&.bounce]:animate-[macIconBounce_0.65s_ease-out] active-dock-icon"', 'class="dock-icon text-[26px] flex items-center justify-center origin-bottom transition-transform duration-100 ease-out"');

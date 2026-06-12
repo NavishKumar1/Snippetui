@@ -158,5 +158,4 @@ if (container) {
 </div>`,
   prompt: 'Design an interactive 3D isometric step staircase navigation with physically depressing buttons and glowing active pads.'
 };
-component.html = component.html.replace('class="iso-step active"', 'class="iso-step active"');
 component.tailwind = component.tailwind.replace('class="step-face top absolute inset-0 [transform-style:preserve-3d] bg-[#19222b] border-1.5 border-cyan-400/30 text-cyan-400/70 flex items-center justify-center font-sans text-[11px] font-extrabold tracking-wide active-step-face"', 'class="step-face top absolute inset-0 [transform-style:preserve-3d] bg-[#19222b] border-1.5 border-cyan-400/30 text-cyan-400/70 flex items-center justify-center font-sans text-[11px] font-extrabold tracking-wide"');

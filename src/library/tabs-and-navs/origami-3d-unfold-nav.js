@@ -165,5 +165,4 @@ if (container) {
   prompt: 'Design a luxury 3D origami folding tab bar using rotating flip-cards in 180-degree unfolding perspectives.'
 };
 // Add tailwind class coordination active hooks
-component.html = component.html.replace('class="origami-card-item active"', 'class="origami-card-item active"');
 component.tailwind = component.tailwind.replace('class="origami-flipper w-full h-full relative [transform-style:preserve-3d] transition-transform duration-600 cubic-bezier -rotate-x-[30deg] hover:-rotate-x-[10deg] [&.active]:rotate-x-[180deg] [&.active]:translate-z-[6px]"', 'class="origami-flipper w-full h-full relative [transform-style:preserve-3d] transition-transform duration-600 -rotate-x-[30deg] active-flipper"');

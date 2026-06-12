@@ -332,7 +332,6 @@ export const componentHtml = component.html;
 export const componentTailwind = component.tailwind;
 export const componentCss = component.css;
 export const componentJs = component.js;
-component.html = component.html.replace('class="pyramid-level level-1 active"', 'class="pyramid-level level-1 active"');
 component.tailwind = component.tailwind.replace('level-3 active', 'level-3'); // Correct base state
 component.tailwind = component.tailwind.replace('level-1', 'level-1 active'); // Set top active
 component.tailwind = component.tailwind.replace('translate-pink', 'pink');

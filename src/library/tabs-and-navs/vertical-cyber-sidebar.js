@@ -234,6 +234,5 @@ if (container) {
 </div>`,
   prompt: 'Design a high-tech vertical command sidebar navigation selector featuring indicator glow bars.'
 };
-component.html = component.html.replace('class="sidebar-tab active"', 'class="sidebar-tab active"');
 component.tailwind = component.tailwind.replace('class="sidebar-tab active relative bg-transparent border-none px-3.5 py-2.5 text-left cursor-pointer rounded-md flex items-center gap-3 transition [&.active]:bg-cyan-500/5 [&.active]:border [&.active]:border-cyan-500/20 [&.active]:text-[#00f2fe] active-sidebar-tab"', 'class="sidebar-tab active relative bg-transparent border-none px-3.5 py-2.5 text-left cursor-pointer rounded-md flex items-center gap-3 transition [&.active]:bg-cyan-500/5 [&.active]:border [&.active]:border-cyan-500/20 [&.active]:text-[#00f2fe]"');
 component.tailwind = component.tailwind.replace('class="tab-indicator absolute left-0 top-[6px] bottom-[6px] w-[3px] bg-[#00f2fe] rounded-r opacity-0 transition-opacity duration-300 active-indicator"', 'class="tab-indicator absolute left-0 top-[6px] bottom-[6px] w-[3px] bg-[#00f2fe] rounded-r transition-opacity duration-300"');

@@ -206,4 +206,3 @@ if (container) {
 </div>`,
   prompt: 'Design a highly creative 3D stacked card deck tab switcher with physical scaling and rotating rearrangements.'
 };
-component.html = component.html.replace('class="deck-card active"', 'class="deck-card active"');

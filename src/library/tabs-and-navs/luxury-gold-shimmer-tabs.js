@@ -160,4 +160,3 @@ if (container) {
 </div>`,
   prompt: 'Design a luxury gold segmented navigation switcher featuring light sweep shimmer flares sliding smoothly.'
 };
-component.html = component.html.replace('class="gold-tab-btn active"', 'class="gold-tab-btn active"');

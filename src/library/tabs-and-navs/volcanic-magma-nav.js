@@ -162,4 +162,3 @@ if (container) {
 </div>`,
   prompt: 'Design a dark volcanic magma switcher menu panel with pulsing molten orange lava indicators sliding dynamically.'
 };
-component.html = component.html.replace('class="magma-tab-btn active"', 'class="magma-tab-btn active"');

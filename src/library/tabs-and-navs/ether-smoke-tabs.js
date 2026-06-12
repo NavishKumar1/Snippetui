@@ -282,4 +282,3 @@ if (container) {
 </div>`,
   prompt: 'Design a dark ethereal gas selector bar navigation with floating purple smoke clouds dynamic sliding.'
 };
-component.html = component.html.replace('class="ether-tab-btn active"', 'class="ether-tab-btn active"');

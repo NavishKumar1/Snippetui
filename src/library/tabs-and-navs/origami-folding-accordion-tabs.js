@@ -218,7 +218,6 @@ if (container) {
 </div>`,
   prompt: 'Design a vertical origami folded paper accordion tab panel layout in luxury gold tones with 3D folding sweeps.'
 };
-component.html = component.html.replace('class="origami-item active"', 'class="origami-item active"');
 component.tailwind = component.tailwind.replaceAll('class="origami-content-wrapper max-h-0 overflow-hidden transition-[max-height,transform] duration-500 [transform-origin:top_center] -rotate-x-[90deg] [&.active]:max-h-20 [&.active]:rotate-x-0"', 'class="origami-content-wrapper max-h-0 overflow-hidden transition-all duration-500 -rotate-x-[90deg] [transform-origin:top_center]"');
 component.tailwind = component.tailwind.replace('class="origami-num font-mono text-[9px] text-[#d4af37]/40 active-num"', 'class="origami-num font-mono text-[9px] text-[#d4af37]/40"');
 component.tailwind = component.tailwind.replace('class="origami-item active border-1.5 border-[#d4af37]/20 bg-[#19140f] rounded-lg overflow-hidden [transform-style:preserve-3d] transition-all duration-400 [&.active]:border-[#ffd700] [&.active]:shadow-lg active-origami-item"', 'class="origami-item active border-1.5 border-[#d4af37]/20 bg-[#19140f] rounded-lg overflow-hidden [transform-style:preserve-3d] transition-all duration-400"');

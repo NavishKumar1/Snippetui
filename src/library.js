@@ -261,7 +261,7 @@ ${comp.html}
           const parts = rule.split(':');
           if (parts.length < 2) return null;
           const key = parts[0].trim().replace(/-([a-z])/g, (m, c) => c.toUpperCase());
-          const val = parts.slice(1).join(':').trim().replace(/'/g, "\\'");
+          const val = parts.slice(1).join(':').trim().replace(/\\/g, '\\\\').replace(/'/g, "\\'");
           return `${key}: '${val}'`;
         }).filter(Boolean);
         return `style={{ ${reactRules.join(', ')} }}`;

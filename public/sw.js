@@ -45,10 +45,14 @@ self.addEventListener('fetch', (event) => {
 
   const requestUrl = new URL(event.request.url);
   const isLocalRequest = requestUrl.origin === location.origin;
-  const isCdnRequest = requestUrl.host.includes('fonts.googleapis.com') ||
-                       requestUrl.host.includes('fonts.gstatic.com') ||
-                       requestUrl.host.includes('googletagmanager.com') ||
-                       requestUrl.host.includes('unsplash.com');
+  const isCdnRequest = requestUrl.hostname === 'fonts.googleapis.com' ||
+                       requestUrl.hostname === 'fonts.gstatic.com' ||
+                       requestUrl.hostname === 'www.googletagmanager.com' ||
+                       requestUrl.hostname === 'googletagmanager.com' ||
+                       requestUrl.hostname === 'images.unsplash.com' ||
+                       requestUrl.hostname === 'unsplash.com' ||
+                       requestUrl.hostname.endsWith('.unsplash.com') ||
+                       requestUrl.hostname.endsWith('.gstatic.com');
 
   if (!isLocalRequest && !isCdnRequest) {
     return; // Pass through straight to network

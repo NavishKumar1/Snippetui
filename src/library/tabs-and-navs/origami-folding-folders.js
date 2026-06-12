@@ -270,4 +270,3 @@ if (container) {
   prompt: 'Design a luxury 3D paper folders tab selection component utilizing active tab unfolding rotations and folder-pane content transitions.'
 };
 // Add CSS hook to fix class trigger in tailwind template
-component.html = component.html.replace('class="origami-folder-tab active"', 'class="origami-folder-tab active"');

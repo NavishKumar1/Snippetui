@@ -334,7 +334,17 @@ export function renderCliGuide(onNavigate) {
             div.className = `terminal-line line-${type}`;
             
             if (type === 'prompt') {
-              div.innerHTML = `<span class="terminal-prompt">guest@snippetui:~$</span> <span class="user-typed">${text}</span>`;
+              const promptSpan = document.createElement('span');
+              promptSpan.className = 'terminal-prompt';
+              promptSpan.textContent = 'guest@snippetui:~$';
+              div.appendChild(promptSpan);
+              
+              div.appendChild(document.createTextNode(' '));
+              
+              const typedSpan = document.createElement('span');
+              typedSpan.className = 'user-typed';
+              typedSpan.textContent = text;
+              div.appendChild(typedSpan);
             } else {
               div.innerHTML = text;
             }
@@ -351,6 +361,14 @@ export function renderCliGuide(onNavigate) {
         return new Promise((resolve) => {
           const div = document.createElement('div');
           div.className = 'terminal-line line-spinner';
+          
+          const spinnerSpan = document.createElement('span');
+          spinnerSpan.className = 'term-cyan';
+          div.appendChild(spinnerSpan);
+          
+          const msgNode = document.createTextNode(' ' + message);
+          div.appendChild(msgNode);
+          
           terminalHistory?.appendChild(div);
           
           const spinnerFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
@@ -364,7 +382,7 @@ export function renderCliGuide(onNavigate) {
               div.remove();
               resolve();
             } else {
-              div.innerHTML = `<span class="term-cyan">${spinnerFrames[frameIndex]}</span> ${message}`;
+              spinnerSpan.textContent = spinnerFrames[frameIndex];
               frameIndex = (frameIndex + 1) % spinnerFrames.length;
               terminalScreen.scrollTop = terminalScreen.scrollHeight;
             }
@@ -383,6 +401,15 @@ export function renderCliGuide(onNavigate) {
 <span class="term-cyan"> |_____/|_| \\_|_____|_|    |_|    |______|  |_|   \\____/|_____|</span>
 `;
         await writeTerminalLine(logoAscii, 'output', 0);
+      };
+
+      const escapeHtml = (unsafe) => {
+        return unsafe
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
       };
 
       // Core executor mock responses
@@ -449,7 +476,7 @@ export function renderCliGuide(onNavigate) {
         }
         else if (cmd.startsWith('snippetui info')) {
           const comp = cmd.replace('snippetui info', '').trim();
-          const targetComp = comp || 'buttons/mercury-ripple-btn';
+          const targetComp = escapeHtml(comp || 'buttons/mercury-ripple-btn');
           await simulateSpinner(`Querying database information for component [${targetComp}]...`);
           
           await writeTerminalLine(`<b>📦 Component:</b> <span class="term-green">${targetComp}</span>`, 'output', 100);
@@ -470,7 +497,7 @@ export function renderCliGuide(onNavigate) {
         }
         else if (cmd.startsWith('snippetui create')) {
           const rawName = cmd.replace('snippetui create', '').trim();
-          const compName = rawName || 'custom-component';
+          const compName = escapeHtml(rawName || 'custom-component');
           await simulateSpinner(`Generating assets for new custom component: [${compName}]...`);
           await writeTerminalLine(`<span class="term-green">✔</span> Created starter boilerplate: <span class="term-cyan">./src/components/snippetui/custom/${compName}.js</span>`, 'output', 200);
           await writeTerminalLine(`<span class="term-green">✔</span> Created styling tokens: <span class="term-cyan">./src/components/snippetui/custom/${compName}.css</span>`, 'output', 200);

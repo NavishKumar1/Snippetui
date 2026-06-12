@@ -464,7 +464,7 @@ async function runAdd(componentId) {
         const colonIdx = rule.indexOf(':');
         if (colonIdx === -1) return null;
         const key = rule.slice(0, colonIdx).trim().replace(/-([a-z])/g, (m, c) => c.toUpperCase());
-        const val = rule.slice(colonIdx + 1).trim().replace(/'/g, "\\'");
+        const val = rule.slice(colonIdx + 1).trim().replace(/\\/g, '\\\\').replace(/'/g, "\\'");
         return `${key}: '${val}'`;
       }).filter(Boolean);
       return `style={{ ${reactRules.join(', ')} }}`;
