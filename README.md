@@ -12,7 +12,7 @@
   <p align="center">
     <a href="https://vite.dev"><img src="https://img.shields.io/badge/Vite-Ready-646CFF?style=for-the-badge&logo=vite" alt="Vite Ready" /></a>
     <img src="https://img.shields.io/badge/Dependency-Zero-00f2fe?style=for-the-badge&logo=progressive-web-apps" alt="Zero Dependency" />
-    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-purple.svg?style=for-the-badge" alt="License MIT" /></a>
+    <a href="LICENSE.md"><img src="https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge" alt="License Proprietary" /></a>
   </p>
 </div>
 
@@ -336,5 +336,5 @@ Vite compiles, treeshakes, and outputs an optimized bundle to the `/dist` direct
 ---
 
 ## 📄 License
-Licensed under the [MIT License](LICENSE). 
+Licensed under the custom [SnippetUI Platform & Component License](LICENSE.md). 
 Created and engineered by Navish Kumar.
