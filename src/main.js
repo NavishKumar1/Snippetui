@@ -11,6 +11,7 @@ import { renderTerms } from './terms.js';
 import { render404 } from './error404.js';
 import { renderCliGuide } from './cliguide.js';
 import { renderEditor } from './editor.js';
+import { renderEmbedView } from './editor/embed-view.js';
 import Lenis from 'lenis';
 import { t, getCurrentLanguage, setLanguage } from './i18n.js';
 
@@ -101,10 +102,30 @@ function navigate(target) {
     }
 
     const parts = target.split('?');
-    const compId = parts[1]?.split('=')[1] || '';
+    const params = new URLSearchParams(parts[1] || '');
+    const compId = params.get('component') || '';
     page = renderEditor(navigate, compId);
     window.location.hash = target;
     title = 'Editor | SnippetUI';
+  } else if (target.startsWith('embed')) {
+    navbar.style.display = 'none';
+    appContainer.classList.remove('with-nav');
+    appContainer.classList.add('no-nav');
+    document.body.classList.remove('library-page-active');
+    document.body.classList.remove('editor-page-active');
+
+    if (globalLenis) {
+      globalLenis.destroy();
+      globalLenis = null;
+    }
+
+    const parts = target.split('?');
+    const params = new URLSearchParams(parts[1] || '');
+    const compId = params.get('component') || '';
+    const code = params.get('code') || '';
+    page = renderEmbedView(compId, code);
+    window.location.hash = target;
+    title = 'Embed Preview | SnippetUI';
   } else if (target.startsWith('library')) {
     navbar.style.display = 'none';
     appContainer.classList.remove('with-nav');
@@ -406,8 +427,18 @@ function handleHashRoute() {
   const hash = window.location.hash;
   if (hash.startsWith('#editor')) {
     const parts = hash.substring(1).split('?');
-    const compId = parts[1]?.split('=')[1] || '';
-    navigate(`editor?component=${compId}`);
+    const params = new URLSearchParams(parts[1] || '');
+    const compId = params.get('component') || '';
+    const code = params.get('code') || '';
+    navigate(`editor?component=${compId}${code ? `&code=${code}` : ''}`);
+  } else if (hash.startsWith('#embed')) {
+    const parts = hash.substring(1).split('?');
+    const params = new URLSearchParams(parts[1] || '');
+    const compId = params.get('component') || '';
+    const code = params.get('code') || '';
+    const tailwind = params.get('tailwind') || '';
+    const mode = params.get('mode') || '';
+    navigate(`embed?component=${compId}${code ? `&code=${code}` : ''}${tailwind ? `&tailwind=${tailwind}` : ''}${mode ? `&mode=${mode}` : ''}`);
   } else if (hash.startsWith('#library')) {
     const parts = hash.substring(1).split('?');
     const category = parts[1]?.split('=')[1] || 'all';
