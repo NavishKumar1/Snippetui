@@ -1950,6 +1950,15 @@ onMounted(() => {
       const grid = container.querySelector('#components-grid');
       if (grid) {
         grid.addEventListener('click', (e) => {
+          // D. Open Editor Action: navigate to editor page
+          const btnOpenEditor = e.target.closest('.btn-open-editor');
+          if (btnOpenEditor) {
+            e.stopPropagation();
+            const id = btnOpenEditor.getAttribute('data-id');
+            onNavigate(`editor?component=${id}`);
+            return;
+          }
+
           // A. Copy Prompt Action
           const btnCopyPrompt = e.target.closest('.btn-copy-prompt');
           if (btnCopyPrompt) {
@@ -2112,6 +2121,14 @@ onMounted(() => {
       const modalBackdrop = container.querySelector('#preview-modal-backdrop');
       modalBackdrop?.addEventListener('click', (e) => {
         if (e.target === modalBackdrop) closePreviewModal(container);
+      });
+
+      // Open Editor page from drawer header
+      container.querySelector('#btn-open-editor-header')?.addEventListener('click', () => {
+        if (activeDetailComponent) {
+          closeCodeDrawer(container);
+          onNavigate(`editor?component=${activeDetailComponent.id}`);
+        }
       });
 
       // 5. Floating Reload Button listener inside preview modal box
