@@ -1364,6 +1364,7 @@ export function renderLanding(onNavigate) {
             <img src="/assets/logo.png" alt="SnippetUI Logo" class="footer-logo-img" />
             <p>${t('footer_desc')}</p>
             <p>${t('footer_copyright')}</p>
+            <p style="color: var(--text-secondary);">Created with <span style="color: var(--accent-cyan);">💙</span> by Navish Kumar</p>
           </div>
           
           <div class="footer-links">
