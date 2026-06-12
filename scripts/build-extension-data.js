@@ -51,9 +51,17 @@ if (!fs.existsSync(outDir)) {
   fs.mkdirSync(outDir, { recursive: true });
 }
 
+const jsonData = JSON.stringify(exportData, null, 2);
+
 fs.writeFileSync(
   path.join(outDir, 'components.json'),
-  JSON.stringify(exportData, null, 2)
+  jsonData
 );
 
-console.log(`Successfully exported ${exportData.length} components to vscode-extension/src/components.json`);
+fs.writeFileSync(
+  path.join(__dirname, '../vscode-extension/components.json'),
+  jsonData
+);
+
+console.log(`Successfully exported ${exportData.length} components to vscode-extension/src/components.json and vscode-extension/components.json`);
+
