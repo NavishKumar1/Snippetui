@@ -876,17 +876,20 @@ export function renderEditor(onNavigate, compId) {
         if (!textarea) return;
 
         let compiled = '';
-        const html = editorHtml ? editorHtml.getValue() : workbenchHtml;
-        const css = editorCss ? editorCss.getValue() : workbenchCss;
-        const js = editorJs ? editorJs.getValue() : workbenchJs;
+        // Sync Monaco model values back to workspaceFiles map
+        Object.keys(editorModels).forEach(name => {
+          if (editorModels[name]) {
+            workspaceFiles[name].content = editorModels[name].getValue();
+          }
+        });
 
         try {
           if (activeExportTab === 'react') {
-            compiled = generateReact(html, css, js, isTailwindActive);
+            compiled = generateReact(workspaceFiles, isTailwindActive);
           } else if (activeExportTab === 'vue') {
-            compiled = generateVue(html, css, js);
+            compiled = generateVue(workspaceFiles);
           } else if (activeExportTab === 'svelte') {
-            compiled = generateSvelte(html, css, js);
+            compiled = generateSvelte(workspaceFiles);
           }
         } catch (e) {
           compiled = `/* Codegen Error: ${e.message} */`;
