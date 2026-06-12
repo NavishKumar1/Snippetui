@@ -423,6 +423,173 @@ onMounted(() => {
       }
     }
   }
+  // 4. Automatic Tailwind Configuration Animation/Keyframe Injector
+  if (config.styleFormat === 'tailwind' && comp.css) {
+    // Parse keyframes and animations
+    const keyframes = {};
+    let searchIdx = 0;
+    while (true) {
+      const matchIdx = comp.css.toLowerCase().indexOf('@keyframes', searchIdx);
+      if (matchIdx === -1) break;
+      
+      const nameStart = matchIdx + 10;
+      const braceStart = comp.css.indexOf('{', nameStart);
+      if (braceStart === -1) break;
+      const name = comp.css.slice(nameStart, braceStart).trim();
+      
+      let braceCount = 1;
+      let idx = braceStart + 1;
+      while (idx < comp.css.length && braceCount > 0) {
+        if (comp.css[idx] === '{') braceCount++;
+        else if (comp.css[idx] === '}') braceCount--;
+        idx++;
+      }
+      
+      const body = comp.css.slice(braceStart + 1, idx - 1);
+      searchIdx = idx;
+
+      const stageRegex = /(0%|100%|[0-9]+%|from|to)\s*\{([\s\S]*?)\}/gi;
+      let stageMatch;
+      const stages = {};
+      while ((stageMatch = stageRegex.exec(body)) !== null) {
+        const stageName = stageMatch[1];
+        const stageBody = stageMatch[2];
+        
+        const styleRules = {};
+        const rulesList = stageBody.trim().split(';').filter(r => r.trim());
+        rulesList.forEach(rule => {
+          const colonIdx = rule.indexOf(':');
+          if (colonIdx !== -1) {
+            const key = rule.slice(0, colonIdx).trim().replace(/-([a-z])/g, (m, c) => c.toUpperCase());
+            const val = rule.slice(colonIdx + 1).trim();
+            styleRules[key] = val;
+          }
+        });
+        stages[stageName] = styleRules;
+      }
+      keyframes[name] = stages;
+    }
+
+    const animations = {};
+    const animationRegex = /animation\s*:\s*([a-zA-Z0-9_-]+)\s+([^;]+);/gi;
+    let animMatch;
+    while ((animMatch = animationRegex.exec(comp.css)) !== null) {
+      const name = animMatch[1];
+      const settings = animMatch[2].trim();
+      if (keyframes[name]) {
+        animations[name] = `${name} ${settings}`;
+      }
+    }
+
+    const nameRegex = /animation-name\s*:\s*([a-zA-Z0-9_-]+)\s*;/gi;
+    let nameMatch;
+    while ((nameMatch = nameRegex.exec(comp.css)) !== null) {
+      const animName = nameMatch[1];
+      if (keyframes[animName]) {
+        const durRegex = /animation-duration\s*:\s*([^;]+);/i;
+        const durMatch = comp.css.match(durRegex);
+        const duration = durMatch ? durMatch[1].trim() : '1s';
+        
+        const iterRegex = /animation-iteration-count\s*:\s*([^;]+);/i;
+        const iterMatch = comp.css.match(iterRegex);
+        const iter = iterMatch ? iterMatch[1].trim() : 'infinite';
+
+        const dirRegex = /animation-direction\s*:\s*([^;]+);/i;
+        const dirMatch = comp.css.match(dirRegex);
+        const dir = dirMatch ? dirMatch[1].trim() : '';
+
+        animations[animName] = `${animName} ${duration} ${iter} ${dir}`.trim();
+      }
+    }
+
+    const kfNames = Object.keys(keyframes);
+    if (kfNames.length > 0) {
+      const localConfigs = [
+        'tailwind.config.js',
+        'tailwind.config.cjs',
+        'tailwind.config.ts',
+        'tailwind.config.mjs'
+      ];
+      let foundConfigPath = null;
+      for (const conf of localConfigs) {
+        const p = path.join(process.cwd(), conf);
+        if (fs.existsSync(p)) {
+          foundConfigPath = p;
+          break;
+        }
+      }
+
+      if (foundConfigPath) {
+        console.log(`[ SnippetUI CLI ] Found Tailwind configuration: ${path.basename(foundConfigPath)}. Injecting keyframes and animations...`);
+        let configContent = fs.readFileSync(foundConfigPath, 'utf8');
+        
+        let keyframesStr = '';
+        for (const [name, stages] of Object.entries(keyframes)) {
+          keyframesStr += `\n        '${name}': {\n`;
+          for (const [stage, rules] of Object.entries(stages)) {
+            keyframesStr += `          '${stage}': {\n`;
+            for (const [key, val] of Object.entries(rules)) {
+              keyframesStr += `            ${key}: '${val}',\n`;
+            }
+            keyframesStr += `          },\n`;
+          }
+          keyframesStr += `        },`;
+        }
+
+        let animsStr = '';
+        for (const [name, val] of Object.entries(animations)) {
+          animsStr += `\n        '${name}': '${val}',`;
+        }
+
+        // String injector rules
+        const extendIndex = configContent.indexOf('extend:');
+        if (extendIndex !== -1) {
+          const extendBlockStart = configContent.indexOf('{', extendIndex);
+          
+          if (keyframesStr) {
+            const keyframesIndex = configContent.indexOf('keyframes:', extendIndex);
+            if (keyframesIndex !== -1) {
+              const keyframesStart = configContent.indexOf('{', keyframesIndex);
+              configContent = configContent.slice(0, keyframesStart + 1) + keyframesStr + configContent.slice(keyframesStart + 1);
+            } else {
+              configContent = configContent.slice(0, extendBlockStart + 1) + `\n      keyframes: {${keyframesStr}\n      },` + configContent.slice(extendBlockStart + 1);
+            }
+          }
+
+          if (animsStr) {
+            const newExtendIndex = configContent.indexOf('extend:');
+            const newExtendBlockStart = configContent.indexOf('{', newExtendIndex);
+            
+            const animsIndex = configContent.indexOf('animation:', newExtendIndex);
+            if (animsIndex !== -1) {
+              const animsStart = configContent.indexOf('{', animsIndex);
+              configContent = configContent.slice(0, animsStart + 1) + animsStr + configContent.slice(animsStart + 1);
+            } else {
+              configContent = configContent.slice(0, newExtendBlockStart + 1) + `\n      animation: {${animsStr}\n      },` + configContent.slice(newExtendBlockStart + 1);
+            }
+          }
+        } else {
+          const themeIndex = configContent.indexOf('theme:');
+          if (themeIndex !== -1) {
+            const themeBlockStart = configContent.indexOf('{', themeIndex);
+            let injectContent = `\n    extend: {`;
+            if (keyframesStr) injectContent += `\n      keyframes: {${keyframesStr}\n      },`;
+            if (animsStr) injectContent += `\n      animation: {${animsStr}\n      },`;
+            injectContent += `\n    },`;
+            configContent = configContent.slice(0, themeBlockStart + 1) + injectContent + configContent.slice(themeBlockStart + 1);
+          }
+        }
+        
+        try {
+          fs.writeFileSync(foundConfigPath, configContent, 'utf8');
+          console.log(`${C.green}✔ Successfully injected keyframes (${kfNames.join(', ')}) and animations to ${path.basename(foundConfigPath)}.${C.reset}`);
+        } catch (err) {
+          console.error(`${C.red}Error updating tailwind config: ${err.message}${C.reset}`);
+        }
+      }
+    }
+  }
+
   console.log(`\n${C.green}[ SUCCESS ] Component "${comp.name}" added successfully to ${config.srcDir}/${componentFolder}!${C.reset}\n`);
 }
 
