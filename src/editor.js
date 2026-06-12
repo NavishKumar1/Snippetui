@@ -7,6 +7,8 @@ import { loadMonaco, createMonacoEditor } from './editor/monaco-helper.js';
 import { loadPrettier, formatCode } from './editor/formatter.js';
 import { generateReact, generateVue, generateSvelte } from './editor/codegen.js';
 import { initResizers } from './editor/splitter.js';
+import { compressState, decompressState } from './editor/compression.js';
+import { showEmbedModal } from './editor/embed.js';
 
 // CRC-32 Lookup Table & Helper for uncompressed ZIP writing
 const crcTable = [];
@@ -195,11 +197,21 @@ export function renderEditor(onNavigate, compId) {
             JS
           </button>
           
+          <!-- Share & Embed Buttons -->
+          <button class="editor-page-btn-action" id="editor-page-btn-share" title="Share compressed workspace URL">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 4px; vertical-align: middle;"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+            Share
+          </button>
+          <button class="editor-page-btn-action" id="editor-page-btn-embed" title="Get embed code snippet">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 4px; vertical-align: middle;"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Embed
+          </button>
+
           <button class="editor-page-btn-action" id="editor-page-btn-reset" title="Reset all changes back to default">
             Reset
           </button>
           <button class="editor-page-btn-action accent" id="editor-page-btn-download" title="Download uncompressed zip module">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 4px; vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
             ZIP Bundle
           </button>
         </div>
@@ -539,7 +551,24 @@ export function renderEditor(onNavigate, compId) {
       const badgeErrors = container.querySelector('#editor-console-badge-errors');
 
       // Lazy-load Monaco and initialize editors
-      loadMonaco().then(() => {
+      loadMonaco().then(async () => {
+        // Decompress workspace state from URL hash if present
+        const hashParts = window.location.hash.split('?');
+        const hashParams = new URLSearchParams(hashParts[1] || '');
+        const urlCompressedCode = hashParams.get('code');
+        if (urlCompressedCode) {
+          try {
+            const state = await decompressState(urlCompressedCode);
+            if (state) {
+              workbenchHtml = state.html !== undefined ? state.html : workbenchHtml;
+              workbenchCss = state.css !== undefined ? state.css : workbenchCss;
+              workbenchJs = state.js !== undefined ? state.js : workbenchJs;
+            }
+          } catch (e) {
+            console.error('[SnippetUI] Failed to decompress state', e);
+          }
+        }
+
         // Remove skeleton loaders
         container.querySelectorAll('.editor-page-editor-skeleton').forEach(el => el.remove());
 
@@ -580,6 +609,26 @@ export function renderEditor(onNavigate, compId) {
         initResizers(container);
 
         // Hook up Format buttons
+        container.querySelectorAll('.editor-page-editor-btn-format').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang');
+            let editor = null;
+            if (lang === 'html') editor = editorHtml;
+            else if (lang === 'css') editor = editorCss;
+            else if (lang === 'js') editor = editorJs;
+
+            if (editor) {
+              const unformatted = editor.getValue();
+              try {
+                const formatted = formatCode(unformatted, lang);
+                editor.setValue(formatted);
+                triggerToast(`Formatted ${lang.toUpperCase()}!`);
+              } catch (e) {
+                triggerToast(`Formatting error: ${e.message || e}`);
+              }
+            }
+          });
+        });
       }).catch(err => {
         console.error('[SnippetUI Monaco Load Error]', err);
         triggerToast('Failed to load Monaco Editor. Using fallback text editor.');
@@ -845,6 +894,35 @@ export function renderEditor(onNavigate, compId) {
       container.querySelector('#editor-page-btn-copy-js')?.addEventListener('click', () => {
         const val = editorJs ? editorJs.getValue() : workbenchJs;
         copyTextToClipboard(val, 'Copied JavaScript code!');
+      });
+
+      // Share Action
+      container.querySelector('#editor-page-btn-share')?.addEventListener('click', async () => {
+        const htmlVal = editorHtml ? editorHtml.getValue() : workbenchHtml;
+        const cssVal = editorCss ? editorCss.getValue() : workbenchCss;
+        const jsVal = editorJs ? editorJs.getValue() : workbenchJs;
+        try {
+          const compCode = await compressState(htmlVal, cssVal, jsVal);
+          const shareUrl = `${window.location.origin}/#editor?component=${comp.id}&code=${compCode}`;
+          copyTextToClipboard(shareUrl, 'Share link copied to clipboard!');
+        } catch (e) {
+          triggerToast('Failed to generate share link.');
+          console.error(e);
+        }
+      });
+
+      // Embed Action
+      container.querySelector('#editor-page-btn-embed')?.addEventListener('click', async () => {
+        const htmlVal = editorHtml ? editorHtml.getValue() : workbenchHtml;
+        const cssVal = editorCss ? editorCss.getValue() : workbenchCss;
+        const jsVal = editorJs ? editorJs.getValue() : workbenchJs;
+        try {
+          const compCode = await compressState(htmlVal, cssVal, jsVal);
+          showEmbedModal(comp.id, compCode, triggerToast, copyTextToClipboard);
+        } catch (e) {
+          triggerToast('Failed to generate embed code.');
+          console.error(e);
+        }
       });
 
       // Reset action
