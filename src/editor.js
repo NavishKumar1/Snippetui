@@ -140,6 +140,7 @@ export function renderEditor(onNavigate, compId) {
   let workbenchHtml = '';
   let workbenchCss = '';
   let workbenchJs = '';
+  let debounceTimeout = null;
   let workbenchSandboxCleanup = null;
 
   // Restore edits from localStorage if available
@@ -256,7 +257,7 @@ export function renderEditor(onNavigate, compId) {
       <div class="editor-page-preview-row" id="editor-page-preview-section">
         <div class="editor-page-preview-header">
           <div class="editor-page-preview-title">
-            <span class="editor-page-preview-indicator"></span>
+            <span class="editor-page-preview-indicator" id="editor-page-preview-indicator"></span>
             <span>Live Interactive Preview</span>
           </div>
           <div class="editor-page-preview-actions">
@@ -436,6 +437,28 @@ export function renderEditor(onNavigate, compId) {
         onNavigate('library');
       });
 
+      // debounced compilation trigger
+      function triggerSandboxCompile() {
+        if (debounceTimeout) {
+          clearTimeout(debounceTimeout);
+        }
+        
+        // Show compiling status in indicator
+        const indicator = container.querySelector('#editor-page-preview-indicator');
+        if (indicator) {
+          indicator.style.background = '#eab308';
+          indicator.style.boxShadow = '0 0 8px #eab308';
+        }
+
+        debounceTimeout = setTimeout(() => {
+          runSandbox(container);
+          if (indicator) {
+            indicator.style.background = '#10b981';
+            indicator.style.boxShadow = '0 0 8px #10b981';
+          }
+        }, 300); // 300ms debouncing delay
+      }
+
       // Synchronize text inputs and scroll positions
       const setupTextareaEvents = (txt, num, type) => {
         if (!txt || !num) return;
@@ -446,7 +469,7 @@ export function renderEditor(onNavigate, compId) {
           else if (type === 'js') workbenchJs = val;
 
           updateLineNumbers(txt, num);
-          runSandbox(container);
+          triggerSandboxCompile();
 
           // Save workspace progress in localStorage
           localStorage.setItem(`snippetui_custom_${comp.id}`, JSON.stringify({
@@ -534,13 +557,10 @@ export function renderEditor(onNavigate, compId) {
       });
     },
     destroy: () => {
-      if (workbenchSandboxCleanup) {
-        workbenchSandboxCleanup();
-        workbenchSandboxCleanup = null;
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = null;
       }
-      // Clean style tags from head
-      const styleTag = document.getElementById('editor-page-sandbox-styles');
-      if (styleTag) styleTag.remove();
     }
   };
 }
