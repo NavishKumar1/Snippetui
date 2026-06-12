@@ -11268,3 +11268,117 @@ body.editor-page-active {
   filter: brightness(1.1);
 }
 
+/* ==========================================================================
+   SnippetUI - SaaS-Grade IDE & Virtual Workspace Custom Styles
+   ========================================================================== */
+
+/* File Explorer Sidebar */
+.editor-sidebar-explorer {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: var(--font-body);
+}
+
+.explorer-file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  margin: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+  border-left: 2px solid transparent;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.explorer-file-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.explorer-file-item.active {
+  background: rgba(0, 242, 254, 0.06) !important;
+  border-left: 2px solid var(--accent-cyan) !important;
+}
+
+.explorer-file-item.active span {
+  color: #ffffff;
+}
+
+.explorer-file-delete-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.explorer-file-delete-btn:hover {
+  color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Customizer Drawer & Controls */
+#editor-customizer-drawer {
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.6);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.customizer-var-input[type="color"] {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.15s ease;
+}
+
+.customizer-var-input[type="color"]:hover {
+  transform: scale(1.05);
+  border-color: var(--accent-cyan) !important;
+}
+
+.customizer-var-input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.customizer-var-input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  cursor: pointer;
+  box-shadow: 0 0 8px var(--accent-cyan);
+  transition: all 0.15s ease;
+}
+
+.customizer-var-input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 12px var(--accent-cyan);
+}
+
+.customizer-var-input[type="text"] {
+  transition: all 0.2s ease;
+}
+
+.customizer-var-input[type="text"]:focus {
+  border-color: var(--accent-cyan) !important;
+  box-shadow: 0 0 8px rgba(0, 242, 254, 0.15);
+}
+
+/* Formatting button */
+#editor-btn-format-active {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#editor-btn-format-active:hover {
+  background: rgba(0, 242, 254, 0.08) !important;
+  color: #ffffff !important;
+  border-color: var(--accent-cyan) !important;
+}
+
