@@ -9,6 +9,7 @@ import { generateReact, generateVue, generateSvelte } from './editor/codegen.js'
 import { initResizers } from './editor/splitter.js';
 import { compressState, decompressState } from './editor/compression.js';
 import { showEmbedModal } from './editor/embed.js';
+import { TEMPLATES } from './editor/templates.js';
 
 // CRC-32 Lookup Table & Helper for uncompressed ZIP writing
 const crcTable = [];
@@ -213,6 +214,15 @@ export function renderEditor(onNavigate, compId) {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 4px; vertical-align: middle;"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
             Embed
           </button>
+
+          <!-- Template Boilerplates Picker -->
+          <select id="editor-page-select-template" class="editor-page-btn-action" style="padding: 4px 10px; font-size: 11px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; outline: none; border-radius: 4px; font-weight: 700; width: 110px;" title="Load boilerplate starter templates">
+            <option value="" disabled selected>Boilerplates</option>
+            <option value="tailwind-hero">Tailwind Hero</option>
+            <option value="svg-loader">SVG Progress</option>
+            <option value="glass-card">Glass Card</option>
+            <option value="ripple-btn">Ripple Button</option>
+          </select>
 
           <button class="editor-page-btn-action" id="editor-page-btn-reset" title="Reset all changes back to default">
             Reset
@@ -976,6 +986,44 @@ export function renderEditor(onNavigate, compId) {
         runSandbox(container);
         updateCodegenOutput(); // Refresh exports
         triggerToast(isTailwindActive ? 'Tailwind Sandbox Mode Enabled!' : 'Tailwind Sandbox Mode Disabled!');
+      });
+
+      // Template Picker Handler
+      container.querySelector('#editor-page-select-template')?.addEventListener('change', (e) => {
+        const templateId = e.target.value;
+        const template = TEMPLATES.find(t => t.id === templateId);
+        if (template) {
+          if (confirm(`Load "${template.name}"? This will replace your current edits in the editor.`)) {
+            workbenchHtml = template.html;
+            workbenchCss = template.css;
+            workbenchJs = template.js;
+            isTailwindActive = template.tailwind || false;
+
+            if (editorHtml) editorHtml.setValue(workbenchHtml);
+            if (editorCss) editorCss.setValue(workbenchCss);
+            if (editorJs) editorJs.setValue(workbenchJs);
+
+            updateTailwindBtnState();
+            
+            // Sync Tailwind Sandbox query state in Hash URL
+            const hashParts = window.location.hash.split('?');
+            const params = new URLSearchParams(hashParts[1] || '');
+            if (isTailwindActive) {
+              params.set('tailwind', 'true');
+            } else {
+              params.delete('tailwind');
+            }
+            const newHash = `${hashParts[0]}${params.toString() ? `?${params.toString()}` : ''}`;
+            history.replaceState(null, '', newHash);
+
+            runSandbox(container);
+            updateCodegenOutput();
+            saveWorkspace();
+            triggerToast(`Boilerplate template "${template.name}" loaded!`);
+          }
+          // Reset selection
+          e.target.value = '';
+        }
       });
 
       // Reset action
