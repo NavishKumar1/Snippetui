@@ -1,0 +1,10 @@
+{
+  "srcDir": "./src/components/snippetui",
+  "styleFormat": "tailwind",
+  "framework": "react",
+  "script": "ts",
+  "theme": {
+    "primary": "--accent-cyan",
+    "secondary": "--accent-purple"
+  }
+}
