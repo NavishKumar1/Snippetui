@@ -319,8 +319,9 @@ ${hasScript ? `
     const container = containerRef.current;
     if (!container) return;
 
-    const select = ${isTS ? '<T extends HTMLElement = HTMLElement>(selector: string) => container.querySelector<T>(selector)' : '(selector) => container.querySelector(selector)'};
-    const selectAll = ${isTS ? '<T extends HTMLElement = HTMLElement>(selector: string) => container.querySelectorAll<T>(selector)' : '(selector) => container.querySelectorAll(selector)'};
+    ${isTS ? `function select<T extends HTMLElement = HTMLElement>(selector: string) { return container.querySelector<T>(selector); }
+    function selectAll<T extends HTMLElement = HTMLElement>(selector: string) { return container.querySelectorAll<T>(selector); }` : `const select = (selector) => container.querySelector(selector);
+    const selectAll = (selector) => container.querySelectorAll(selector);`}
 
     ${scopedScript.split('\n').join('\n    ')}
   }, []);

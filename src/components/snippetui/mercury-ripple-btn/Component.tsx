@@ -7,8 +7,8 @@ export default function LiquidMercuryRipple() {
     const container = containerRef.current;
     if (!container) return;
 
-    const select = <T extends HTMLElement = HTMLElement>(selector: string) => container.querySelector<T>(selector);
-    const selectAll = <T extends HTMLElement = HTMLElement>(selector: string) => container.querySelectorAll<T>(selector);
+    function select<T extends HTMLElement = HTMLElement>(selector: string) { return container.querySelector<T>(selector); }
+    function selectAll<T extends HTMLElement = HTMLElement>(selector: string) { return container.querySelectorAll<T>(selector); }
 
     // TypeScript Implementation
     const mercBtn = select<HTMLButtonElement>('.mercury-ripple-btn');
