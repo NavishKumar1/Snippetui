@@ -338,6 +338,7 @@ import { component as volcanicFireflyDrift404 } from './error-404/volcanic-firef
 import { component as soundWaveEqualizer404 } from './error-404/sound-wave-equalizer-404.js';
 import { component as holographicGlitchTicket404 } from './error-404/holographic-glitch-ticket-404.js';
 import { component as quantumSuperposition404 } from './error-404/quantum-superposition-404.js';
+import { component as asciiMatrixRain404 } from './error-404/ascii-matrix-rain-404.js';
 
 // Dock Navigations
 import { component as ultimateGamingDock } from './dock-navigations/ultimate-gaming-dock.js';
@@ -759,6 +760,7 @@ export const COMPONENTS_DATABASE = [
   soundWaveEqualizer404,
   holographicGlitchTicket404,
   quantumSuperposition404,
+  asciiMatrixRain404,
 
   // Dock Navigations
   ultimateGamingDock,
