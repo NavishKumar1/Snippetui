@@ -343,6 +343,7 @@ import { component as etherealSmokeVeil404 } from './error-404/ethereal-smoke-ve
 import { component as steampunkGearMechanism404 } from './error-404/steampunk-gear-mechanism-404.js';
 import { component as foldingOrigamiGeometrics404 } from './error-404/folding-origami-geometrics-404.js';
 import { component as radarSonarScanner404 } from './error-404/radar-sonar-scanner-404.js';
+import { component as magneticCompassDrift404 } from './error-404/magnetic-compass-drift-404.js';
 
 // Dock Navigations
 import { component as ultimateGamingDock } from './dock-navigations/ultimate-gaming-dock.js';
@@ -769,6 +770,7 @@ export const COMPONENTS_DATABASE = [
   steampunkGearMechanism404,
   foldingOrigamiGeometrics404,
   radarSonarScanner404,
+  magneticCompassDrift404,
 
   // Dock Navigations
   ultimateGamingDock,
