@@ -340,6 +340,7 @@ import { component as holographicGlitchTicket404 } from './error-404/holographic
 import { component as quantumSuperposition404 } from './error-404/quantum-superposition-404.js';
 import { component as asciiMatrixRain404 } from './error-404/ascii-matrix-rain-404.js';
 import { component as etherealSmokeVeil404 } from './error-404/ethereal-smoke-veil-404.js';
+import { component as steampunkGearMechanism404 } from './error-404/steampunk-gear-mechanism-404.js';
 
 // Dock Navigations
 import { component as ultimateGamingDock } from './dock-navigations/ultimate-gaming-dock.js';
@@ -763,6 +764,7 @@ export const COMPONENTS_DATABASE = [
   quantumSuperposition404,
   asciiMatrixRain404,
   etherealSmokeVeil404,
+  steampunkGearMechanism404,
 
   // Dock Navigations
   ultimateGamingDock,
