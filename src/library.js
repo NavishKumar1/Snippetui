@@ -500,7 +500,8 @@ onMounted(() => {
       'containers': 'cat_containers',
       'dashboard-widgets': 'cat_widgets',
       'monetization': 'cat_monetization',
-      'dashboard-layouts': 'cat_layouts'
+      'dashboard-layouts': 'cat_layouts',
+      'error-404': 'cat_error404'
     };
     const key = mapping[cat];
     if (key && t(key) !== key) {

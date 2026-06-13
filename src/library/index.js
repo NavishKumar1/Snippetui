@@ -320,6 +320,23 @@ import { component as interactiveLightningPlasma } from './background-animations
 import { component as holoWaveInterference } from './background-animations/holo-wave-interference.js';
 import { component as liquidGlassMetaballs } from './background-animations/liquid-glass-metaballs.js';
 import { component as vectorFieldSwarm } from './background-animations/vector-field-swarm.js';
+import { component as liquidEther } from './background-animations/liquid-ether.js';
+import { component as aetherialMorphingMesh } from './background-animations/aetherial-morphing-mesh.js';
+import { component as holographicAuroraWavefront } from './background-animations/holographic-aurora-wavefront.js';
+import { component as liquidChromeWavefront } from './background-animations/liquid-chrome-wavefront.js';
+import { component as gravitySingularityGrid } from './background-animations/gravity-singularity-grid.js';
+
+// 404 Error Pages
+import { component as interactiveGlitchNeon404 } from './error-404/interactive-glitch-neon-404.js';
+import { component as cosmicSpaceDrift404 } from './error-404/cosmic-space-drift-404.js';
+import { component as retroCrtConsole404 } from './error-404/retro-crt-console-404.js';
+import { component as liquidMercuryMorph404 } from './error-404/liquid-mercury-morph-404.js';
+import { component as magneticGravityPortal404 } from './error-404/magnetic-gravity-portal-404.js';
+import { component as cyberGridTerminal404 } from './error-404/cyber-grid-terminal-404.js';
+import { component as bioluminescentNeural404 } from './error-404/bioluminescent-neural-404.js';
+import { component as volcanicFireflyDrift404 } from './error-404/volcanic-firefly-drift-404.js';
+import { component as soundWaveEqualizer404 } from './error-404/sound-wave-equalizer-404.js';
+import { component as holographicGlitchTicket404 } from './error-404/holographic-glitch-ticket-404.js';
 
 // Dock Navigations
 import { component as ultimateGamingDock } from './dock-navigations/ultimate-gaming-dock.js';
@@ -723,6 +740,23 @@ export const COMPONENTS_DATABASE = [
   holoWaveInterference,
   liquidGlassMetaballs,
   vectorFieldSwarm,
+  liquidEther,
+  aetherialMorphingMesh,
+  holographicAuroraWavefront,
+  liquidChromeWavefront,
+  gravitySingularityGrid,
+
+  // 404 Error Pages
+  interactiveGlitchNeon404,
+  cosmicSpaceDrift404,
+  retroCrtConsole404,
+  liquidMercuryMorph404,
+  magneticGravityPortal404,
+  cyberGridTerminal404,
+  bioluminescentNeural404,
+  volcanicFireflyDrift404,
+  soundWaveEqualizer404,
+  holographicGlitchTicket404,
 
   // Dock Navigations
   ultimateGamingDock,

@@ -79,6 +79,8 @@ const TRANSLATIONS = {
     cat_widgets: 'Dashboard Widgets',
     cat_monetization: 'Monetization',
     cat_layouts: 'Dashboard Layouts',
+    cat_error404: '404 Error Pages',
+    cat_error404_desc: 'Breathtaking 404 error layouts, interactive glitch pages, terminal simulations, and space-drifting states.',
 
     // Elite Cards
     elite_micro_title: 'Micro-Animations',
@@ -379,6 +381,8 @@ const TRANSLATIONS = {
     cat_widgets: 'Widgets de Tablero',
     cat_monetization: 'Monetización',
     cat_layouts: 'Diseños de Tablero',
+    cat_error404: 'Páginas de Error 404',
+    cat_error404_desc: 'Diseños de error 404 impresionantes, páginas de glitch interactivas, simulaciones de terminal y estados de deriva espacial.',
 
     // Elite Cards
     elite_micro_title: 'Micro-Animaciones',
@@ -679,6 +683,8 @@ const TRANSLATIONS = {
     cat_widgets: 'Widgets de Tableau de Bord',
     cat_monetization: 'Monétisation',
     cat_layouts: 'Structures de Tableaux',
+    cat_error404: 'Pages d\'Erreur 404',
+    cat_error404_desc: 'Mises en page d\'erreur 404 époustouflantes, pages glitch interactives, simulations de terminal et dérives spatiales.',
 
     // Elite Cards
     elite_micro_title: 'Micro-Animations',
@@ -979,6 +985,8 @@ const TRANSLATIONS = {
     cat_widgets: 'Dashboard-Widgets',
     cat_monetization: 'Monetisierung',
     cat_layouts: 'Dashboard-Layouts',
+    cat_error404: '404-Fehlerseiten',
+    cat_error404_desc: 'Atemberaubende 404-Fehlerlayouts, interaktive Glitch-Seiten, Terminal-Simulationen und schwebende Weltraumzustände.',
 
     // Elite Cards
     elite_micro_title: 'Mikro-Animationen',
@@ -1279,6 +1287,8 @@ const TRANSLATIONS = {
     cat_widgets: 'ダッシュボードパーツ',
     cat_monetization: '収益化カード',
     cat_layouts: 'ダッシュボードレイアウト',
+    cat_error404: '404エラーページ',
+    cat_error404_desc: '美しい404エラーレイアウト、インタラクティブなグリッチ画面、ターミナルエミュレーション、宇宙漂流エフェクト。',
 
     // Elite Cards
     elite_micro_title: 'マイクロアニメーション',
@@ -1579,6 +1589,8 @@ const TRANSLATIONS = {
     cat_widgets: '仪表盘微件',
     cat_monetization: '商业变现',
     cat_layouts: '仪表盘布局',
+    cat_error404: '404 错误页面',
+    cat_error404_desc: '令人惊叹的 404 错误布局、交互式故障页面、终端模拟和深空漂流状态。',
 
     // Elite Cards
     elite_micro_title: '精细微交互',
