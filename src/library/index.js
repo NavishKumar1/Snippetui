@@ -346,6 +346,7 @@ import { component as radarSonarScanner404 } from './error-404/radar-sonar-scann
 import { component as magneticCompassDrift404 } from './error-404/magnetic-compass-drift-404.js';
 import { component as thermiteWeldingSpark404 } from './error-404/thermite-welding-spark-404.js';
 import { component as dnaHelixSynapse404 } from './error-404/dna-helix-synapse-404.js';
+import { component as crtRadarScreen404 } from './error-404/crt-radar-screen-404.js';
 
 // Dock Navigations
 import { component as ultimateGamingDock } from './dock-navigations/ultimate-gaming-dock.js';
@@ -775,6 +776,7 @@ export const COMPONENTS_DATABASE = [
   magneticCompassDrift404,
   thermiteWeldingSpark404,
   dnaHelixSynapse404,
+  crtRadarScreen404,
 
   // Dock Navigations
   ultimateGamingDock,
