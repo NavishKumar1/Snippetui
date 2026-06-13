@@ -823,6 +823,14 @@ export function renderLanding(onNavigate) {
                 <span class="card-arrow">${t('cat_explore')}</span>
               </div>
 
+              <div class="category-card" data-category="error-404">
+                <div class="card-glow"></div>
+                <div class="category-card-icon">⚠️</div>
+                <h3>${t('cat_error404')}</h3>
+                <p>${t('cat_error404_desc')}</p>
+                <span class="card-arrow">${t('cat_explore')}</span>
+              </div>
+
             </div>
           </div>
 
