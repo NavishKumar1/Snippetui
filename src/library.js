@@ -1557,21 +1557,7 @@ onMounted(() => {
 
       // Initialize Lenis smooth scroll for library panels (desktop only for performance)
       if (window.innerWidth > 768) {
-        const sidebar = container.querySelector('.library-sidebar');
         const main = container.querySelector('.library-main');
-        if (sidebar) {
-          sidebarLenis = new Lenis({
-            wrapper: sidebar,
-            autoRaf: true,
-            lerp: 0.1,
-            duration: 1.2
-          });
-          
-          sidebarResizeObserver = new ResizeObserver(() => {
-            if (sidebarLenis) sidebarLenis.resize();
-          });
-          sidebarResizeObserver.observe(sidebar);
-        }
         if (main) {
           mainLenis = new Lenis({
             wrapper: main,

@@ -3201,21 +3201,18 @@ a {
 
 /* Customize Sidebar Scrollbar for ultra premium look */
 .library-sidebar::-webkit-scrollbar {
-  width: 10px;
+  width: 6px;
 }
 .library-sidebar::-webkit-scrollbar-track {
-  background: transparent;
-  border-top: 20px solid transparent;    /* Keep top rounded corner pristine */
-  border-bottom: 20px solid transparent; /* Keep bottom rounded corner pristine */
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 100px;
 }
 .library-sidebar::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.25);
   border-radius: 100px;
-  border: 3px solid transparent;
-  background-clip: content-box;
 }
 .library-sidebar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 242, 254, 0.3);
+  background-color: var(--accent-cyan);
 }
 
 .search-wrapper {
