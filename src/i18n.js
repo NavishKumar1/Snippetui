@@ -81,6 +81,8 @@ const TRANSLATIONS = {
     cat_layouts: 'Dashboard Layouts',
     cat_error404: '404 Error Pages',
     cat_error404_desc: 'Breathtaking 404 error layouts, interactive glitch pages, terminal simulations, and space-drifting states.',
+    cat_globe: 'Interactive 3D Globes',
+    cat_globe_desc: 'Responsive, interactive 3D globes with mouse drag controls, custom canvas projections, and glowing satellite connection rings.',
 
     // Elite Cards
     elite_micro_title: 'Micro-Animations',
@@ -383,6 +385,8 @@ const TRANSLATIONS = {
     cat_layouts: 'Diseños de Tablero',
     cat_error404: 'Páginas de Error 404',
     cat_error404_desc: 'Diseños de error 404 impresionantes, páginas de glitch interactivas, simulaciones de terminal y estados de deriva espacial.',
+    cat_globe: 'Globos 3D Interactivos',
+    cat_globe_desc: 'Globos 3D responsivos e interactivos con controles de arrastre de mouse, proyecciones de coordenadas personalizadas y anillos de conexión satelital.',
 
     // Elite Cards
     elite_micro_title: 'Micro-Animaciones',
@@ -685,6 +689,8 @@ const TRANSLATIONS = {
     cat_layouts: 'Structures de Tableaux',
     cat_error404: 'Pages d\'Erreur 404',
     cat_error404_desc: 'Mises en page d\'erreur 404 époustouflantes, pages glitch interactives, simulations de terminal et dérives spatiales.',
+    cat_globe: 'Globes 3D Interactifs',
+    cat_globe_desc: 'Globes 3D interactifs et réactifs avec contrôle de rotation par glisser-déplacer, projection de coordonnées personnalisée et anneaux satellites.',
 
     // Elite Cards
     elite_micro_title: 'Micro-Animations',
@@ -987,6 +993,8 @@ const TRANSLATIONS = {
     cat_layouts: 'Dashboard-Layouts',
     cat_error404: '404-Fehlerseiten',
     cat_error404_desc: 'Atemberaubende 404-Fehlerlayouts, interaktive Glitch-Seiten, Terminal-Simulationen und schwebende Weltraumzustände.',
+    cat_globe: 'Interaktive 3D-Globen',
+    cat_globe_desc: 'Reaktionsschnelle, interaktive 3D-Globen mit Maus-Drag-Steuerung, benutzerdefinierten Canvas-Projektionen und leuchtenden Satellitenverbindungsringen.',
 
     // Elite Cards
     elite_micro_title: 'Mikro-Animationen',
@@ -1289,6 +1297,8 @@ const TRANSLATIONS = {
     cat_layouts: 'ダッシュボードレイアウト',
     cat_error404: '404エラーページ',
     cat_error404_desc: '美しい404エラーレイアウト、インタラクティブなグリッチ画面、ターミナルエミュレーション、宇宙漂流エフェクト。',
+    cat_globe: 'インタラクティブ3D地球儀',
+    cat_globe_desc: 'ドラッグ回転操作、カスタムキャンバス座標投影、発光する衛星コネクションリングを備えたレスポンシブな3D地球儀。',
 
     // Elite Cards
     elite_micro_title: 'マイクロアニメーション',
@@ -1591,6 +1601,8 @@ const TRANSLATIONS = {
     cat_layouts: '仪表盘布局',
     cat_error404: '404 错误页面',
     cat_error404_desc: '令人惊叹的 404 错误布局、交互式故障页面、终端模拟和深空漂流状态。',
+    cat_globe: '交互式 3D 地球仪',
+    cat_globe_desc: '响应式、交互式 3D 地球仪，支持鼠标拖拽旋转、自定义 Canvas 投影和发光卫星连接环。',
 
     // Elite Cards
     elite_micro_title: '精细微交互',
