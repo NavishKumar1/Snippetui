@@ -437,6 +437,12 @@ import { component as growthConversionDashboard } from './dashboard-layouts/grow
 import { component as nextgenAiSaasDashboard } from './dashboard-layouts/nextgen-ai-saas-dashboard.js';
 import { component as ultimateEnterpriseSuite } from './dashboard-layouts/ultimate-enterprise-suite.js';
 
+// Globe Components
+import { component as dottedConnectionGlobe } from './globe/dotted-connection-globe.js';
+import { component as wireframeHudGlobe } from './globe/wireframe-hud-globe.js';
+import { component as matrixCyberGlobe } from './globe/matrix-cyber-globe.js';
+import { component as biolumeParticleGlobe } from './globe/biolume-particle-globe.js';
+
 export const COMPONENTS_DATABASE = [
   // Text Animations
   textShimmer,
@@ -857,4 +863,10 @@ export const COMPONENTS_DATABASE = [
   growthConversionDashboard,
   nextgenAiSaasDashboard,
   ultimateEnterpriseSuite,
+
+  // Globe Components
+  dottedConnectionGlobe,
+  wireframeHudGlobe,
+  matrixCyberGlobe,
+  biolumeParticleGlobe,
 ];

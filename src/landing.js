@@ -831,6 +831,14 @@ export function renderLanding(onNavigate) {
                 <span class="card-arrow">${t('cat_explore')}</span>
               </div>
 
+              <div class="category-card" data-category="globe">
+                <div class="card-glow"></div>
+                <div class="category-card-icon">🌐</div>
+                <h3>${t('cat_globe')}</h3>
+                <p>${t('cat_globe_desc')}</p>
+                <span class="card-arrow">${t('cat_explore')}</span>
+              </div>
+
             </div>
           </div>
 
